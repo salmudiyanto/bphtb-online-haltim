@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          500: '#4CAF50',
+          600: '#43a047',
+          700: '#388e3c',
+          800: '#2e7d32'
+        },
+        slate: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a'
+        }
+      },
+      fontFamily: {
+        sans: ['Public Sans', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace']
+      }
+    }
+  }
+};</script></head><body class="bg-[#f8fafc] text-slate-800 font-sans antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-[#f6faf7] border-r border-[#e0ece3] shadow-[0_1px_6px_rgba(0,0,0,0.03)] z-50 flex flex-col justify-between select-none"><div class="flex flex-col"><div class="h-16 px-6 flex items-center gap-3 bg-[#eef5f0] border-b border-[#e0ece3]"><div class="p-1 bg-white rounded-lg flex items-center justify-center shadow-xs border border-[#cfe0d4]"><img alt="Official Indonesian Regional Government Tax Emblem / Logo for BPHTB" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V70zBvtM7Ta6kXwIU_kFihAYQrSgk4i5Jk5et8t5xHLbpn_bBBa65ybr_VGbqugLXhkMRU1upvwPpEf2U-BlVqUQnI2LOxovDJHJcMPvFx5O08_1kjLbgFwU90nvZlTpt1pp79vP7NAIw3ETs2AfZKYDin8xHBAXfgSt1y-rkTkoSmj8bQaarNO3DQWE_QjYvmskTe2XyhohWegmS8c01Bt5I50IUb1OUo9GtrI49EIDSSTXDVgzC5JwQ"/></div><div class="flex flex-col"><span class="text-base text-[#2e7d32] leading-tight font-bold">e-BPHTB</span><span class="text-[11px] text-slate-500 uppercase tracking-wider font-semibold">BAPENDA ONLINE</span></div></div><div class="px-4 py-2"><span class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold px-1">Menu Navigasi</span></div><nav class="flex flex-col gap-1 px-3"><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-600 hover:bg-[#eaf4ec] hover:text-[#233327] transition-all text-sm" data-path="dashboard" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="">Dashboard</span></div></a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-600 hover:bg-[#eaf4ec] hover:text-[#233327] transition-all text-sm" data-path="permohonan-masuk" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">move_to_inbox</span><span class="">Permohonan Masuk</span></div><span class="px-2 py-0.5 rounded-full text-xs bg-[#e2f2e5] text-[#1e4624] font-semibold">14</span></a><a aria-current="page" class="flex items-center justify-between px-3 py-2.5 transition-all bg-[#4CAF50] text-white text-sm font-semibold rounded-lg shadow-sm" data-path="pendaftaran-baru" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">post_add</span><span class="">Pendaftaran Baru</span></div></a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-600 hover:bg-[#eaf4ec] hover:text-[#233327] transition-all text-sm" data-path="verifikasi-berkas" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">fact_check</span><span class="">Verifikasi Berkas</span></div></a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-600 hover:bg-[#eaf4ec] hover:text-[#233327] transition-all text-sm" data-path="skp-dan-bukti-bayar" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span class="">SKP &amp; Bukti Bayar</span></div></a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-600 hover:bg-[#eaf4ec] hover:text-[#233327] transition-all text-sm" data-path="rekap-dan-laporan" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">assessment</span><span class="">Rekap &amp; Laporan</span></div></a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-600 hover:bg-[#eaf4ec] hover:text-[#233327] transition-all text-sm" data-path="peta-geografis-znt" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">map</span><span class="">Peta Geografis ZNT</span></div></a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-600 hover:bg-[#eaf4ec] hover:text-[#233327] transition-all text-sm" data-path="pengaturan-sistem" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">tune</span><span class="">Pengaturan Sistem</span></div></a></nav></div><div class="p-4 m-3 bg-[#eef5f0] border border-[#dce9df] rounded-xl flex flex-col gap-2"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#4CAF50]"></span><span class="text-xs text-slate-700 font-medium">ATR / BPN Terhubung</span></div><span class="material-symbols-outlined text-[#4CAF50] text-[16px]">cloud_done</span></div><div class="h-[1px] bg-[#d3e0d6]"></div><div class="flex items-center justify-between"><span class="text-xs text-slate-400">Sistem v2.4.0 Secure</span><span class="px-1.5 py-0.5 rounded text-xs bg-[#4CAF50] text-white font-semibold">BSrE</span></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-white border-b border-[#e0ece3] shadow-[0_1px_6px_rgba(0,0,0,0.03)] z-40 flex items-center justify-between px-8"><div class="flex items-center gap-4"><div class="flex flex-col"><div class="flex items-center gap-2"><span class="text-base text-[#264332] font-semibold">Sistem Informasi BPHTB Online</span><span class="px-2 py-0.5 rounded-full text-xs bg-[#ebf6ee] text-[#2e7d32] font-medium border border-[#cfe0d4]">Provinsi / Kab-Kota</span></div><div class="flex items-center gap-2"><span class="text-xs text-slate-500">Badan Pendapatan Daerah</span><span class="text-slate-400 text-xs">•</span><div class="flex items-center gap-1 text-[#2e7d32]"><span class="w-2 h-2 rounded-full bg-[#4CAF50] inline-block"></span><span class="text-xs font-semibold">SISMIOP PBB Online</span></div></div></div></div><div class="flex items-center gap-4"><button aria-label="Notifikasi Sistem" class="relative p-2 rounded-lg text-slate-500 hover:bg-[#ebf6ee] hover:text-[#264332] transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#4CAF50] rounded-full ring-2 ring-white"></span></button><div class="h-8 w-[1px] bg-[#e0ece3]"></div><div class="flex items-center gap-3 pl-1"><div class="flex flex-col text-right"><span class="text-xs font-semibold text-[#264332] leading-tight">Drs. H. Hendra Wijaya</span><span class="text-xs text-slate-500">Verifikator Pajak Utama</span></div><div class="w-8 h-8 rounded-full bg-[#4CAF50] flex items-center justify-center text-white cursor-pointer"><span class="material-symbols-outlined text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-[#f8fafc] min-h-screen"><div class="flex flex-col w-full" id="app">
+<div class="w-full max-w-[1440px] mx-auto px-6 lg:px-10 py-8 flex flex-col gap-8">
+<!-- Top Meta Breadcrumb & Action Banner -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200">
+<div class="flex flex-col gap-1.5">
+<nav class="flex items-center gap-2 text-slate-500 text-xs">
+<span class="hover:text-[#4CAF50] cursor-pointer transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">home</span> Beranda
+</span>
+<span class="text-slate-300">/</span>
+<span class="hover:text-[#4CAF50] cursor-pointer transition-colors">Pelayanan BPHTB</span>
+<span class="text-slate-300">/</span>
+<span class="text-[#4CAF50] font-semibold">Input Pendaftaran BPHTB</span>
+</nav>
+<div class="flex items-center gap-3 mt-1">
+<h1 class="text-2xl font-bold text-slate-900 tracking-tight">Input Pendaftaran BPHTB</h1>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#edf7ee] text-[#2e7d32] border border-[#c8e6c9] text-xs font-semibold shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4CAF50]"></span>
+Mode Input Petugas
+</span>
+</div>
+<p class="text-sm text-slate-600 max-w-3xl">
+Perekaman berkas dan pendataan permohonan baru Bea Perolehan Hak atas Tanah dan Bangunan (BPHTB) wilayah kerja BAPENDA Daerah.
+</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2.5 bg-white border border-slate-200 px-3.5 py-2 rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-[#4CAF50] text-[20px]">draft</span>
+<div class="flex flex-col text-left">
+<span class="text-[11px] text-slate-400 font-medium">Nomor Draft Sesi</span>
+<span class="font-mono text-xs font-semibold text-slate-800 tracking-wide">{{ nomorDraftSesi }}</span>
+</div>
+</div>
+<button @click="panduanSingkat" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all duration-150 text-xs font-semibold shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px] text-[#4CAF50]">help_outline</span>
+<span>Panduan Singkat</span>
+</button>
+</div>
+</div>
+<!-- Main Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Primary Data Entry Stack (8 Cols) -->
+<div class="lg:col-span-8 flex flex-col gap-8">
+<!-- CARD 1: Nomor Pelayanan (Administratif) -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 lg:p-7 flex flex-col gap-6">
+<div class="flex items-center justify-between pb-4 border-b border-slate-100">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-[#edf7ee] border border-[#c8e6c9] flex items-center justify-center text-[#4CAF50]">
+<span class="material-symbols-outlined text-[24px]">assignment_turned_in</span>
+</div>
+<div class="flex flex-col">
+<h2 class="text-base font-bold text-slate-900">1. Nomor &amp; Status Pelayanan</h2>
+<p class="text-xs text-slate-500">Penomoran berkas registrasi resmi loket pendaftaran BAPENDA</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded bg-slate-100 border border-slate-200 font-mono text-xs text-slate-600 font-medium">SYS-AUTO-ID</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<!-- Nomor Pelayanan -->
+<div class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-1">
+<label class="text-xs font-semibold text-slate-700 flex items-center justify-between">
+<span>Nomor Pelayanan BPHTB <span class="text-red-500">*</span></span>
+<span class="text-[11px] text-[#388e3c] font-semibold">Tersinkron Otomatis</span>
+</label>
+<div class="relative flex items-center">
+<input class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-mono text-sm px-3.5 py-2.5 rounded-lg outline-none cursor-not-allowed select-all" readonly="" type="text" v-model="form.nomorPelayanan"/>
+<button @click="refreshNomorPelayanan" class="absolute right-2 px-2.5 py-1 rounded bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-1 transition-colors shadow-xs" id="btn-regenerate" title="Generate nomor acak baru" type="button">
+<span class="material-symbols-outlined text-[16px] text-[#4CAF50]">refresh</span>
+<span>Refresh</span>
+</button>
+</div>
+<p class="text-xs text-slate-400">Format baku register: PLY-BPHTB/TAHUN/BULAN/URUT</p>
+</div>
+<!-- Jenis Pelayanan -->
+<div class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-1">
+<label class="text-xs font-semibold text-slate-700" for="select-jenis-pelayanan">
+Jenis Transaksi / Pelayanan <span class="text-red-500">*</span>
+</label>
+<div class="relative">
+<select class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 pr-10 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all appearance-none cursor-pointer" id="select-jenis-pelayanan" v-model="form.jenisTransaksi">
+<option value="jual-beli">Jual Beli (Peralihan Hak Pokok)</option>
+<option value="hibah">Hibah (Pemberian Sukarela)</option>
+<option value="waris">Waris (Surat Keterangan Waris Sah)</option>
+<option value="hibah-wasiat">Hibah Wasiat</option>
+<option value="tukar-menukar">Tukar Menukar (Ruislag)</option>
+<option value="pemasukan-perseroan">Pemasukan dalam Perseroan (Inbreng)</option>
+<option value="pemisahan-hak">Pemisahan Hak Bersama</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-slate-400 pointer-events-none text-[20px]">expand_more</span>
+</div>
+<p class="text-xs text-slate-400">Menentukan threshold NPOPTKP yang diberlakukan sistem</p>
+</div>
+<!-- No Surat Permohonan PPAT -->
+<div class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-1">
+<label class="text-xs font-semibold text-slate-700" for="no-surat-ppat">
+No. Surat Pengantar PPAT / Permohonan <span class="text-red-500">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-slate-400 text-[18px]">receipt</span>
+<input class="w-full bg-white border border-slate-300 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="no-surat-ppat" placeholder="Contoh: 005/SP-PPAT/IX/2026" type="text" v-model="form.noSuratPengantar"/>
+</div>
+<p class="text-xs text-slate-400">Nomor agenda surat pengantar notaris/PPAT pembuat akta</p>
+</div>
+<!-- Tanggal Surat Permohonan -->
+<div class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-1">
+<label class="text-xs font-semibold text-slate-700" for="tgl-surat-ppat">
+Tanggal Surat Permohonan <span class="text-red-500">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-slate-400 text-[18px]">calendar_today</span>
+<input class="w-full bg-white border border-slate-300 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="tgl-surat-ppat" type="date" v-model="form.tanggalSurat"/>
+</div>
+<p class="text-xs text-slate-400">Tanggal penandatanganan berkas pengantar</p>
+</div>
+<!-- Tanggal Penerimaan Loket -->
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-700" for="tgl-terima-loket">
+Tanggal Penerimaan Berkas <span class="text-red-500">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-[#4CAF50] text-[18px]">event_available</span>
+<input class="w-full bg-white border border-slate-300 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="tgl-terima-loket" type="date" v-model="form.tanggalPenerimaan"/>
+</div>
+<p class="text-xs text-slate-400">Sesuai jam loket registrasi kantor BAPENDA</p>
+</div>
+<!-- Tanggal Perkiraan Selesai -->
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-700" for="tgl-selesai-est">
+Perkiraan Selesai (SLA Standar 3 Hari)
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-slate-500 text-[18px]">timer</span>
+<input class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none cursor-default" id="tgl-selesai-est" type="date" v-model="form.perkiraanSelesai"/>
+</div>
+<p class="text-xs text-slate-400">Target verifikasi dokumen &amp; penetapan validasi</p>
+</div>
+</div>
+</div>
+<!-- CARD 2: Data Wajib & Objek Pajak -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 lg:p-7 flex flex-col gap-6">
+<div class="flex items-center justify-between pb-4 border-b border-slate-100">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-[#edf7ee] border border-[#c8e6c9] flex items-center justify-center text-[#4CAF50]">
+<span class="material-symbols-outlined text-[24px]">real_estate_agent</span>
+</div>
+<div class="flex flex-col">
+<h2 class="text-base font-bold text-slate-900">2. Data Wajib / Objek Pajak &amp; Keterangan</h2>
+<p class="text-xs text-slate-500">Identitas subjek pemohon serta spesifikasi legalitas objek tanah &amp; bangunan</p>
+</div>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-[#edf7ee] border border-[#c8e6c9] rounded-md">
+<span class="material-symbols-outlined text-[#388e3c] text-[16px]">sync</span>
+<span class="text-xs font-semibold text-[#2e7d32]">Integrasi SISMIOP</span>
+</div>
+</div>
+<div class="flex flex-col gap-5">
+<!-- Baris 1: Nama Pemohon -->
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-700 flex items-center justify-between" for="nama-pemohon">
+<span>Nama Lengkap Wajib Pajak / Pemohon <span class="text-red-500">*</span></span>
+<span class="text-[11px] text-slate-400 font-normal">Sesuai KTP Pemohon</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-slate-400 text-[18px]">badge</span>
+<input class="w-full bg-white border border-slate-300 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="nama-pemohon" placeholder="Contoh: Ir. Muhammad Rizky Kurniawan, M.Eng." type="text" v-model="form.namaWajibPajak"/>
+</div>
+</div>
+<!-- Baris 2: Alamat Pemohon -->
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-700" for="alamat-pemohon">
+Alamat Domisili Pemohon Sesuai KTP <span class="text-red-500">*</span>
+</label>
+<textarea class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all resize-none" id="alamat-pemohon" placeholder="Tuliskan nama jalan, nomor rumah, RT/RW, kelurahan, dan kota domisili pemohon..." rows="2" v-model="form.alamatPemohon"></textarea>
+</div>
+<div class="h-[1px] bg-slate-200 my-1"></div>
+<!-- Baris 3: NOP PBB & Nama Subjek Pajak (SISMIOP) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+<!-- NOP Input with Sync Action -->
+<div class="md:col-span-7 flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-700 flex items-center justify-between" for="input-nop">
+<span>Nomor Objek Pajak (NOP PBB-P2) <span class="text-red-500">*</span></span>
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#388e3c]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4CAF50]"></span> Terhubung SISMIOP
+</span>
+</label>
+<div class="flex gap-2">
+<div class="relative flex-1 flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-slate-400 text-[18px]">domain_verification</span>
+<input class="w-full bg-white border border-slate-300 text-slate-800 font-mono text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all font-semibold tracking-wider" id="input-nop" placeholder="35.73.xxx.xxx.xxx-xxxx.x" type="text" v-model="form.nop"/>
+</div>
+<button :disabled="isSyncingNop" @click="cekDataNop" class="px-4 py-2.5 rounded-lg bg-[#4CAF50] text-white hover:bg-[#43a047] font-semibold text-xs flex items-center gap-1.5 shadow-sm transition-all shrink-0" id="btn-sync-nop" type="button">
+<span class="material-symbols-outlined text-[18px]" v-if="!isSyncingNop &amp;&amp; !isNopSynced">sync_alt</span>
+<span class="material-symbols-outlined text-[18px] animate-spin" v-if="isSyncingNop">refresh</span>
+<span class="material-symbols-outlined text-[18px]" v-if="isNopSynced">check</span>
+<span>{{ syncButtonLabel }}</span>
+</button>
+</div>
+<p class="text-xs text-slate-400">Masking 18 digit NOP terdaftar pada SPPT PBB tahun berjalan</p>
+</div>
+<!-- Nama Subjek Pajak Terdaftar SPPT -->
+<div class="md:col-span-5 flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-700" for="nama-subjek-pbb">
+Nama Wajib Pajak pada SPPT <span class="text-red-500">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-slate-400 text-[18px]">account_box</span>
+<input class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none cursor-default font-medium" id="nama-subjek-pbb" readonly="" type="text" v-model="form.namaWpSppt"/>
+</div>
+<p class="text-xs text-[#388e3c] font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Sesuai database BAPENDA
+</p>
+</div>
+</div>
+<!-- Baris 4: Alamat Objek Pajak -->
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-700" for="alamat-objek-pajak">
+Alamat Lokasi Objek Pajak (Letak Tanah / Bangunan) <span class="text-red-500">*</span>
+</label>
+<textarea class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all resize-none" id="alamat-objek-pajak" rows="2" v-model="form.alamatObjekPajak"></textarea>
+</div>
+<!-- Baris 5: Nomor HP/WA & Keterangan Tambahan -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+<div class="md:col-span-5 flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-700" for="no-hp-pemohon">
+Nomor Kontak / WhatsApp Pemohon <span class="text-red-500">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="absolute left-3 font-mono text-sm font-semibold text-slate-400 select-none">+62</span>
+<input class="w-full bg-white border border-slate-300 text-slate-800 font-mono text-sm pl-12 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="no-hp-pemohon" placeholder="812xxxxxxxx" type="tel" v-model="form.nomorKontak"/>
+</div>
+<p class="text-xs text-slate-400">Nomor aktif untuk notifikasi billing kode bayar</p>
+</div>
+<div class="md:col-span-7 flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-slate-700" for="keterangan-riwayat">
+Keterangan Tambahan / Catatan Peralihan Hak
+</label>
+<input class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="keterangan-riwayat" placeholder="Catatan transaksi, riwayat akta terdahulu, nomor sertifikat..." type="text" v-model="form.keteranganTambahan"/>
+<p class="text-xs text-slate-400">Opsional: isi riwayat singkat alas hak sertifikat</p>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD 3: Checklist Persyaratan Dokumen -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 lg:p-7 flex flex-col gap-6">
+<div class="flex items-center justify-between pb-4 border-b border-slate-100">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-[#edf7ee] border border-[#c8e6c9] flex items-center justify-center text-[#4CAF50]">
+<span class="material-symbols-outlined text-[24px]">folder_check</span>
+</div>
+<div class="flex flex-col">
+<h2 class="text-base font-bold text-slate-900">3. Persyaratan Berkas yang Dilampirkan</h2>
+<p class="text-xs text-slate-500">Checklist validasi kelengkapan fisik dan berkas digital sesuai juknis</p>
+</div>
+</div>
+<div :class="checklistBadgeClass">
+<span class="material-symbols-outlined text-[18px] text-[#4CAF50]">verified</span>
+<span id="doc-counter-status">{{ dokumenStatusText }}</span>
+</div>
+</div>
+<div class="flex flex-col gap-3.5">
+<!-- Item Checklist 1 -->
+<label class="group relative flex items-start gap-4 p-4 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 transition-colors cursor-pointer select-none">
+<div class="flex items-center h-6">
+<input class="doc-checklist w-5 h-5 accent-[#4CAF50] rounded cursor-pointer" id="doc-chk-ktp" type="checkbox" v-model="form.dokumenKtp"/>
+</div>
+<div class="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex flex-col">
+<span class="text-sm text-slate-900 font-semibold group-hover:text-[#4CAF50] transition-colors">
+Fotokopi KTP Penjual &amp; Pembeli (Atau Ahli Waris / Kuasa)
+</span>
+<span class="text-xs text-slate-500">
+Identitas KTP-el sah yang masih berlaku, diverifikasi dengan data kependudukan Dukcapil.
+</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded bg-[#edf7ee] text-[#2e7d32] border border-[#c8e6c9] text-xs font-semibold">
+Terverifikasi
+</span>
+<span class="material-symbols-outlined text-slate-400 text-[20px]">attach_file</span>
+</div>
+</div>
+</label>
+<!-- Item Checklist 2 -->
+<label class="group relative flex items-start gap-4 p-4 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 transition-colors cursor-pointer select-none">
+<div class="flex items-center h-6">
+<input class="doc-checklist w-5 h-5 accent-[#4CAF50] rounded cursor-pointer" id="doc-chk-pbb" type="checkbox" v-model="form.dokumenSppt"/>
+</div>
+<div class="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex flex-col">
+<span class="text-sm text-slate-900 font-semibold group-hover:text-[#4CAF50] transition-colors">
+Fotokopi Lampiran Bukti Lunas SPPT PBB (Tahun Berjalan &amp; Histori)
+</span>
+<span class="text-xs text-slate-500">
+PBB Tahun Pajak 2026 lunas tidak ada tunggakan masa lalu (Kolektibilitas Nihil).
+</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded bg-[#edf7ee] text-[#2e7d32] border border-[#c8e6c9] text-xs font-semibold">
+Lunas 2026
+</span>
+<span class="material-symbols-outlined text-slate-400 text-[20px]">task_alt</span>
+</div>
+</div>
+</label>
+<!-- Item Checklist 3 -->
+<label class="group relative flex items-start gap-4 p-4 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 transition-colors cursor-pointer select-none">
+<div class="flex items-center h-6">
+<input class="doc-checklist w-5 h-5 accent-[#4CAF50] rounded cursor-pointer" id="doc-chk-alas" type="checkbox" v-model="form.dokumenSertifikat"/>
+</div>
+<div class="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex flex-col">
+<span class="text-sm text-slate-900 font-semibold group-hover:text-[#4CAF50] transition-colors">
+Fotokopi Sertifikat Tanah / Surat Ukur / Dokumen Alas Hak
+</span>
+<span class="text-xs text-slate-500">
+Sertifikat Hak Milik (SHM) No. 04112 atau Surat Keterangan Riwayat Tanah dari Kelurahan.
+</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded bg-[#edf7ee] text-[#2e7d32] border border-[#c8e6c9] text-xs font-semibold">
+SHM Valid
+</span>
+<span class="material-symbols-outlined text-slate-400 text-[20px]">verified_user</span>
+</div>
+</div>
+</label>
+</div>
+<div class="flex items-center gap-3 p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-600">
+<span class="material-symbols-outlined text-[#4CAF50] text-[22px] shrink-0">info</span>
+<p class="text-xs leading-relaxed">
+Semua berkas fisik diverifikasi saat serah terima di Loket Pelayanan BPHTB. Pastikan cap basah PPAT tercantum pada berkas pengantar.
+</p>
+</div>
+</div>
+</div>
+<!-- Persistent Calculation & Summary Sidebar (4 Cols) -->
+<div class="lg:col-span-4 flex flex-col gap-6 sticky top-24">
+<!-- Tax Calculation Breakdown -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+<div class="h-1.5 w-full bg-[#4CAF50]"></div>
+<div class="p-6 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[#4CAF50] text-[22px]">calculate</span>
+<h3 class="text-base font-bold text-slate-900">Simulasi Terutang</h3>
+</div>
+<span class="font-mono text-xs bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded text-slate-700 font-semibold">Tarif 5%</span>
+</div>
+<p class="text-xs text-slate-500">
+Kalkulasi otomatis berdasarkan estimasi nilai transaksi dan NJOP sistem PBB.
+</p>
+<div class="flex flex-col gap-2 pt-2">
+<!-- NPOP -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-slate-800">Nilai Transaksi (NPOP)</span>
+<span class="text-[11px] text-slate-400">Harga Akta Pasar</span>
+</div>
+<span class="font-mono text-sm font-semibold text-slate-900">Rp {{ formatRupiah(simulasi.npop) }}</span>
+</div>
+<!-- NJOP Total PBB -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50/70 border border-slate-200">
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-slate-800">Total NJOP PBB</span>
+<span class="text-[11px] text-slate-400">Luas Bumi &amp; Bangunan</span>
+</div>
+<span class="font-mono text-sm text-slate-600">Rp {{ formatRupiah(simulasi.njopTotal) }}</span>
+</div>
+<!-- NPOPTKP -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-amber-700">NPOPTKP Daerah</span>
+<span class="text-[11px] text-slate-400">Pengurang Standar Jual Beli</span>
+</div>
+<span class="font-mono text-sm font-semibold text-amber-700">- Rp {{ formatRupiah(npoptkpDaerah) }}</span>
+</div>
+<!-- NPOPKP -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50/70 border border-slate-200">
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-slate-800">NPOP Kena Pajak</span>
+<span class="text-[11px] text-slate-400">(NPOP - NPOPTKP)</span>
+</div>
+<span class="font-mono text-sm font-bold text-slate-900">Rp {{ formatRupiah(npopKenaPajak) }}</span>
+</div>
+<div class="h-[1px] bg-slate-200 my-1"></div>
+<!-- Total BPHTB Terutang Highlight Box -->
+<div class="p-4 rounded-xl bg-[#4CAF50] text-white flex flex-col gap-1 shadow-sm">
+<span class="text-xs text-white/90 tracking-wide uppercase font-semibold">BPHTB Terutang (5% x NPOPKP)</span>
+<span class="text-2xl font-bold font-mono tracking-tight text-white">Rp {{ formatRupiah(bphtbTerutang) }}</span>
+<span class="text-xs text-white/90 mt-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">verified</span> Nilai penetapan sementara
+</span>
+</div>
+</div>
+</div>
+<!-- Petugas Validasi Quick Info -->
+<div class="p-5 bg-slate-50 border-t border-slate-200 flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-slate-700 text-white flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-900">Petugas Penerima Berkas</span>
+<span class="text-[11px] text-slate-500 font-mono">NIP: 19840512 200801 1 003</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-slate-500 text-xs pt-2 border-t border-slate-200">
+<span>Status Dokumen:</span>
+<span class="font-semibold text-[#2e7d32]">{{ statusDokumenLabel }}</span>
+</div>
+</div>
+</div>
+<!-- PPAT Authority Quick Card -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Mitra PPAT Terdaftar</span>
+<span class="material-symbols-outlined text-slate-500 text-[20px]">gavel</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-sm font-bold text-slate-900">Kantor Notaris &amp; PPAT Farida Hanum, S.H., M.Kn.</span>
+<span class="text-xs text-slate-500">SK BPN RI No. 12/KEP-BPN/2018</span>
+<span class="font-mono text-xs text-slate-400">Kode PPAT: PPAT-MLG-084</span>
+</div>
+<div class="pt-2 flex items-center gap-2 border-t border-slate-100">
+<span class="w-2 h-2 rounded-full bg-[#4CAF50]"></span>
+<span class="text-xs text-[#2e7d32] font-semibold">Akun IPPAT Aktif &amp; Terverifikasi</span>
+</div>
+</div>
+</div>
+</div>
+<!-- STICKY BOTTOM ACTION BAR -->
+<div class="sticky bottom-4 z-30 w-full bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 p-4 lg:p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-[#edf7ee] border border-[#c8e6c9] flex items-center justify-center text-[#4CAF50]">
+<span class="material-symbols-outlined text-[20px]">security</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-900">Validasi Formulir Pra-Simpan</span>
+<span class="text-xs text-slate-500">Pastikan NOP PBB, nama subjek, dan nominal akta sudah sesuai dengan berkas fisik.</span>
+</div>
+</div>
+<div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+<!-- Tombol Batal -->
+<button @click="batalForm" class="px-5 py-2.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 transition-colors text-xs font-semibold flex items-center gap-2" id="btn-batal" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+<span>Batal</span>
+</button>
+<!-- Tombol Simpan Draft -->
+<button @click="simpanDraft" class="px-5 py-2.5 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors text-xs font-semibold flex items-center gap-2 shadow-xs" id="btn-draft" type="button">
+<span class="material-symbols-outlined text-[18px] text-slate-500">bookmark</span>
+<span>Simpan Draft</span>
+</button>
+<!-- Tombol Simpan Pendaftaran Utama -->
+<button :disabled="isSaving" @click="simpanPendaftaran" class="px-6 py-2.5 rounded-lg bg-[#4CAF50] text-white hover:bg-[#43a047] transition-all text-xs font-semibold flex items-center gap-2.5 shadow-sm hover:shadow" id="btn-simpan-pendaftaran" type="button">
+<span class="material-symbols-outlined text-[20px]" v-if="!isSaving &amp;&amp; !isSaved">send_and_archive</span>
+<span class="material-symbols-outlined text-[20px] animate-spin" v-if="isSaving">rotate_right</span>
+<span class="material-symbols-outlined text-[20px]" v-if="isSaved">done_all</span>
+<span>{{ saveButtonLabel }}</span>
+</button>
+</div>
+</div>
+</div>
+</div></main></div>
+</body></html>

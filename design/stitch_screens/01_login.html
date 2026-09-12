@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - Sistem Informasi BPHTB Online</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<!-- SweetAlert2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.min.css" rel="stylesheet"/><script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+<style>
+    :root {
+      --primary-color: #4CAF50;
+      --primary-hover: #43a047;
+      --primary-dark: #2e5939;
+      --primary-light: #f0f8f2;
+      --text-dark: #233b2e;
+      --text-muted: #5e776a;
+      --border-color: #d0ded4;
+      --card-bg: #ffffff;
+      --bg-gradient: linear-gradient(145deg, #2e5939 0%, #355e3b 55%, #274b30 100%);
+      --body-bg: #f4f8f5;
+    }
+
+    * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--body-bg);
+      display: flex;
+      flex-direction: column;
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    /* Background decorative pattern */
+    .bg-pattern {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        radial-gradient(at 10% 20%, rgba(76, 175, 80, 0.08) 0px, transparent 50%),
+        radial-gradient(at 90% 80%, rgba(46, 89, 57, 0.07) 0px, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .login-wrapper {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .login-container {
+      max-width: 980px;
+      margin: auto;
+      width: 100%;
+    }
+
+    .main-card {
+      border: 1px solid rgba(208, 222, 212, 0.7);
+      border-radius: 1.25rem;
+      box-shadow: 0 16px 36px -8px rgba(35, 59, 46, 0.08), 0 2px 6px rgba(35, 59, 46, 0.03);
+      overflow: hidden;
+      background: var(--card-bg);
+    }
+
+    /* Left Banner / Branding Side */
+    .brand-side {
+      background: var(--bg-gradient);
+      position: relative;
+      overflow: hidden;
+      color: #ffffff;
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .brand-side::before {
+      content: '';
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(163, 246, 158, 0.12) 0%, transparent 70%);
+      top: -90px;
+      right: -90px;
+      pointer-events: none;
+    }
+
+    .brand-side::after {
+      content: '';
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(76, 175, 80, 0.18) 0%, transparent 70%);
+      bottom: -50px;
+      left: -50px;
+      pointer-events: none;
+    }
+
+    .logo-badge {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.18));
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 9999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.025em;
+      color: #e2f7e6;
+      backdrop-filter: blur(4px);
+    }
+
+    .brand-feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .feature-icon-wrapper {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #e2f7e6;
+      font-size: 1rem;
+    }
+
+    /* Right Form Side */
+    .form-side {
+      padding: 3rem 2.75rem;
+      background: #ffffff;
+    }
+
+    @media (max-width: 767.98px) {
+      .form-side {
+        padding: 2rem 1.5rem;
+      }
+      .brand-side {
+        padding: 2rem 1.5rem;
+      }
+    }
+
+    .form-header-title {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.02em;
+    }
+
+    .form-header-subtitle {
+      color: var(--text-muted);
+      font-size: 0.925rem;
+    }
+
+    .form-floating > .form-control {
+      border: 1.5px solid var(--border-color);
+      border-radius: 0.65rem;
+      height: calc(3.5rem + 2px);
+      padding: 1rem 0.85rem;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      background-color: #fafdfa;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .form-floating > .form-control:focus {
+      background-color: #ffffff;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.15);
+    }
+
+    .form-floating > label {
+      padding: 1rem 0.85rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .input-icon-group {
+      position: relative;
+    }
+
+    .input-icon-group .form-control {
+      padding-left: 2.75rem;
+    }
+
+    .input-icon-group > label {
+      padding-left: 2.75rem;
+    }
+
+    .input-leading-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8fa395;
+      font-size: 1.15rem;
+      z-index: 5;
+      pointer-events: none;
+      transition: color 0.2s ease;
+    }
+
+    .form-floating:focus-within .input-leading-icon {
+      color: var(--primary-color);
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+      background: none;
+      border: none;
+      color: #7b9485;
+      padding: 0.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .password-toggle-btn:hover {
+      color: var(--primary-color);
+      background-color: #eef7f0;
+    }
+
+    /* Button Primary */
+    .btn-submit-login {
+      background-color: var(--primary-color);
+      border: none;
+      border-radius: 0.65rem;
+      padding: 0.9rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.01em;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.25);
+    }
+
+    .btn-submit-login:hover, .btn-submit-login:focus {
+      background-color: var(--primary-hover);
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(76, 175, 80, 0.32);
+    }
+
+    .btn-submit-login:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit-login:disabled {
+      background-color: #a7bcae;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .form-check-input:checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .form-check-input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    }
+
+    .form-check-label {
+      font-size: 0.875rem;
+      color: var(--text-dark);
+      cursor: pointer;
+    }
+
+    .support-box {
+      background-color: #f6faf7;
+      border: 1px dashed #cad9ce;
+      border-radius: 0.65rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+
+    .footer-text {
+      font-size: 0.8rem;
+      color: #8fa395;
+      text-align: center;
+      border-color: #e4eee7 !important;
+    }
+
+    /* Bootstrap Validation styling tweak */
+    .was-validated .form-control:invalid,
+    .form-control.is-invalid {
+      border-color: #d32f2f;
+      background-image: none !important;
+    }
+
+    .was-validated .form-control:valid,
+    .form-control.is-valid {
+      border-color: var(--primary-color);
+      background-image: none !important;
+    }
+
+    .invalid-feedback {
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 0.35rem;
+      padding-left: 0.25rem;
+      color: #c62828;
+    }
+
+    /* Demo Quick Fill Tags */
+    .demo-credentials-bar {
+      background: #edf5ef;
+      border: 1px solid #d5e5d9;
+      border-radius: 0.5rem;
+      padding: 0.55rem 0.8rem;
+      font-size: 0.775rem;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-demo-tag {
+      background: #ffffff;
+      border: 1px solid #c8dcd0;
+      padding: 0.22rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.725rem;
+      font-weight: 600;
+      color: #2e5939;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-demo-tag:hover {
+      background: var(--primary-color);
+      color: #ffffff;
+      border-color: var(--primary-color);
+    }
+
+    .btn-demo-tag.tag-danger {
+      color: #c62828;
+      border-color: #f1c5c5;
+      background: #fff8f8;
+    }
+
+    .btn-demo-tag.tag-danger:hover {
+      background: #c62828;
+      color: #ffffff;
+      border-color: #c62828;
+    }
+
+    .btn-demo-tag.tag-warning {
+      color: #9a6500;
+      border-color: #f6e2b2;
+      background: #fffdf5;
+    }
+
+    .btn-demo-tag.tag-warning:hover {
+      background: #b57c12;
+      color: #ffffff;
+      border-color: #b57c12;
+    }
+
+    .text-theme-primary {
+      color: #2e5939 !important;
+    }
+
+    .text-theme-primary:hover {
+      color: var(--primary-color) !important;
+    }
+  </style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<div class="login-wrapper">
+<div class="login-container" id="app">
+<div class="card main-card">
+<div class="row g-0">
+<!-- LEFT BRANDING SIDE (Official Identity & Information) -->
+<div class="col-lg-5 brand-side d-none d-lg-flex">
+<div>
+<div class="d-flex align-items-center gap-3 mb-4">
+<img alt="Logo BPHTB Online" class="logo-badge" src="https://lh3.googleusercontent.com/aida/AEtjO1VdEzZ3yeNGnt_0utzsVvPFkfVGX7lHrKMzkbijeWj9A-u6xBmQgAErCW11yJ2qeHyckL4YmevbT54ftEfo0R46NtpETDqugMCsyXvWyKy_ok76rz8RhOXwfX2pfLuSbShf5bdIEFFSd3lUwZUEQEYt5wrMlXm66OjOOkIAL_QVmj0XcUlVTnErf7SqQaCGDTnt944iq1hFAgyW7HaAVUhgDw0gqGb8RLFJmL8TU5g_r6d7GKfGrVudjWY"/>
+<div>
+<div class="brand-badge mb-1">
+<i class="bi bi-shield-check"></i> Portal Resmi Terintegrasi
+                  </div>
+<h4 class="fw-bold mb-0 text-white">BPHTB Online</h4>
+<small class="text-white-50">Badan Pendapatan Daerah</small>
+</div>
+</div>
+<div class="my-4">
+<h5 class="fw-bold text-white mb-2">Pelayanan Pajak Daerah Transparan &amp; Cepat</h5>
+<p class="text-white-50 small mb-4">
+                  Sistem Informasi Validasi &amp; Pembayaran Bea Perolehan Hak atas Tanah dan Bangunan untuk mewujudkan tata kelola perpajakan daerah yang akuntabel dan modern.
+                </p>
+<div class="brand-feature-item">
+<div class="feature-icon-wrapper">
+<i class="bi bi-file-earmark-lock2-fill"></i>
+</div>
+<div>
+<div class="fw-semibold text-white small">Keamanan Terstandarisasi</div>
+<div class="text-white-50" style="font-size: 0.775rem;">Enkripsi SSL 256-bit dan autentikasi berlapis untuk menjaga integritas data WP &amp; PPAT.</div>
+</div>
+</div>
+<div class="brand-feature-item">
+<div class="feature-icon-wrapper">
+<i class="bi bi-patch-check-fill"></i>
+</div>
+<div>
+<div class="fw-semibold text-white small">Validasi NOP Terkoneksi PBB</div>
+<div class="text-white-50" style="font-size: 0.775rem;">Sinkronisasi otomatis basis data SISMIOP dan sistem pertanahan nasional (ATR/BPN).</div>
+</div>
+</div>
+<div class="brand-feature-item">
+<div class="feature-icon-wrapper">
+<i class="bi bi-speedometer2"></i>
+</div>
+<div>
+<div class="fw-semibold text-white small">Verifikasi Berkas Real-Time</div>
+<div class="text-white-50" style="font-size: 0.775rem;">Pelacakan status verifikasi berkas SSPD BPHTB secara langsung oleh wajib pajak.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Left Info -->
+<div class="pt-4 border-top border-white border-opacity-10">
+<div class="d-flex align-items-center justify-content-between text-white-50" style="font-size: 0.75rem;">
+<span><i class="bi bi-building me-1"></i> Pemerintah Republik Indonesia</span>
+<span>v2.4.0 Secure</span>
+</div>
+</div>
+</div>
+<!-- RIGHT FORM SIDE (Interactive Login according to PRD) -->
+<div class="col-lg-7 form-side d-flex flex-column justify-content-center"><!-- Success Dashboard Simulation -->
+<div class="text-center p-3 py-4" v-if="isLoggedIn">
+<div class="mb-4">
+<div class="rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3" style="width: 80px; height: 80px; background-color: #e8f5e9; color: #4CAF50;">
+<i class="bi bi-check2-circle display-5"></i>
+</div>
+<h3 class="fw-bold" style="color: #233b2e;">Autentikasi Berhasil</h3>
+<p class="text-muted">Selamat datang, <b>{{ form.username }}</b>! Anda telah terhubung ke Sistem Informasi BPHTB Online.</p>
+</div>
+<div class="p-3 rounded-3 mb-4 d-inline-block mx-auto text-start w-100" style="max-width: 440px; font-size: 0.875rem; background-color: #f6faf7; border: 1px solid #d0ded4;">
+<div class="d-flex justify-content-between py-1 border-bottom" style="border-color: #e2ece5 !important;">
+<span class="text-muted">Status Sesi:</span>
+<span class="badge" style="background-color: #4CAF50;">Aktif (Terverifikasi)</span>
+</div>
+<div class="d-flex justify-content-between py-1 border-bottom" style="border-color: #e2ece5 !important;">
+<span class="text-muted">Hak Akses:</span>
+<span class="fw-semibold" style="color: #233b2e;">Petugas Verifikator / PPAT</span>
+</div>
+<div class="d-flex justify-content-between py-1">
+<span class="text-muted">Waktu Login:</span>
+<span style="color: #233b2e;">{{ loginTime }} WIB</span>
+</div>
+</div>
+<div>
+<button @click="resetLogin" class="btn px-4 py-2" style="border: 1.5px solid #4CAF50; color: #2e5939; font-weight: 600; background: #ffffff;">
+<i class="bi bi-arrow-counterclockwise me-1" style="color: #4CAF50;"></i> Kembali ke Form Login
+    </button>
+</div>
+</div>
+<div v-else="">
+<!-- Mobile Brand Header (Visible only on mobile/tablet) -->
+<div class="d-lg-none text-center mb-4">
+<img alt="Logo BPHTB" class="mb-2" src="https://lh3.googleusercontent.com/aida/AEtjO1VdEzZ3yeNGnt_0utzsVvPFkfVGX7lHrKMzkbijeWj9A-u6xBmQgAErCW11yJ2qeHyckL4YmevbT54ftEfo0R46NtpETDqugMCsyXvWyKy_ok76rz8RhOXwfX2pfLuSbShf5bdIEFFSd3lUwZUEQEYt5wrMlXm66OjOOkIAL_QVmj0XcUlVTnErf7SqQaCGDTnt944iq1hFAgyW7HaAVUhgDw0gqGb8RLFJmL8TU5g_r6d7GKfGrVudjWY" style="width: 60px; height: 60px;"/>
+<h5 class="fw-bold mb-0" style="color: #2e5939;">SISTEM INFORMASI BPHTB ONLINE</h5>
+<small class="text-muted">Badan Pendapatan Daerah / Pemerintah Daerah</small>
+</div>
+<!-- Header Section -->
+<div class="mb-3">
+<h2 class="form-header-title mb-1">Masuk ke Sistem</h2>
+<p class="form-header-subtitle mb-0">
+      Silakan masukkan kredensial akun Anda untuk mengakses dashboard BPHTB Online.
+    </p>
+</div>
+<!-- Quick Demo Helper Pill for Evaluation -->
+<div class="demo-credentials-bar">
+<span><i class="bi bi-info-circle me-1" style="color: #4CAF50;"></i> <strong>Akun Uji Coba:</strong></span>
+<div class="d-flex gap-2">
+<button @click="fillTestAccount('valid')" class="btn-demo-tag" type="button">
+<i class="bi bi-check-circle me-1" style="color: #4CAF50;"></i>Akun Valid
+      </button>
+<button @click="fillTestAccount('wrong')" class="btn-demo-tag tag-danger" type="button">
+<i class="bi bi-x-circle me-1"></i>Akun Salah
+      </button>
+<button @click="fillTestAccount('server_error')" class="btn-demo-tag tag-warning" type="button">
+<i class="bi bi-exclamation-triangle me-1"></i>Simulasi Error Server
+      </button>
+</div>
+</div>
+<!-- Login Form (Bootstrap 5 Form Validation with Vue 2) -->
+<form @submit.prevent="handleLogin" class="needs-validation" novalidate="">
+<!-- Username Field -->
+<div class="mb-3">
+<div class="form-floating input-icon-group">
+<i class="bi bi-person input-leading-icon"></i>
+<input :class="{ 'is-invalid': errors.username }" :disabled="isLoading" @input="errors.username = false" aria-describedby="usernameFeedback" autocomplete="username" class="form-control" id="username" name="username" placeholder="Username atau NIP" required="" type="text" v-model="form.username"/>
+<label for="username">Username / NIP / Email</label>
+<div class="invalid-feedback" id="usernameFeedback" v-if="errors.username">
+<i class="bi bi-exclamation-circle me-1"></i> Username wajib diisi.
+        </div>
+</div>
+</div>
+<!-- Password Field with Show/Hide Toggle -->
+<div class="mb-3">
+<div class="form-floating input-icon-group">
+<i class="bi bi-shield-lock input-leading-icon"></i>
+<input :class="{ 'is-invalid': errors.password }" :disabled="isLoading" :type="showPassword ? 'text' : 'password'" @input="errors.password = false" aria-describedby="passwordFeedback" autocomplete="current-password" class="form-control" id="password" name="password" placeholder="Kata Sandi" required="" v-model="form.password"/>
+<label for="password">Kata Sandi</label>
+<button :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" :title="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'" @click="togglePassword" class="password-toggle-btn" id="btnTogglePassword" type="button">
+<i :class="showPassword ? 'bi-eye-slash' : 'bi-eye'" class="bi" id="toggleIcon"></i>
+</button>
+<div class="invalid-feedback" id="passwordFeedback" v-if="errors.password">
+<i class="bi bi-exclamation-circle me-1"></i> Password wajib diisi.
+        </div>
+</div>
+</div>
+<!-- Remember Me & Forgot Link -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+<div class="form-check">
+<input :disabled="isLoading" class="form-check-input" id="rememberMe" name="rememberMe" type="checkbox" v-model="form.remember"/>
+<label class="form-check-label select-none" for="rememberMe">
+          Ingat sesi saya
+        </label>
+</div>
+<a @click="showBantuanLogin" class="text-decoration-none small text-theme-primary fw-semibold" href="javascript:void(0)">
+<i class="bi bi-question-circle me-1"></i> Butuh bantuan login?
+      </a>
+</div>
+<!-- Submit Button -->
+<div class="d-grid mb-3">
+<button :disabled="isLoading" class="btn btn-submit-login" id="btnLogin" type="submit">
+<span id="btnText" v-if="!isLoading"><i class="bi bi-box-arrow-in-right me-2"></i> Masuk Sekarang</span>
+<span id="btnSpinner" v-else="">
+<span aria-hidden="true" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          Sedang memproses login...
+        </span>
+</button>
+</div>
+<!-- Support / Helpline Info Box -->
+<div class="support-box d-flex align-items-center gap-2 mb-3">
+<i class="bi bi-headset fs-5" style="color: #4CAF50;"></i>
+<div style="font-size: 0.8rem; line-height: 1.35;">
+        Kendala teknis atau akun terblokir? Hubungi <strong>Helpdesk Bapenda</strong> via WhatsApp di <strong>0812-3456-7890</strong> (Jam Kerja 08.00 - 16.00 WIB).
+      </div>
+</div>
+</form>
+<!-- Copyright and Institutional Disclaimer -->
+<div class="footer-text mt-3 pt-3 border-top">
+    © {{ currentYear }} Badan Pendapatan Daerah. Seluruh hak cipta dilindungi undang-undang.
+  </div>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.all.min.js"></script>
+<!-- Application Logic complying with PRD -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set current year
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+      const loginForm = document.getElementById('loginForm');
+      const usernameInput = document.getElementById('username');
+      const passwordInput = document.getElementById('password');
+      const btnTogglePassword = document.getElementById('btnTogglePassword');
+      const toggleIcon = document.getElementById('toggleIcon');
+      const btnLogin = document.getElementById('btnLogin');
+      const btnText = document.getElementById('btnText');
+      const btnSpinner = document.getElementById('btnSpinner');
+
+      // 1. Requirement 3.1 & Acceptance Criteria: Show/Hide Password Feature
+      btnTogglePassword.addEventListener('click', () => {
+        const currentType = passwordInput.getAttribute('type');
+        if (currentType === 'password') {
+          passwordInput.setAttribute('type', 'text');
+          toggleIcon.classList.replace('bi-eye', 'bi-eye-slash');
+          btnTogglePassword.setAttribute('title', 'Sembunyikan kata sandi');
+          btnTogglePassword.setAttribute('aria-label', 'Sembunyikan kata sandi');
+        } else {
+          passwordInput.setAttribute('type', 'password');
+          toggleIcon.classList.replace('bi-eye-slash', 'bi-eye');
+          btnTogglePassword.setAttribute('title', 'Tampilkan kata sandi');
+          btnTogglePassword.setAttribute('aria-label', 'Tampilkan kata sandi');
+        }
+      });
+
+      // Clear is-invalid feedback on user typing
+      [usernameInput, passwordInput].forEach(input => {
+        input.addEventListener('input', () => {
+          if (input.value.trim() !== '') {
+            input.classList.remove('is-invalid');
+          }
+        });
+      });
+
+      // 2. Requirement 3.2, 3.3, 3.4, 3.5: Form Validation & Processing Flow
+      loginForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const usernameVal = usernameInput.value.trim();
+        const passwordVal = passwordInput.value.trim();
+
+        // Validate fields
+        let isValid = true;
+
+        if (!usernameVal) {
+          usernameInput.classList.add('is-invalid');
+          isValid = false;
+        } else {
+          usernameInput.classList.remove('is-invalid');
+        }
+
+        if (!passwordVal) {
+          passwordInput.classList.add('is-invalid');
+          isValid = false;
+        } else {
+          passwordInput.classList.remove('is-invalid');
+        }
+
+        if (!isValid) {
+          // Focus first invalid field for accessibility
+          if (!usernameVal) {
+            usernameInput.focus();
+          } else if (!passwordVal) {
+            passwordInput.focus();
+          }
+          return;
+        }
+
+        // Form is valid -> Start processing login
+        executeLoginProcess(usernameVal, passwordVal);
+      });
+
+      // Function to execute login with SweetAlert2 loading & feedback
+      function executeLoginProcess(username, password) {
+        // Prevent multiple submits & display button loading state
+        setButtonLoading(true);
+
+        // Requirement 3.4: Loading state with SweetAlert2
+        Swal.fire({
+          title: 'Sedang memproses login...',
+          html: '<div class="text-muted small">Memverifikasi kredensial akun ke server BPHTB...</div>',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          allowEnterKey: false,
+          showConfirmButton: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        // Simulate backend API authentication request (1.5s delay)
+        setTimeout(() => {
+          setButtonLoading(false);
+
+          // Simulated Backend Responses based on demo credentials or actual inputs
+          if (username === 'server_error') {
+            // Requirement 3.5: Server Error
+            Swal.fire({
+              icon: 'error',
+              title: 'Gangguan Sistem',
+              text: 'Terjadi kesalahan pada sistem. Silakan coba kembali beberapa saat lagi.',
+              confirmButtonColor: '#4CAF50',
+              confirmButtonText: 'Tutup'
+            });
+          } else if (username === 'petugas_bphtb' && password === 'admin123' || (username.length >= 4 && password === 'admin123')) {
+            // Requirement 3.5: Login Berhasil
+            Swal.fire({
+              icon: 'success',
+              title: 'Login Berhasil!',
+              html: 'Selamat datang kembali di <b>Sistem Informasi BPHTB Online</b>.<br><span class="text-muted small">Mengarahkan ke Dashboard Utama...</span>',
+              timer: 2200,
+              timerProgressBar: true,
+              showConfirmButton: false,
+              willClose: () => {
+                // Redirect simulation
+                showSuccessDashboardBanner(username);
+              }
+            });
+          } else {
+            // Requirement 3.5: Login Gagal
+            Swal.fire({
+              icon: 'error',
+              title: 'Autentikasi Gagal',
+              text: 'Username atau kata sandi tidak valid. Pastikan data yang dimasukkan sudah benar.',
+              confirmButtonColor: '#4CAF50',
+              confirmButtonText: 'Coba Lagi'
+            }).then(() => {
+              passwordInput.value = '';
+              passwordInput.focus();
+            });
+          }
+        }, 1400);
+      }
+
+      function setButtonLoading(isLoading) {
+        if (isLoading) {
+          btnLogin.disabled = true;
+          usernameInput.disabled = true;
+          passwordInput.disabled = true;
+          btnText.classList.add('d-none');
+          btnSpinner.classList.remove('d-none');
+        } else {
+          btnLogin.disabled = false;
+          usernameInput.disabled = false;
+          passwordInput.disabled = false;
+          btnText.classList.remove('d-none');
+          btnSpinner.classList.add('d-none');
+        }
+      }
+    });
+
+    // Quick Fill helper for interactive preview/testing
+    function quickFill(user, pass, state) {
+      const u = document.getElementById('username');
+      const p = document.getElementById('password');
+      u.value = user;
+      p.value = pass;
+      u.classList.remove('is-invalid');
+      p.classList.remove('is-invalid');
+
+      // Visual feedback
+      const toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true
+      });
+
+      if (state === 'success') {
+        toast.fire({ icon: 'info', title: 'Data akun valid dimuat. Klik Masuk.' });
+      } else if (state === 'error') {
+        toast.fire({ icon: 'warning', title: 'Data akun salah dimuat. Klik Masuk.' });
+      } else {
+        toast.fire({ icon: 'question', title: 'Mode server error dimuat. Klik Masuk.' });
+      }
+    }
+
+    // Help Modal
+    function showBantuanLogin() {
+      Swal.fire({
+        title: 'Bantuan Masuk Sistem BPHTB',
+        html: `
+          <div class="text-start small" style="color: #233b2e;">
+            <p>Jika Anda mengalami kendala saat masuk ke sistem:</p>
+            <ol class="ps-3 mb-3">
+              <li>Pastikan huruf besar dan kecil (Caps Lock) pada kata sandi sesuai.</li>
+              <li>Untuk PPAT/Notaris, pastikan akun telah diaktivasi oleh Administrator Bapenda.</li>
+              <li>Jika lupa kata sandi atau akun terkunci akibat salah percobaan berkali-kali, silakan hubungi admin teknis instansi.</li>
+            </ol>
+            <div class="py-2 px-3 mb-0 rounded" style="font-size: 0.8rem; background-color: #edf7ef; border: 1px solid #d0ded4; color: #2e5939;">
+              <i class="bi bi-envelope-fill me-1" style="color: #4CAF50;"></i> Email bantuan: <b>support-bphtb@bapenda.go.id</b>
+            </div>
+          </div>
+        `,
+        confirmButtonColor: '#4CAF50',
+        confirmButtonText: 'Mengerti'
+      });
+    }
+
+    // Simulation of target dashboard upon successful authentication
+    function showSuccessDashboardBanner(username) {
+      document.querySelector('.login-container').innerHTML = `
+        <div class="card main-card text-center p-5 animate__animated animate__fadeIn">
+          <div class="mb-4">
+            <div class="rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3" style="width: 80px; height: 80px; background-color: #e8f5e9; color: #4CAF50;">
+              <i class="bi bi-check2-circle display-5"></i>
+            </div>
+            <h3 class="fw-bold" style="color: #233b2e;">Autentikasi Berhasil</h3>
+            <p class="text-muted">Selamat datang, <b>${username}</b>! Anda telah terhubung ke Sistem Informasi BPHTB Online.</p>
+          </div>
+          <div class="p-3 rounded-3 mb-4 d-inline-block mx-auto text-start" style="max-width: 480px; font-size: 0.875rem; background-color: #f6faf7; border: 1px solid #d0ded4;">
+            <div class="d-flex justify-content-between py-1 border-bottom" style="border-color: #e2ece5 !important;">
+              <span class="text-muted">Status Sesi:</span>
+              <span class="badge" style="background-color: #4CAF50;">Aktif (Terverifikasi)</span>
+            </div>
+            <div class="d-flex justify-content-between py-1 border-bottom" style="border-color: #e2ece5 !important;">
+              <span class="text-muted">Hak Akses:</span>
+              <span class="fw-semibold" style="color: #233b2e;">Petugas Verifikator / PPAT</span>
+            </div>
+            <div class="d-flex justify-content-between py-1">
+              <span class="text-muted">Waktu Login:</span>
+              <span style="color: #233b2e;">${new Date().toLocaleTimeString('id-ID')} WIB</span>
+            </div>
+          </div>
+          <div>
+            <button class="btn px-4 py-2" style="border: 1.5px solid #4CAF50; color: #2e5939; font-weight: 600; background: #ffffff;" onmouseover="this.style.background='#eef7f0'" onmouseout="this.style.background='#ffffff'" onclick="window.location.reload()">
+              <i class="bi bi-arrow-counterclockwise me-1" style="color: #4CAF50;"></i> Kembali ke Form Login
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body></html>
