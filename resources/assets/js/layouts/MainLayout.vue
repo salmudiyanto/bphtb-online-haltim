@@ -1,11 +1,19 @@
 <template>
-  <div class="main-layout">
-    <Navbar />
-    <div class="main-content">
-      <Sidebar />
-      <div class="page-container">
+  <div class="main-wrapper bg-surface font-body-md text-on-surface min-h-screen">
+    <!-- Backdrop overlay for mobile when sidebar is open -->
+    <div 
+      v-if="isSidebarOpen" 
+      @click="isSidebarOpen = false" 
+      class="fixed inset-0 bg-[#264332]/50 z-40 xl:hidden backdrop-blur-sm transition-opacity"
+    ></div>
+
+    <Sidebar :isOpen="isSidebarOpen" @close="isSidebarOpen = false" />
+    
+    <div class="xl:pl-sidebar-width pl-0 transition-all duration-300">
+      <Navbar @toggle-sidebar="isSidebarOpen = !isSidebarOpen" />
+      <main class="w-full pt-16 bg-surface min-h-screen px-container-padding-mobile lg:px-container-padding-desktop py-gutter-lg">
         <router-view></router-view>
-      </div>
+      </main>
     </div>
   </div>
 </template>
@@ -19,18 +27,15 @@ export default {
   components: {
     Navbar,
     Sidebar
+  },
+  data() {
+    return {
+      isSidebarOpen: false
+    };
   }
 };
 </script>
 
 <style scoped>
-.main-content {
-  display: flex;
-}
-.page-container {
-  flex: 1;
-  padding: 20px;
-  background-color: #f8f9fa;
-  min-height: calc(100vh - 50px);
-}
+/* Scoped styles can be minimal since we use Tailwind */
 </style>
