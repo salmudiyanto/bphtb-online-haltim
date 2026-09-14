@@ -8,13 +8,28 @@
 
     <title>{{ config('app.name', 'BPHTB Online') }}</title>
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <!-- Dinamic Base & Asset Path for Subdirectory & Artisan Serve -->
+    @php
+        $isCliServer = php_sapi_name() === 'cli-server';
+        $basePath = $isCliServer ? '/' : rtrim(dirname(dirname($_SERVER['SCRIPT_NAME'])), '/\\') . '/';
+        $assetPrefix = $isCliServer ? '' : 'public/';
+    @endphp
+    <base href="{{ $basePath }}">
+
     <!-- Styles -->
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link href="{{ $assetPrefix }}css/app.css" rel="stylesheet">
 </head>
 <body>
     <div id="app"></div>
 
     <!-- Scripts -->
-    <script src="{{ mix('js/app.js') }}"></script>
+    <script src="{{ $assetPrefix }}js/app.js"></script>
 </body>
 </html>

@@ -1,8 +1,6 @@
 <template>
-  <div class="auth-layout">
-    <div class="auth-container">
-      <router-view></router-view>
-    </div>
+  <div class="auth-wrapper">
+    <router-view></router-view>
   </div>
 </template>
 
@@ -13,16 +11,9 @@ export default {
 </script>
 
 <style scoped>
-.auth-layout {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f4f6f9;
-}
-.auth-container {
+/* Let the page component handle its own layout container */
+.auth-wrapper {
   width: 100%;
-  max-width: 420px;
-  padding: 20px;
+  min-height: 100vh;
 }
 </style>

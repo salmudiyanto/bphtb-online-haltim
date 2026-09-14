@@ -1,9 +1,16 @@
-
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 // Variables
 @import "variables";
 
 // Bootstrap
-@import "~bootstrap/dist/css/bootstrap.css";
+@import "bootstrap/dist/css/bootstrap.css";
+
+// Tailwind CSS
+@import "tailwindcss";
+@config "../../../tailwind.config.js";
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
