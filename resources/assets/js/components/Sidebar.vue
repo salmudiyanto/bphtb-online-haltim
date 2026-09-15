@@ -88,20 +88,7 @@
       </nav>
     </div>
     
-    <div class="p-gutter-md m-gutter-sm bg-[#eef5f0] border border-[#dce9df] rounded-xl flex flex-col gap-2">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-[#4CAF50]"></span>
-          <span class="font-label-sm text-label-sm text-on-surface-variant">ATR / BPN Terhubung</span>
-        </div>
-        <span class="material-symbols-outlined text-[#4CAF50] text-[16px]">cloud_done</span>
-      </div>
-      <div class="h-[1px] bg-[#d3e0d6]"></div>
-      <div class="flex items-center justify-between">
-        <span class="font-label-sm text-label-sm text-outline">Sistem v2.4.0 Secure</span>
-        <span class="px-1.5 py-0.5 rounded font-label-sm text-label-sm bg-[#4CAF50] text-white">BSrE</span>
-      </div>
-    </div>
+
   </aside>
 </template>
 

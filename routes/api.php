@@ -45,6 +45,12 @@ Route::prefix('v1')->group(function () {
         }
     });
 
+    // Referensi & Transaksi Routes
+    Route::get('/referensi/jenis-transaksi', 'ReferensiController@getJenisTransaksi');
+    Route::get('/referensi/persyaratan/{kode_transaksi}', 'ReferensiController@getPersyaratan');
+    Route::get('/pendaftaran/generate-no-surat', 'PendaftaranController@generateNoSurat');
+    Route::post('/pbb/cek-tunggakan', 'PbbController@cekTunggakan');
+
     // Protected Routes (JWT Auth)
     Route::middleware('auth:api')->group(function () {
         Route::get('/me', 'Auth\AuthController@me');
@@ -58,3 +64,4 @@ Route::prefix('v1')->group(function () {
         });
     });
 });
+

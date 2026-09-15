@@ -21,7 +21,7 @@
             </span>
           </div>
           <p class="text-sm text-slate-600 max-w-3xl">
-            Kelola dan verifikasi berkas digital persyaratan permohonan BPHTB sebelum diproses ke penetapan validasi oleh tim pemeriksa BAPENDA.
+            Kelola dan verifikasi berkas digital persyaratan permohonan BPHTB sebelum diproses ke penetapan validasi oleh tim pemeriksa BPKAD Kab. Haltim.
           </p>
         </div>
         <!-- Progress Ring Mini -->
@@ -112,7 +112,7 @@
                   Berkas permohonan masih memerlukan <strong class="text-amber-800 underline decoration-amber-400">{{ pendingCount }} dokumen legal</strong> tambahan agar proses penetapan SKPD-BPHTB dapat diajukan ke Verifikator Pajak.
                 </template>
 <template v-else="">
-<span class="text-emerald-800 font-semibold">Seluruh dokumen digital telah lengkap diupload dan siap diajukan ke Verifikator Pajak BAPENDA.</span>
+<span class="text-emerald-800 font-semibold">Seluruh dokumen digital telah lengkap diupload dan siap diajukan ke Verifikator Pajak BPKAD Kab. Haltim.</span>
 </template>
 </p>
 </div>
@@ -261,13 +261,13 @@
 </div>
 </div>
 </div>
-<!-- Dokumen Validasi Visual Card (BAPENDA Official Seal) -->
+<!-- Dokumen Validasi Visual Card (BPKAD Kab. Haltim Official Seal) -->
 <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-xs flex flex-col gap-4">
 <div class="flex items-center gap-3">
 <img alt="Logo BPHTB" class="h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UTvogIAOKCALCGyAp4MHlChPHgCFdXhmY6VBhWkgeCj19PRqa-DTVG7qY7u12CHOYFp0rubTYdGowQ4bVQRaCcCBAz1eJ8bLLgo2AxbDmP5POjyX1xxsfeNDKSH6VgAmle3bgSsWiFtYu-d3hPsGafbmDCm1ErBPGPHzTtRsR9W7oZ2MORswhDoJeu4nrNc_0TIVe2JUlahjOvq4QJb81NMifMu5tA6xdeVeLIme_AEK9nrH88VmotBaQ"/>
 <div class="flex flex-col">
 <span class="text-[13.5px] font-bold text-slate-900">Validasi Integritas Berkas</span>
-<span class="text-[11px] text-slate-500">Sistem Verifikasi Otomatis BAPENDA</span>
+<span class="text-[11px] text-slate-500">Sistem Verifikasi Otomatis BPKAD Kab. Haltim</span>
 </div>
 </div>
 <div class="flex flex-col gap-2 text-[12px]">
@@ -371,7 +371,7 @@
 <!-- Mock Watermark -->
 <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 rotate-[-25deg]">
 <span class="text-[32px] font-black text-slate-900 tracking-widest uppercase">
-                  BAPENDA e-BPHTB DIGITAL ARCHIVE
+                  BPKAD KAB. HALTIM e-BPHTB DIGITAL ARCHIVE
                 </span>
 </div>
 <!-- Document Header Section in PDF -->
@@ -408,14 +408,14 @@
 </div>
 </div>
 <div class="text-center text-[11.5px] text-slate-500">
-                  Dokumen ini diverifikasi secara elektronik melalui interkoneksi e-KTP DUKCAPIL &amp; BAPENDA Daerah.
+                  Dokumen ini diverifikasi secara elektronik melalui interkoneksi e-KTP DUKCAPIL &amp; BPKAD Kab. Haltim.
                 </div>
 </div>
 <!-- Document Footer with Stamp -->
 <div class="pt-4 border-t border-slate-200 flex items-center justify-between">
 <div class="flex items-center gap-2">
 <div class="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-300 flex items-center justify-center text-emerald-700 text-[10px] font-bold text-center leading-none p-1">
-                    VALID BAPENDA
+                    VALID BPKAD
                   </div>
 <div class="flex flex-col">
 <span class="text-[10px] text-slate-400">Divalidasi Oleh:</span>

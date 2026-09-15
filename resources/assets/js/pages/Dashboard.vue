@@ -89,9 +89,6 @@
 <h2 class="font-headline-sm text-headline-sm text-[#264332] font-semibold">Permohonan Hari Ini</h2>
 </div>
 </div>
-<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#ebf6ee] text-[#2e7d32] border border-[#cfe0d4] font-medium">
-<span class="material-symbols-outlined text-[14px]">trending_up</span>+14.2%
-          </span>
 </div>
 <div class="mt-5 flex items-baseline justify-between">
 <div>
@@ -120,9 +117,6 @@
 <h2 class="font-headline-sm text-headline-sm text-[#264332] font-semibold">Permohonan Bulan Ini</h2>
 </div>
 </div>
-<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#ebf6ee] text-[#2e7d32] border border-[#cfe0d4] font-medium">
-<span class="material-symbols-outlined text-[14px]">trending_up</span>+8.5% MoM
-          </span>
 </div>
 <div class="mt-5 flex items-baseline justify-between">
 <div>
@@ -151,9 +145,6 @@
 <h2 class="font-headline-sm text-headline-sm text-[#264332] font-semibold">Permohonan Tahun Ini</h2>
 </div>
 </div>
-<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e2f2e5] text-[#1e4624] border border-[#cfe0d4] font-semibold">
-            86.4% Capaian
-          </span>
 </div>
 <div class="mt-5 flex items-baseline justify-between">
 <div>

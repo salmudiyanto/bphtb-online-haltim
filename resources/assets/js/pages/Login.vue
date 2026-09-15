@@ -15,7 +15,7 @@
                     <i class="bi bi-shield-check"></i> Portal Resmi Terintegrasi
                   </div>
                   <h4 class="fw-bold mb-0 text-white">BPHTB Online</h4>
-                  <small class="text-white-50">Badan Pendapatan Daerah</small>
+                  <small class="text-white-50">BPKAD Kab. Haltim</small>
                 </div>
               </div>
               <div class="my-4">
@@ -98,7 +98,7 @@
               <div class="d-lg-none text-center mb-4">
                 <img alt="Logo BPHTB" class="mb-2" src="https://lh3.googleusercontent.com/aida/AEtjO1VdEzZ3yeNGnt_0utzsVvPFkfVGX7lHrKMzkbijeWj9A-u6xBmQgAErCW11yJ2qeHyckL4YmevbT54ftEfo0R46NtpETDqugMCsyXvWyKy_ok76rz8RhOXwfX2pfLuSbShf5bdIEFFSd3lUwZUEQEYt5wrMlXm66OjOOkIAL_QVmj0XcUlVTnErf7SqQaCGDTnt944iq1hFAgyW7HaAVUhgDw0gqGb8RLFJmL8TU5g_r6d7GKfGrVudjWY" style="width: 60px; height: 60px;"/>
                 <h5 class="fw-bold mb-0" style="color: #2e5939;">SISTEM INFORMASI BPHTB ONLINE</h5>
-                <small class="text-muted">Badan Pendapatan Daerah / Pemerintah Daerah</small>
+                <small class="text-muted">BPKAD Kab. Haltim / Pemerintah Daerah</small>
               </div>
 
               <!-- Header Section -->
@@ -166,14 +166,14 @@
                 <div class="support-box d-flex align-items-center gap-2 mb-3">
                   <i class="bi bi-headset fs-5" style="color: #4CAF50;"></i>
                   <div style="font-size: 0.8rem; line-height: 1.35;">
-                    Kendala teknis atau akun terblokir? Hubungi <strong>Helpdesk Bapenda</strong> via WhatsApp di <strong>0812-3456-7890</strong> (Jam Kerja 08.00 - 16.00 WIB).
+                    Kendala teknis atau akun terblokir? Hubungi <strong>Helpdesk BPKAD Kab. Haltim</strong> via WhatsApp di <strong>0812-3456-7890</strong> (Jam Kerja 08.00 - 16.00 WITA).
                   </div>
                 </div>
               </form>
 
               <!-- Footer -->
               <div class="footer-text mt-3 pt-3 border-top">
-                &copy; {{ new Date().getFullYear() }} Badan Pendapatan Daerah. Seluruh hak cipta dilindungi undang-undang.
+                &copy; {{ new Date().getFullYear() }} BPKAD Kab. Haltim. Seluruh hak cipta dilindungi undang-undang.
               </div>
 
             </div>
@@ -283,11 +283,11 @@ export default {
             <p>Jika Anda mengalami kendala saat masuk ke sistem:</p>
             <ol class="ps-3 mb-3">
               <li>Pastikan huruf besar dan kecil (Caps Lock) pada kata sandi sesuai.</li>
-              <li>Untuk PPAT/Notaris, pastikan akun telah diaktivasi oleh Administrator Bapenda.</li>
+              <li>Untuk PPAT/Notaris, pastikan akun telah diaktivasi oleh Administrator BPKAD Kab. Haltim.</li>
               <li>Jika lupa kata sandi atau akun terkunci, silakan hubungi admin teknis instansi.</li>
             </ol>
             <div class="py-2 px-3 rounded text-xs" style="background-color: #edf7ef; border: 1px solid #d0ded4; color: #2e5939;">
-              <i class="bi bi-envelope-fill me-1 text-success"></i> Email bantuan: <b>support-bphtb@bapenda.go.id</b>
+              <i class="bi bi-envelope-fill me-1 text-success"></i> Email bantuan: <b>support-bphtb@bpkad-haltim.go.id</b>
             </div>
           </div>
         `,

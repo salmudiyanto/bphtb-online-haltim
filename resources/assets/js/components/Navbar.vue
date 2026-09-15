@@ -9,10 +9,9 @@
         <div class="flex items-center gap-2">
           <span class="font-headline-sm text-[16px] lg:text-headline-sm text-[#264332] font-semibold hidden sm:block">Sistem Informasi BPHTB Online</span>
           <span class="font-headline-sm text-[16px] text-[#264332] font-semibold sm:hidden">BPHTB Online</span>
-          <span class="hidden md:inline-block px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-[#ebf6ee] text-[#2e7d32] font-medium border border-[#cfe0d4]">Provinsi / Kab-Kota</span>
         </div>
         <div class="flex items-center gap-2">
-          <span class="font-body-sm text-[11px] lg:text-body-sm text-on-surface-variant">Badan Pendapatan Daerah</span>
+          <span class="font-body-sm text-[11px] lg:text-body-sm text-on-surface-variant">BPKAD Kab. Haltim</span>
           <span class="text-outline text-[10px] lg:text-body-sm hidden xs:inline-block">•</span>
           <div class="hidden xs:flex items-center gap-1 text-[#2e7d32]">
             <span class="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-[#4CAF50] inline-block"></span>
@@ -32,14 +31,14 @@
       
       <div class="flex items-center gap-2 lg:gap-3 sm:pl-1">
         <div class="hidden md:flex flex-col text-right">
-          <span class="font-label-lg text-label-lg text-[#264332] leading-tight">Drs. H. Hendra Wijaya</span>
-          <span class="font-body-sm text-body-sm text-on-surface-variant">Verifikator Pajak Utama</span>
+          <span class="font-label-lg text-label-lg text-[#264332] leading-tight">{{ user.username || 'Petugas BPHTB' }}</span>
+          <span class="font-body-sm text-body-sm text-on-surface-variant">{{ user.email || 'Verifikator Pajak' }}</span>
         </div>
-        <div class="relative group cursor-pointer">
-          <div class="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-[#4CAF50] flex items-center justify-center text-white">
+        <div class="relative cursor-pointer" ref="userDropdownRef">
+          <button @click.stop="toggleDropdown" type="button" class="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-[#4CAF50] hover:bg-[#43a047] flex items-center justify-center text-white focus:outline-none focus:ring-2 focus:ring-[#4CAF50]/50 transition-all">
             <span class="material-symbols-outlined text-[16px] lg:text-[18px]">person</span>
-          </div>
-          <div class="absolute right-0 mt-2 w-48 py-2 bg-surface-container-lowest rounded-xl shadow-lg border border-[#cfe0d4] hidden group-hover:flex flex-col z-50">
+          </button>
+          <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-48 py-2 bg-surface-container-lowest rounded-xl shadow-lg border border-[#cfe0d4] flex flex-col z-50">
             <a class="px-4 py-2 font-body-md text-body-md !text-on-surface-variant hover:bg-[#ebf6ee] hover:!text-[#264332] flex items-center gap-2 no-underline" href="#">
               <span class="material-symbols-outlined text-[18px]">manage_accounts</span>Profil Petugas
             </a>
@@ -64,6 +63,7 @@ export default {
   name: 'Navbar',
   data() {
     return {
+      dropdownOpen: false,
       user: {
         username: 'Petugas BPHTB',
         email: 'petugas@bphtb.go.id'
@@ -77,9 +77,22 @@ export default {
         this.user = JSON.parse(userInfo);
       } catch (e) {}
     }
+    document.addEventListener('click', this.closeDropdown);
+  },
+  beforeDestroy() {
+    document.removeEventListener('click', this.closeDropdown);
   },
   methods: {
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+    },
+    closeDropdown(e) {
+      if (this.$refs.userDropdownRef && !this.$refs.userDropdownRef.contains(e.target)) {
+        this.dropdownOpen = false;
+      }
+    },
     logout() {
+      this.dropdownOpen = false;
       Swal.fire({
         title: 'Konfirmasi Keluar',
         text: 'Apakah Anda yakin ingin keluar dari sistem BPHTB Online?',
