@@ -5,90 +5,72 @@
       isOpen ? 'translate-x-0' : '-translate-x-full'
     ]"
   >
-    <div class="flex flex-col">
-      <div class="h-16 px-card-padding flex items-center justify-center bg-[#eef5f0] border-b border-[#e0ece3]">
+    <div class="flex flex-col h-full">
+      <!-- Top Logo Header -->
+      <div class="h-16 px-card-padding flex items-center justify-center bg-[#eef5f0] border-b border-[#e0ece3] shrink-0">
         <img alt="Logo BPHTB" class="h-12 w-auto object-contain" src="/images/logo_utama.png"/>
       </div>
       
-      <div class="px-gutter-md py-gutter-sm">
-        <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline px-gutter-xs">Menu Navigasi</span>
+      <!-- Scrollable Navigation Items -->
+      <div class="overflow-y-auto flex-1 py-3 px-3 custom-scrollbar">
+        
+        <!-- Dashboard (Top standalone item) -->
+        <div class="mb-2">
+          <router-link to="/dashboard" :class="navClasses('/dashboard')" @click.native="$emit('close')">
+            <div class="flex items-center gap-2.5">
+              <span class="material-symbols-outlined text-[20px]">dashboard</span>
+              <span>Dashboard</span>
+            </div>
+          </router-link>
+        </div>
+
+        <!-- Loop Groups -->
+        <div v-for="group in groups" :key="group.id" class="mb-3">
+          
+          <!-- Standalone Item (e.g. Verifikasi - Tanpa Group) -->
+          <template v-if="!group.isGroup">
+            <router-link :to="group.path" :class="navClasses(group.path)" @click.native="$emit('close')">
+              <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-[20px]">{{ group.icon }}</span>
+                <span>{{ group.title }}</span>
+              </div>
+            </router-link>
+          </template>
+
+          <!-- Group Section -->
+          <template v-else>
+            <!-- Group Title / Accordion Header -->
+            <button 
+              @click="toggleGroup(group.id)"
+              class="w-full flex items-center justify-between px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-gray-800 transition-colors"
+            >
+              <span>{{ group.title }}</span>
+              <span class="material-symbols-outlined text-[16px] transition-transform duration-200" :class="{ 'rotate-180': openGroups[group.id] }">
+                expand_more
+              </span>
+            </button>
+
+            <!-- Group Children Links -->
+            <div v-show="openGroups[group.id]" class="flex flex-col gap-1 mt-1 pl-1">
+              <router-link 
+                v-for="item in group.items" 
+                :key="item.path" 
+                :to="item.path" 
+                :class="navClasses(item.path)" 
+                @click.native="$emit('close')"
+              >
+                <div class="flex items-center gap-2.5 truncate">
+                  <span class="material-symbols-outlined text-[18px] opacity-80 shrink-0">{{ item.icon }}</span>
+                  <span class="truncate">{{ item.label }}</span>
+                </div>
+              </router-link>
+            </div>
+          </template>
+
+        </div>
+
       </div>
-      
-      <nav class="flex flex-col gap-1 px-gutter-sm">
-        <router-link to="/dashboard" :class="navClasses('/dashboard')" @click.native="$emit('close')">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px]">dashboard</span>
-            <span>Dashboard</span>
-          </div>
-        </router-link>
-        
-        <router-link to="/pendaftaran-baru" :class="navClasses('/pendaftaran-baru')" @click.native="$emit('close')">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px]">add_circle</span>
-            <span>Pendaftaran Baru</span>
-          </div>
-        </router-link>
-
-        <router-link to="/upload-persyaratan" :class="navClasses('/upload-persyaratan')" @click.native="$emit('close')">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px]">upload_file</span>
-            <span>Upload Persyaratan</span>
-          </div>
-        </router-link>
-
-        <router-link to="/input-sspd" :class="navClasses('/input-sspd')" @click.native="$emit('close')">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px]">calculate</span>
-            <span>Input SSPD</span>
-          </div>
-        </router-link>
-        
-        <router-link to="/permohonan-masuk" :class="navClasses('/permohonan-masuk')" @click.native="$emit('close')">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px]">move_to_inbox</span>
-            <span>Permohonan Masuk</span>
-          </div>
-          <span class="px-1.5 py-0.5 rounded-full font-label-sm text-label-sm bg-[#e2f2e5] text-[#1e4624] font-semibold">14</span>
-        </router-link>
-        
-        <router-link to="/verifikasi-berkas" :class="navClasses('/verifikasi-berkas')" @click.native="$emit('close')">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px]">fact_check</span>
-            <span>Verifikasi Berkas</span>
-          </div>
-        </router-link>
-        
-        <router-link to="/surat-ketetapan" :class="navClasses('/surat-ketetapan')" @click.native="$emit('close')">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px]">receipt_long</span>
-            <span>SKP &amp; Bukti Bayar</span>
-          </div>
-        </router-link>
-        
-        <router-link to="/rekap-laporan" :class="navClasses('/rekap-laporan')" @click.native="$emit('close')">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px]">assessment</span>
-            <span>Rekap &amp; Laporan</span>
-          </div>
-        </router-link>
-        
-        <router-link to="/peta-geografis" :class="navClasses('/peta-geografis')" @click.native="$emit('close')">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px]">map</span>
-            <span>Peta Geografis ZNT</span>
-          </div>
-        </router-link>
-        
-        <router-link to="/pengaturan-sistem" :class="navClasses('/pengaturan-sistem')" @click.native="$emit('close')">
-          <div class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-[20px]">tune</span>
-            <span>Pengaturan Sistem</span>
-          </div>
-        </router-link>
-      </nav>
     </div>
-    
-
   </aside>
 </template>
 
@@ -101,13 +83,95 @@ export default {
       default: false
     }
   },
+  data() {
+    return {
+      openGroups: {
+        pelayanan: true,
+        transaksi: true,
+        pembayaran: true,
+        monitoring: true,
+        laporan: true,
+        gantiPassword: false
+      },
+      groups: [
+        {
+          id: 'pelayanan',
+          title: 'Pelayanan',
+          isGroup: true,
+          items: [
+            { label: 'Input Nomor Pelayanan', path: '/pendaftaran-baru', icon: 'add_circle' },
+            { label: 'Upload Persyaratan', path: '/upload-persyaratan', icon: 'upload_file' },
+            { label: 'Edit Nomor Pelayanan', path: '/edit-nomor-pelayanan', icon: 'edit_note' }
+          ]
+        },
+        {
+          id: 'transaksi',
+          title: 'Transaksi',
+          isGroup: true,
+          items: [
+            { label: 'Input Data Surat Setoran', path: '/input-sspd', icon: 'calculate' },
+            { label: 'Cetak Surat Setoran', path: '/cetak-surat-setoran', icon: 'print' },
+            { label: 'Input SSPD-BPHTB KB', path: '/input-sspd-kb', icon: 'post_add' },
+            { label: 'Cetak Bukti Transaksi Nihil', path: '/cetak-bukti-nihil', icon: 'receipt' },
+            { label: 'Cetak Ulang Kwitansi Nihil', path: '/cetak-kwitansi-nihil', icon: 'print' },
+            { label: 'Pembatalan BPHTB Nihil', path: '/pembatalan-nihil', icon: 'cancel' }
+          ]
+        },
+        {
+          id: 'verifikasi',
+          title: 'Verifikasi',
+          isGroup: false,
+          path: '/verifikasi-berkas',
+          icon: 'fact_check'
+        },
+        {
+          id: 'pembayaran',
+          title: 'Pembayaran',
+          isGroup: true,
+          items: [
+            { label: 'Pembayaran BPHTB', path: '/pembayaran-bphtb', icon: 'payments' },
+            { label: 'Pembatalan Pembayaran BPHTB', path: '/pembatalan-pembayaran', icon: 'money_off' },
+            { label: 'Cetak Ulang Kwitansi Pembayaran', path: '/cetak-kwitansi-pembayaran', icon: 'receipt_long' }
+          ]
+        },
+        {
+          id: 'monitoring',
+          title: 'Monitoring',
+          isGroup: true,
+          items: [
+            { label: 'Sudah Bayar', path: '/monitoring/sudah-bayar', icon: 'check_circle' },
+            { label: 'Siap Bayar', path: '/monitoring/siap-bayar', icon: 'pending_actions' }
+          ]
+        },
+        {
+          id: 'laporan',
+          title: 'Laporan',
+          isGroup: true,
+          items: [
+            { label: 'Rekap & Laporan', path: '/rekap-laporan', icon: 'assessment' }
+          ]
+        },
+        {
+          id: 'gantiPassword',
+          title: 'Ganti Password',
+          isGroup: true,
+          items: [
+            { label: 'Ganti Password', path: '/ganti-password', icon: 'lock_reset' }
+          ]
+        }
+      ]
+    };
+  },
   methods: {
+    toggleGroup(groupId) {
+      this.$set(this.openGroups, groupId, !this.openGroups[groupId]);
+    },
     navClasses(path) {
-      const baseClasses = "flex items-center justify-between px-3 py-2.5 transition-all rounded-lg no-underline ";
+      const baseClasses = "flex items-center justify-between px-3 py-2 transition-all rounded-lg no-underline text-xs font-medium ";
       if (this.$route.path === path) {
-        return baseClasses + "bg-[#4CAF50] !text-white font-label-md shadow-sm";
+        return baseClasses + "bg-[#4CAF50] !text-white shadow-sm font-semibold";
       } else {
-        return baseClasses + "!text-on-surface-variant hover:bg-[#eaf4ec] hover:!text-[#233327] font-body-md text-body-md";
+        return baseClasses + "!text-gray-700 hover:bg-[#eaf4ec] hover:!text-[#1b3d22]";
       }
     }
   }
@@ -117,5 +181,15 @@ export default {
 <style scoped>
 a {
   text-decoration: none !important;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
 }
 </style>
