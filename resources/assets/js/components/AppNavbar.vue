@@ -60,6 +60,8 @@ export default {
     },
     methods: {
         logout() {
+            localStorage.removeItem('jwt_token');
+            this.$router.push({ name: 'login' }).catch(() => {});
             this.$emit('logout');
         }
     }

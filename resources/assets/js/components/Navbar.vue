@@ -58,12 +58,27 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
+
 export default {
   name: 'Navbar',
   methods: {
     logout() {
-      localStorage.removeItem('jwt_token');
-      this.$router.push('/login');
+      Swal.fire({
+        title: 'Konfirmasi Keluar',
+        text: 'Apakah Anda yakin ingin keluar dari sistem BPHTB Online?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Ya, Keluar',
+        cancelButtonText: 'Batal'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem('jwt_token');
+          this.$router.push({ name: 'login' }).catch(() => {});
+        }
+      });
     }
   }
 };
