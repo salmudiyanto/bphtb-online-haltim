@@ -9,11 +9,8 @@
           <div class="col-lg-5 brand-side d-none d-lg-flex">
             <div>
               <div class="d-flex align-items-center gap-3 mb-4">
-                <img alt="Logo BPHTB Online" class="logo-badge" src="https://lh3.googleusercontent.com/aida/AEtjO1VdEzZ3yeNGnt_0utzsVvPFkfVGX7lHrKMzkbijeWj9A-u6xBmQgAErCW11yJ2qeHyckL4YmevbT54ftEfo0R46NtpETDqugMCsyXvWyKy_ok76rz8RhOXwfX2pfLuSbShf5bdIEFFSd3lUwZUEQEYt5wrMlXm66OjOOkIAL_QVmj0XcUlVTnErf7SqQaCGDTnt944iq1hFAgyW7HaAVUhgDw0gqGb8RLFJmL8TU5g_r6d7GKfGrVudjWY"/>
+                <img alt="Logo BPHTB Online" class="logo-badge" src="/images/logo_haltim.png"/>
                 <div>
-                  <div class="brand-badge mb-1">
-                    <i class="bi bi-shield-check"></i> Portal Resmi Terintegrasi
-                  </div>
                   <h4 class="fw-bold mb-0 text-white">BPHTB Online</h4>
                   <small class="text-white-50">BPKAD Kab. Haltim</small>
                 </div>
@@ -23,15 +20,7 @@
                 <p class="text-white-50 small mb-4">
                   Sistem Informasi Validasi &amp; Pembayaran Bea Perolehan Hak atas Tanah dan Bangunan untuk mewujudkan tata kelola perpajakan daerah yang akuntabel dan modern.
                 </p>
-                <div class="brand-feature-item">
-                  <div class="feature-icon-wrapper">
-                    <i class="bi bi-file-earmark-lock2-fill"></i>
-                  </div>
-                  <div>
-                    <div class="fw-semibold text-white small">Keamanan Terstandarisasi</div>
-                    <div class="text-white-50" style="font-size: 0.775rem;">Enkripsi SSL 256-bit dan autentikasi berlapis untuk menjaga integritas data WP &amp; PPAT.</div>
-                  </div>
-                </div>
+
                 <div class="brand-feature-item">
                   <div class="feature-icon-wrapper">
                     <i class="bi bi-patch-check-fill"></i>
@@ -52,13 +41,7 @@
                 </div>
               </div>
             </div>
-            <!-- Bottom Left Info -->
-            <div class="pt-4 border-top border-white border-opacity-10">
-              <div class="d-flex align-items-center justify-content-between text-white-50" style="font-size: 0.75rem;">
-                <span><i class="bi bi-building me-1"></i> Pemerintah Republik Indonesia</span>
-                <span>v2.4.0 Secure</span>
-              </div>
-            </div>
+
           </div>
 
           <!-- RIGHT FORM SIDE -->
@@ -96,7 +79,7 @@
             <div v-else>
               <!-- Mobile Brand Header -->
               <div class="d-lg-none text-center mb-4">
-                <img alt="Logo BPHTB" class="mb-2" src="https://lh3.googleusercontent.com/aida/AEtjO1VdEzZ3yeNGnt_0utzsVvPFkfVGX7lHrKMzkbijeWj9A-u6xBmQgAErCW11yJ2qeHyckL4YmevbT54ftEfo0R46NtpETDqugMCsyXvWyKy_ok76rz8RhOXwfX2pfLuSbShf5bdIEFFSd3lUwZUEQEYt5wrMlXm66OjOOkIAL_QVmj0XcUlVTnErf7SqQaCGDTnt944iq1hFAgyW7HaAVUhgDw0gqGb8RLFJmL8TU5g_r6d7GKfGrVudjWY" style="width: 60px; height: 60px;"/>
+                <img alt="Logo BPHTB" class="mb-2" src="/images/logo_haltim.png" style="width: 60px; height: 60px;"/>
                 <h5 class="fw-bold mb-0" style="color: #2e5939;">SISTEM INFORMASI BPHTB ONLINE</h5>
                 <small class="text-muted">BPKAD Kab. Haltim / Pemerintah Daerah</small>
               </div>
@@ -141,14 +124,11 @@
                 </div>
 
                 <!-- Remember Me -->
-                <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="mb-4">
                   <div class="form-check">
                     <input class="form-check-input" id="rememberMe" type="checkbox" v-model="form.remember" :disabled="isLoading" />
                     <label class="form-check-label select-none" for="rememberMe">Ingat sesi saya</label>
                   </div>
-                  <a href="#" @click.prevent="showBantuanLogin" class="text-decoration-none small text-theme-primary fw-semibold">
-                    <i class="bi bi-question-circle me-1"></i> Butuh bantuan login?
-                  </a>
                 </div>
 
                 <!-- Submit Button -->
@@ -162,13 +142,7 @@
                   </button>
                 </div>
 
-                <!-- Support Box -->
-                <div class="support-box d-flex align-items-center gap-2 mb-3">
-                  <i class="bi bi-headset fs-5" style="color: #4CAF50;"></i>
-                  <div style="font-size: 0.8rem; line-height: 1.35;">
-                    Kendala teknis atau akun terblokir? Hubungi <strong>Helpdesk BPKAD Kab. Haltim</strong> via WhatsApp di <strong>0812-3456-7890</strong> (Jam Kerja 08.00 - 16.00 WITA).
-                  </div>
-                </div>
+
               </form>
 
               <!-- Footer -->

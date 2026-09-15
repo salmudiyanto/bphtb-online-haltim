@@ -10697,7 +10697,7 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "bi bi-exclamation-circle me-1"
   }), _vm._v(" Password wajib diisi.\n                  ")]) : _vm._e()])]), _vm._v(" "), _c("div", {
-    staticClass: "d-flex align-items-center justify-content-between mb-4"
+    staticClass: "mb-4"
   }, [_c("div", {
     staticClass: "form-check"
   }, [_c("input", {
@@ -10739,20 +10739,7 @@ var render = function render() {
     attrs: {
       "for": "rememberMe"
     }
-  }, [_vm._v("Ingat sesi saya")])]), _vm._v(" "), _c("a", {
-    staticClass: "text-decoration-none small text-theme-primary fw-semibold",
-    attrs: {
-      href: "#"
-    },
-    on: {
-      click: function click($event) {
-        $event.preventDefault();
-        return _vm.showBantuanLogin.apply(null, arguments);
-      }
-    }
-  }, [_c("i", {
-    staticClass: "bi bi-question-circle me-1"
-  }), _vm._v(" Butuh bantuan login?\n                ")])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Ingat sesi saya")])])]), _vm._v(" "), _c("div", {
     staticClass: "d-grid mb-3"
   }, [_c("button", {
     staticClass: "btn btn-submit-login",
@@ -10768,7 +10755,7 @@ var render = function render() {
       role: "status",
       "aria-hidden": "true"
     }
-  }), _vm._v("\n                    Sedang memproses login...\n                  ")])])]), _vm._v(" "), _vm._m(6)]), _vm._v(" "), _c("div", {
+  }), _vm._v("\n                    Sedang memproses login...\n                  ")])])])]), _vm._v(" "), _c("div", {
     staticClass: "footer-text mt-3 pt-3 border-top"
   }, [_vm._v("\n              © " + _vm._s(new Date().getFullYear()) + " BPKAD Kab. Haltim. Seluruh hak cipta dilindungi undang-undang.\n            ")])])])])])])]);
 };
@@ -10783,13 +10770,9 @@ var staticRenderFns = [function () {
     staticClass: "logo-badge",
     attrs: {
       alt: "Logo BPHTB Online",
-      src: "https://lh3.googleusercontent.com/aida/AEtjO1VdEzZ3yeNGnt_0utzsVvPFkfVGX7lHrKMzkbijeWj9A-u6xBmQgAErCW11yJ2qeHyckL4YmevbT54ftEfo0R46NtpETDqugMCsyXvWyKy_ok76rz8RhOXwfX2pfLuSbShf5bdIEFFSd3lUwZUEQEYt5wrMlXm66OjOOkIAL_QVmj0XcUlVTnErf7SqQaCGDTnt944iq1hFAgyW7HaAVUhgDw0gqGb8RLFJmL8TU5g_r6d7GKfGrVudjWY"
+      src: "/images/logo_haltim.png"
     }
-  }), _vm._v(" "), _c("div", [_c("div", {
-    staticClass: "brand-badge mb-1"
-  }, [_c("i", {
-    staticClass: "bi bi-shield-check"
-  }), _vm._v(" Portal Resmi Terintegrasi\n                ")]), _vm._v(" "), _c("h4", {
+  }), _vm._v(" "), _c("div", [_c("h4", {
     staticClass: "fw-bold mb-0 text-white"
   }, [_vm._v("BPHTB Online")]), _vm._v(" "), _c("small", {
     staticClass: "text-white-50"
@@ -10800,19 +10783,6 @@ var staticRenderFns = [function () {
   }, [_vm._v("Pelayanan Pajak Daerah Transparan & Cepat")]), _vm._v(" "), _c("p", {
     staticClass: "text-white-50 small mb-4"
   }, [_vm._v("\n                Sistem Informasi Validasi & Pembayaran Bea Perolehan Hak atas Tanah dan Bangunan untuk mewujudkan tata kelola perpajakan daerah yang akuntabel dan modern.\n              ")]), _vm._v(" "), _c("div", {
-    staticClass: "brand-feature-item"
-  }, [_c("div", {
-    staticClass: "feature-icon-wrapper"
-  }, [_c("i", {
-    staticClass: "bi bi-file-earmark-lock2-fill"
-  })]), _vm._v(" "), _c("div", [_c("div", {
-    staticClass: "fw-semibold text-white small"
-  }, [_vm._v("Keamanan Terstandarisasi")]), _vm._v(" "), _c("div", {
-    staticClass: "text-white-50",
-    staticStyle: {
-      "font-size": "0.775rem"
-    }
-  }, [_vm._v("Enkripsi SSL 256-bit dan autentikasi berlapis untuk menjaga integritas data WP & PPAT.")])])]), _vm._v(" "), _c("div", {
     staticClass: "brand-feature-item"
   }, [_c("div", {
     staticClass: "feature-icon-wrapper"
@@ -10838,16 +10808,7 @@ var staticRenderFns = [function () {
     staticStyle: {
       "font-size": "0.775rem"
     }
-  }, [_vm._v("Pelacakan status verifikasi berkas SSPD BPHTB secara langsung oleh wajib pajak.")])])])])]), _vm._v(" "), _c("div", {
-    staticClass: "pt-4 border-top border-white border-opacity-10"
-  }, [_c("div", {
-    staticClass: "d-flex align-items-center justify-content-between text-white-50",
-    staticStyle: {
-      "font-size": "0.75rem"
-    }
-  }, [_c("span", [_c("i", {
-    staticClass: "bi bi-building me-1"
-  }), _vm._v(" Pemerintah Republik Indonesia")]), _vm._v(" "), _c("span", [_vm._v("v2.4.0 Secure")])])])]);
+  }, [_vm._v("Pelacakan status verifikasi berkas SSPD BPHTB secara langsung oleh wajib pajak.")])])])])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -10907,7 +10868,7 @@ var staticRenderFns = [function () {
     },
     attrs: {
       alt: "Logo BPHTB",
-      src: "https://lh3.googleusercontent.com/aida/AEtjO1VdEzZ3yeNGnt_0utzsVvPFkfVGX7lHrKMzkbijeWj9A-u6xBmQgAErCW11yJ2qeHyckL4YmevbT54ftEfo0R46NtpETDqugMCsyXvWyKy_ok76rz8RhOXwfX2pfLuSbShf5bdIEFFSd3lUwZUEQEYt5wrMlXm66OjOOkIAL_QVmj0XcUlVTnErf7SqQaCGDTnt944iq1hFAgyW7HaAVUhgDw0gqGb8RLFJmL8TU5g_r6d7GKfGrVudjWY"
+      src: "/images/logo_haltim.png"
     }
   }), _vm._v(" "), _c("h5", {
     staticClass: "fw-bold mb-0",
@@ -10927,22 +10888,6 @@ var staticRenderFns = [function () {
   }, [_vm._v("Masuk ke Sistem")]), _vm._v(" "), _c("p", {
     staticClass: "form-header-subtitle mb-0"
   }, [_vm._v("\n                Silakan masukkan kredensial akun Anda untuk mengakses dashboard BPHTB Online.\n              ")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "support-box d-flex align-items-center gap-2 mb-3"
-  }, [_c("i", {
-    staticClass: "bi bi-headset fs-5",
-    staticStyle: {
-      color: "#4CAF50"
-    }
-  }), _vm._v(" "), _c("div", {
-    staticStyle: {
-      "font-size": "0.8rem",
-      "line-height": "1.35"
-    }
-  }, [_vm._v("\n                  Kendala teknis atau akun terblokir? Hubungi "), _c("strong", [_vm._v("Helpdesk BPKAD Kab. Haltim")]), _vm._v(" via WhatsApp di "), _c("strong", [_vm._v("0812-3456-7890")]), _vm._v(" (Jam Kerja 08.00 - 16.00 WITA).\n                ")])]);
 }];
 render._withStripped = true;
 
