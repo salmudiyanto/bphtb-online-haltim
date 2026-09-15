@@ -5099,6 +5099,7 @@ __webpack_require__.r(__webpack_exports__);
   name: 'Navbar',
   data: function data() {
     return {
+      dropdownOpen: false,
       user: {
         username: 'Petugas BPHTB',
         email: 'petugas@bphtb.go.id'
@@ -5112,10 +5113,23 @@ __webpack_require__.r(__webpack_exports__);
         this.user = JSON.parse(userInfo);
       } catch (e) {}
     }
+    document.addEventListener('click', this.closeDropdown);
+  },
+  beforeDestroy: function beforeDestroy() {
+    document.removeEventListener('click', this.closeDropdown);
   },
   methods: {
+    toggleDropdown: function toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+    },
+    closeDropdown: function closeDropdown(e) {
+      if (this.$refs.userDropdownRef && !this.$refs.userDropdownRef.contains(e.target)) {
+        this.dropdownOpen = false;
+      }
+    },
     logout: function logout() {
       var _this = this;
+      this.dropdownOpen = false;
       sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
         title: 'Konfirmasi Keluar',
         text: 'Apakah Anda yakin ingin keluar dari sistem BPHTB Online?',
@@ -6067,11 +6081,31 @@ var render = function render() {
     staticClass: "hidden sm:block h-8 w-[1px] bg-[#e0ece3]"
   }), _vm._v(" "), _c("div", {
     staticClass: "flex items-center gap-2 lg:gap-3 sm:pl-1"
-  }, [_vm._m(2), _vm._v(" "), _c("div", {
-    staticClass: "relative group cursor-pointer"
-  }, [_vm._m(3), _vm._v(" "), _c("div", {
-    staticClass: "absolute right-0 mt-2 w-48 py-2 bg-surface-container-lowest rounded-xl shadow-lg border border-[#cfe0d4] hidden group-hover:flex flex-col z-50"
-  }, [_vm._m(4), _vm._v(" "), _vm._m(5), _vm._v(" "), _c("div", {
+  }, [_c("div", {
+    staticClass: "hidden md:flex flex-col text-right"
+  }, [_c("span", {
+    staticClass: "font-label-lg text-label-lg text-[#264332] leading-tight"
+  }, [_vm._v(_vm._s(_vm.user.username || "Petugas BPHTB"))]), _vm._v(" "), _c("span", {
+    staticClass: "font-body-sm text-body-sm text-on-surface-variant"
+  }, [_vm._v(_vm._s(_vm.user.email || "Verifikator Pajak"))])]), _vm._v(" "), _c("div", {
+    ref: "userDropdownRef",
+    staticClass: "relative cursor-pointer"
+  }, [_c("button", {
+    staticClass: "w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-[#4CAF50] hover:bg-[#43a047] flex items-center justify-center text-white focus:outline-none focus:ring-2 focus:ring-[#4CAF50]/50 transition-all",
+    attrs: {
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.stopPropagation();
+        return _vm.toggleDropdown.apply(null, arguments);
+      }
+    }
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[16px] lg:text-[18px]"
+  }, [_vm._v("person")])]), _vm._v(" "), _vm.dropdownOpen ? _c("div", {
+    staticClass: "absolute right-0 mt-2 w-48 py-2 bg-surface-container-lowest rounded-xl shadow-lg border border-[#cfe0d4] flex flex-col z-50"
+  }, [_vm._m(2), _vm._v(" "), _vm._m(3), _vm._v(" "), _c("div", {
     staticClass: "h-[1px] bg-[#e0ece3] my-1"
   }), _vm._v(" "), _c("a", {
     staticClass: "px-4 py-2 font-body-md text-body-md !text-error hover:bg-error-container hover:!text-on-error-container flex items-center gap-2 cursor-pointer no-underline",
@@ -6083,7 +6117,7 @@ var render = function render() {
     }
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[18px]"
-  }, [_vm._v("logout")]), _vm._v("Keluar Sistem\n          ")])])])])])]);
+  }, [_vm._v("logout")]), _vm._v("Keluar Sistem\n          ")])]) : _vm._e()])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -6125,24 +6159,6 @@ var staticRenderFns = [function () {
   }, [_vm._v("notifications")]), _vm._v(" "), _c("span", {
     staticClass: "absolute top-1 lg:top-1.5 right-1 lg:right-1.5 w-2 h-2 lg:w-2.5 lg:h-2.5 bg-[#4CAF50] rounded-full ring-2 ring-surface-container-lowest"
   })]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "hidden md:flex flex-col text-right"
-  }, [_c("span", {
-    staticClass: "font-label-lg text-label-lg text-[#264332] leading-tight"
-  }, [_vm._v("Drs. H. Hendra Wijaya")]), _vm._v(" "), _c("span", {
-    staticClass: "font-body-sm text-body-sm text-on-surface-variant"
-  }, [_vm._v("Verifikator Pajak Utama")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-[#4CAF50] flex items-center justify-center text-white"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[16px] lg:text-[18px]"
-  }, [_vm._v("person")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
