@@ -5179,13 +5179,129 @@ __webpack_require__.r(__webpack_exports__);
       "default": false
     }
   },
+  data: function data() {
+    return {
+      openGroups: {
+        pelayanan: true,
+        transaksi: true,
+        pembayaran: true,
+        monitoring: true,
+        laporan: true,
+        gantiPassword: false
+      },
+      groups: [{
+        id: 'pelayanan',
+        title: 'Pelayanan',
+        isGroup: true,
+        items: [{
+          label: 'Input Nomor Pelayanan',
+          path: '/pendaftaran-baru',
+          icon: 'add_circle'
+        }, {
+          label: 'Upload Persyaratan',
+          path: '/upload-persyaratan',
+          icon: 'upload_file'
+        }, {
+          label: 'Edit Nomor Pelayanan',
+          path: '/edit-nomor-pelayanan',
+          icon: 'edit_note'
+        }]
+      }, {
+        id: 'transaksi',
+        title: 'Transaksi',
+        isGroup: true,
+        items: [{
+          label: 'Input Data Surat Setoran',
+          path: '/input-sspd',
+          icon: 'calculate'
+        }, {
+          label: 'Cetak Surat Setoran',
+          path: '/cetak-surat-setoran',
+          icon: 'print'
+        }, {
+          label: 'Input SSPD-BPHTB KB',
+          path: '/input-sspd-kb',
+          icon: 'post_add'
+        }, {
+          label: 'Cetak Bukti Transaksi Nihil',
+          path: '/cetak-bukti-nihil',
+          icon: 'receipt'
+        }, {
+          label: 'Cetak Ulang Kwitansi Nihil',
+          path: '/cetak-kwitansi-nihil',
+          icon: 'print'
+        }, {
+          label: 'Pembatalan BPHTB Nihil',
+          path: '/pembatalan-nihil',
+          icon: 'cancel'
+        }]
+      }, {
+        id: 'verifikasi',
+        title: 'Verifikasi',
+        isGroup: false,
+        path: '/verifikasi-berkas',
+        icon: 'fact_check'
+      }, {
+        id: 'pembayaran',
+        title: 'Pembayaran',
+        isGroup: true,
+        items: [{
+          label: 'Pembayaran BPHTB',
+          path: '/pembayaran-bphtb',
+          icon: 'payments'
+        }, {
+          label: 'Pembatalan Pembayaran BPHTB',
+          path: '/pembatalan-pembayaran',
+          icon: 'money_off'
+        }, {
+          label: 'Cetak Ulang Kwitansi Pembayaran',
+          path: '/cetak-kwitansi-pembayaran',
+          icon: 'receipt_long'
+        }]
+      }, {
+        id: 'monitoring',
+        title: 'Monitoring',
+        isGroup: true,
+        items: [{
+          label: 'Sudah Bayar',
+          path: '/monitoring/sudah-bayar',
+          icon: 'check_circle'
+        }, {
+          label: 'Siap Bayar',
+          path: '/monitoring/siap-bayar',
+          icon: 'pending_actions'
+        }]
+      }, {
+        id: 'laporan',
+        title: 'Laporan',
+        isGroup: true,
+        items: [{
+          label: 'Rekap & Laporan',
+          path: '/rekap-laporan',
+          icon: 'assessment'
+        }]
+      }, {
+        id: 'gantiPassword',
+        title: 'Ganti Password',
+        isGroup: true,
+        items: [{
+          label: 'Ganti Password',
+          path: '/ganti-password',
+          icon: 'lock_reset'
+        }]
+      }]
+    };
+  },
   methods: {
+    toggleGroup: function toggleGroup(groupId) {
+      this.$set(this.openGroups, groupId, !this.openGroups[groupId]);
+    },
     navClasses: function navClasses(path) {
-      var baseClasses = "flex items-center justify-between px-3 py-2.5 transition-all rounded-lg no-underline ";
+      var baseClasses = "flex items-center justify-between px-3 py-2 transition-all rounded-lg no-underline text-xs font-medium ";
       if (this.$route.path === path) {
-        return baseClasses + "bg-[#4CAF50] !text-white font-label-md shadow-sm";
+        return baseClasses + "bg-[#4CAF50] !text-white shadow-sm font-semibold";
       } else {
-        return baseClasses + "!text-on-surface-variant hover:bg-[#eaf4ec] hover:!text-[#233327] font-body-md text-body-md";
+        return baseClasses + "!text-gray-700 hover:bg-[#eaf4ec] hover:!text-[#1b3d22]";
       }
     }
   }
@@ -5950,6 +6066,28 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/PlaceholderPage.vue?vue&type=script&lang=js":
+/*!***********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/PlaceholderPage.vue?vue&type=script&lang=js ***!
+  \***********************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: 'PlaceholderPage',
+  computed: {
+    pageTitle: function pageTitle() {
+      return this.$route && this.$route.meta && this.$route.meta.title ? this.$route.meta.title : 'Halaman Fitur';
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/UploadPersyaratan.vue?vue&type=script&lang=js":
 /*!*************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/UploadPersyaratan.vue?vue&type=script&lang=js ***!
@@ -6404,9 +6542,11 @@ var render = function render() {
   return _c("aside", {
     "class": ["fixed left-0 top-0 h-full w-sidebar-width bg-[#f6faf7] border-r border-[#e0ece3] shadow-[0_1px_6px_rgba(0,0,0,0.03)] z-50 flex flex-col justify-between select-none transition-transform duration-300 xl:translate-x-0", _vm.isOpen ? "translate-x-0" : "-translate-x-full"]
   }, [_c("div", {
-    staticClass: "flex flex-col"
-  }, [_vm._m(0), _vm._v(" "), _vm._m(1), _vm._v(" "), _c("nav", {
-    staticClass: "flex flex-col gap-1 px-gutter-sm"
+    staticClass: "flex flex-col h-full"
+  }, [_vm._m(0), _vm._v(" "), _c("div", {
+    staticClass: "overflow-y-auto flex-1 py-3 px-3 custom-scrollbar"
+  }, [_c("div", {
+    staticClass: "mb-2"
   }, [_c("router-link", {
     "class": _vm.navClasses("/dashboard"),
     attrs: {
@@ -6418,144 +6558,74 @@ var render = function render() {
       }
     }
   }, [_c("div", {
-    staticClass: "flex items-center gap-3"
+    staticClass: "flex items-center gap-2.5"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("dashboard")]), _vm._v(" "), _c("span", [_vm._v("Dashboard")])])]), _vm._v(" "), _c("router-link", {
-    "class": _vm.navClasses("/pendaftaran-baru"),
-    attrs: {
-      to: "/pendaftaran-baru"
-    },
-    nativeOn: {
-      click: function click($event) {
-        return _vm.$emit("close");
+  }, [_vm._v("dashboard")]), _vm._v(" "), _c("span", [_vm._v("Dashboard")])])])], 1), _vm._v(" "), _vm._l(_vm.groups, function (group) {
+    return _c("div", {
+      key: group.id,
+      staticClass: "mb-3"
+    }, [!group.isGroup ? [_c("router-link", {
+      "class": _vm.navClasses(group.path),
+      attrs: {
+        to: group.path
+      },
+      nativeOn: {
+        click: function click($event) {
+          return _vm.$emit("close");
+        }
       }
-    }
-  }, [_c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("add_circle")]), _vm._v(" "), _c("span", [_vm._v("Pendaftaran Baru")])])]), _vm._v(" "), _c("router-link", {
-    "class": _vm.navClasses("/upload-persyaratan"),
-    attrs: {
-      to: "/upload-persyaratan"
-    },
-    nativeOn: {
-      click: function click($event) {
-        return _vm.$emit("close");
+    }, [_c("div", {
+      staticClass: "flex items-center gap-2.5"
+    }, [_c("span", {
+      staticClass: "material-symbols-outlined text-[20px]"
+    }, [_vm._v(_vm._s(group.icon))]), _vm._v(" "), _c("span", [_vm._v(_vm._s(group.title))])])])] : [_c("button", {
+      staticClass: "w-full flex items-center justify-between px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-gray-800 transition-colors",
+      on: {
+        click: function click($event) {
+          return _vm.toggleGroup(group.id);
+        }
       }
-    }
-  }, [_c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("upload_file")]), _vm._v(" "), _c("span", [_vm._v("Upload Persyaratan")])])]), _vm._v(" "), _c("router-link", {
-    "class": _vm.navClasses("/input-sspd"),
-    attrs: {
-      to: "/input-sspd"
-    },
-    nativeOn: {
-      click: function click($event) {
-        return _vm.$emit("close");
+    }, [_c("span", [_vm._v(_vm._s(group.title))]), _vm._v(" "), _c("span", {
+      staticClass: "material-symbols-outlined text-[16px] transition-transform duration-200",
+      "class": {
+        "rotate-180": _vm.openGroups[group.id]
       }
-    }
-  }, [_c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("calculate")]), _vm._v(" "), _c("span", [_vm._v("Input SSPD")])])]), _vm._v(" "), _c("router-link", {
-    "class": _vm.navClasses("/permohonan-masuk"),
-    attrs: {
-      to: "/permohonan-masuk"
-    },
-    nativeOn: {
-      click: function click($event) {
-        return _vm.$emit("close");
-      }
-    }
-  }, [_c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("move_to_inbox")]), _vm._v(" "), _c("span", [_vm._v("Permohonan Masuk")])]), _vm._v(" "), _c("span", {
-    staticClass: "px-1.5 py-0.5 rounded-full font-label-sm text-label-sm bg-[#e2f2e5] text-[#1e4624] font-semibold"
-  }, [_vm._v("14")])]), _vm._v(" "), _c("router-link", {
-    "class": _vm.navClasses("/verifikasi-berkas"),
-    attrs: {
-      to: "/verifikasi-berkas"
-    },
-    nativeOn: {
-      click: function click($event) {
-        return _vm.$emit("close");
-      }
-    }
-  }, [_c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("fact_check")]), _vm._v(" "), _c("span", [_vm._v("Verifikasi Berkas")])])]), _vm._v(" "), _c("router-link", {
-    "class": _vm.navClasses("/surat-ketetapan"),
-    attrs: {
-      to: "/surat-ketetapan"
-    },
-    nativeOn: {
-      click: function click($event) {
-        return _vm.$emit("close");
-      }
-    }
-  }, [_c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("receipt_long")]), _vm._v(" "), _c("span", [_vm._v("SKP & Bukti Bayar")])])]), _vm._v(" "), _c("router-link", {
-    "class": _vm.navClasses("/rekap-laporan"),
-    attrs: {
-      to: "/rekap-laporan"
-    },
-    nativeOn: {
-      click: function click($event) {
-        return _vm.$emit("close");
-      }
-    }
-  }, [_c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("assessment")]), _vm._v(" "), _c("span", [_vm._v("Rekap & Laporan")])])]), _vm._v(" "), _c("router-link", {
-    "class": _vm.navClasses("/peta-geografis"),
-    attrs: {
-      to: "/peta-geografis"
-    },
-    nativeOn: {
-      click: function click($event) {
-        return _vm.$emit("close");
-      }
-    }
-  }, [_c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("map")]), _vm._v(" "), _c("span", [_vm._v("Peta Geografis ZNT")])])]), _vm._v(" "), _c("router-link", {
-    "class": _vm.navClasses("/pengaturan-sistem"),
-    attrs: {
-      to: "/pengaturan-sistem"
-    },
-    nativeOn: {
-      click: function click($event) {
-        return _vm.$emit("close");
-      }
-    }
-  }, [_c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("tune")]), _vm._v(" "), _c("span", [_vm._v("Pengaturan Sistem")])])])], 1)])]);
+    }, [_vm._v("\n              expand_more\n            ")])]), _vm._v(" "), _c("div", {
+      directives: [{
+        name: "show",
+        rawName: "v-show",
+        value: _vm.openGroups[group.id],
+        expression: "openGroups[group.id]"
+      }],
+      staticClass: "flex flex-col gap-1 mt-1 pl-1"
+    }, _vm._l(group.items, function (item) {
+      return _c("router-link", {
+        key: item.path,
+        "class": _vm.navClasses(item.path),
+        attrs: {
+          to: item.path
+        },
+        nativeOn: {
+          click: function click($event) {
+            return _vm.$emit("close");
+          }
+        }
+      }, [_c("div", {
+        staticClass: "flex items-center gap-2.5 truncate"
+      }, [_c("span", {
+        staticClass: "material-symbols-outlined text-[18px] opacity-80 shrink-0"
+      }, [_vm._v(_vm._s(item.icon))]), _vm._v(" "), _c("span", {
+        staticClass: "truncate"
+      }, [_vm._v(_vm._s(item.label))])])]);
+    }), 1)]], 2);
+  })], 2)])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "h-16 px-card-padding flex items-center justify-center bg-[#eef5f0] border-b border-[#e0ece3]"
+    staticClass: "h-16 px-card-padding flex items-center justify-center bg-[#eef5f0] border-b border-[#e0ece3] shrink-0"
   }, [_c("img", {
     staticClass: "h-12 w-auto object-contain",
     attrs: {
@@ -6563,14 +6633,6 @@ var staticRenderFns = [function () {
       src: "/images/logo_utama.png"
     }
   })]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "px-gutter-md py-gutter-sm"
-  }, [_c("span", {
-    staticClass: "font-label-sm text-label-sm uppercase tracking-wider text-outline px-gutter-xs"
-  }, [_vm._v("Menu Navigasi")])]);
 }];
 render._withStripped = true;
 
@@ -7799,7 +7861,7 @@ var render = function render() {
       domProps: {
         value: item.kode
       }
-    }, [_vm._v("\n" + _vm._s(item.nama) + "\n")]);
+    }, [_vm._v("\r\n" + _vm._s(item.nama) + "\r\n")]);
   })], 2), _vm._v(" "), _c("span", {
     staticClass: "material-symbols-outlined absolute right-3 top-2.5 text-slate-400 pointer-events-none text-[20px]"
   }, [_vm._v("expand_more")])]), _vm._v(" "), _c("p", {
@@ -7902,7 +7964,7 @@ var render = function render() {
     attrs: {
       "for": "tgl-selesai-est"
     }
-  }, [_vm._v("\nPerkiraan Selesai (SLA Standar 3 Hari)\n")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\r\nPerkiraan Selesai (SLA Standar 3 Hari)\r\n")]), _vm._v(" "), _c("div", {
     staticClass: "relative flex items-center"
   }, [_c("span", {
     staticClass: "material-symbols-outlined absolute left-3 text-slate-500 text-[18px]"
@@ -8029,11 +8091,11 @@ var render = function render() {
     staticClass: "text-xs text-rose-600 font-medium flex items-center gap-1"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[14px]"
-  }, [_vm._v("error")]), _vm._v(" " + _vm._s(_vm.tunggakanMsg) + "\n")]) : _vm.nopVerified && !_vm.hasTunggakan ? _c("p", {
+  }, [_vm._v("error")]), _vm._v(" " + _vm._s(_vm.tunggakanMsg) + "\r\n")]) : _vm.nopVerified && !_vm.hasTunggakan ? _c("p", {
     staticClass: "text-xs text-[#2e7d32] font-medium flex items-center gap-1"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[14px]"
-  }, [_vm._v("check_circle")]), _vm._v(" NOP Bebas Tunggakan PBB\n")]) : _c("p", {
+  }, [_vm._v("check_circle")]), _vm._v(" NOP Bebas Tunggakan PBB\r\n")]) : _c("p", {
     staticClass: "text-xs text-slate-400"
   }, [_vm._v("Format 18 digit: 82.06.###.###.###.####.# (otomatis masking saat mengetik)")])]), _vm._v(" "), _c("div", {
     staticClass: "md:col-span-5 flex flex-col gap-1.5"
@@ -8125,7 +8187,7 @@ var render = function render() {
     attrs: {
       "for": "keterangan-riwayat"
     }
-  }, [_vm._v("\nKeterangan Tambahan / Catatan Peralihan Hak\n")]), _vm._v(" "), _c("input", {
+  }, [_vm._v("\r\nKeterangan Tambahan / Catatan Peralihan Hak\r\n")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -8208,18 +8270,18 @@ var render = function render() {
       staticClass: "flex flex-col"
     }, [_c("span", {
       staticClass: "text-sm text-slate-900 font-semibold group-hover:text-[#4CAF50] transition-colors"
-    }, [_vm._v("\n" + _vm._s(item.persyaratan) + "\n")]), _vm._v(" "), _c("span", {
+    }, [_vm._v("\r\n" + _vm._s(item.persyaratan) + "\r\n")]), _vm._v(" "), _c("span", {
       staticClass: "text-xs text-slate-500"
-    }, [_vm._v("\nKode Syarat: " + _vm._s(item.kd_syarat) + " - Lampiran Wajib Jenis Transaksi " + _vm._s(_vm.form.jenisTransaksi) + "\n")])]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\r\nKode Syarat: " + _vm._s(item.kd_syarat) + " - Lampiran Wajib Jenis Transaksi " + _vm._s(_vm.form.jenisTransaksi) + "\r\n")])]), _vm._v(" "), _c("div", {
       staticClass: "flex items-center gap-2"
     }, [_vm.dokumenChecked[item.kd_syarat] ? _c("span", {
       staticClass: "px-2.5 py-1 rounded bg-[#edf7ee] text-[#2e7d32] border border-[#c8e6c9] text-xs font-semibold"
-    }, [_vm._v("\nTerverifikasi\n")]) : _c("span", {
+    }, [_vm._v("\r\nTerverifikasi\r\n")]) : _c("span", {
       staticClass: "px-2.5 py-1 rounded bg-slate-100 text-slate-500 border border-slate-200 text-xs font-medium"
-    }, [_vm._v("\nBelum Dicentang\n")])])])]);
+    }, [_vm._v("\r\nBelum Dicentang\r\n")])])])]);
   }), 0) : _c("div", {
     staticClass: "p-6 bg-slate-50 border border-slate-200 rounded-xl text-center text-slate-500 text-xs"
-  }, [_vm._v("\nPilih Jenis Transaksi / Pelayanan di atas untuk menampilkan daftar persyaratan berkas secara otomatis.\n")]), _vm._v(" "), _vm._m(16)])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\r\nPilih Jenis Transaksi / Pelayanan di atas untuk menampilkan daftar persyaratan berkas secara otomatis.\r\n")]), _vm._v(" "), _vm._m(16)])]), _vm._v(" "), _c("div", {
     staticClass: "lg:col-span-4 flex flex-col gap-6 sticky top-24"
   }, [_c("div", {
     staticClass: "bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col"
@@ -8229,7 +8291,7 @@ var render = function render() {
     staticClass: "p-6 flex flex-col gap-4"
   }, [_vm._m(17), _vm._v(" "), _c("p", {
     staticClass: "text-xs text-slate-500"
-  }, [_vm._v("\nKalkulasi otomatis berdasarkan estimasi nilai transaksi dan NJOP sistem PBB.\n")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\r\nKalkulasi otomatis berdasarkan estimasi nilai transaksi dan NJOP sistem PBB.\r\n")]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-2 pt-2"
   }, [_c("div", {
     staticClass: "flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200"
@@ -8305,7 +8367,7 @@ var staticRenderFns = [function () {
     staticClass: "hover:text-[#4CAF50] cursor-pointer transition-colors flex items-center gap-1"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[16px]"
-  }, [_vm._v("home")]), _vm._v(" Beranda\n")]), _vm._v(" "), _c("span", {
+  }, [_vm._v("home")]), _vm._v(" Beranda\r\n")]), _vm._v(" "), _c("span", {
     staticClass: "text-slate-300"
   }, [_vm._v("/")]), _vm._v(" "), _c("span", {
     staticClass: "hover:text-[#4CAF50] cursor-pointer transition-colors"
@@ -8321,9 +8383,9 @@ var staticRenderFns = [function () {
     staticClass: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#edf7ee] text-[#2e7d32] border border-[#c8e6c9] text-xs font-semibold shadow-xs"
   }, [_c("span", {
     staticClass: "w-1.5 h-1.5 rounded-full bg-[#4CAF50]"
-  }), _vm._v("\nMode Input Petugas\n")])]), _vm._v(" "), _c("p", {
+  }), _vm._v("\r\nMode Input Petugas\r\n")])]), _vm._v(" "), _c("p", {
     staticClass: "text-sm text-slate-600 max-w-3xl"
-  }, [_vm._v("\nPerekaman berkas dan pendataan permohonan baru Bea Perolehan Hak atas Tanah dan Bangunan (BPHTB) wilayah kerja BPKAD Kab. Haltim.\n")])]);
+  }, [_vm._v("\r\nPerekaman berkas dan pendataan permohonan baru Bea Perolehan Hak atas Tanah dan Bangunan (BPHTB) wilayah kerja BPKAD Kab. Haltim.\r\n")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -8362,7 +8424,7 @@ var staticRenderFns = [function () {
     attrs: {
       "for": "select-jenis-pelayanan"
     }
-  }, [_vm._v("\nJenis Transaksi / Pelayanan "), _c("span", {
+  }, [_vm._v("\r\nJenis Transaksi / Pelayanan "), _c("span", {
     staticClass: "text-red-500"
   }, [_vm._v("*")])]);
 }, function () {
@@ -8373,7 +8435,7 @@ var staticRenderFns = [function () {
     attrs: {
       "for": "no-surat-ppat"
     }
-  }, [_vm._v("\nNo. Surat Permohonan "), _c("span", {
+  }, [_vm._v("\r\nNo. Surat Permohonan "), _c("span", {
     staticClass: "text-red-500"
   }, [_vm._v("*")])]);
 }, function () {
@@ -8384,7 +8446,7 @@ var staticRenderFns = [function () {
     attrs: {
       "for": "tgl-surat-ppat"
     }
-  }, [_vm._v("\nTanggal Surat Permohonan "), _c("span", {
+  }, [_vm._v("\r\nTanggal Surat Permohonan "), _c("span", {
     staticClass: "text-red-500"
   }, [_vm._v("*")])]);
 }, function () {
@@ -8395,7 +8457,7 @@ var staticRenderFns = [function () {
     attrs: {
       "for": "tgl-terima-loket"
     }
-  }, [_vm._v("\nTanggal Penerimaan Berkas "), _c("span", {
+  }, [_vm._v("\r\nTanggal Penerimaan Berkas "), _c("span", {
     staticClass: "text-red-500"
   }, [_vm._v("*")])]);
 }, function () {
@@ -8437,7 +8499,7 @@ var staticRenderFns = [function () {
     attrs: {
       "for": "alamat-pemohon"
     }
-  }, [_vm._v("\nAlamat Domisili Pemohon Sesuai KTP "), _c("span", {
+  }, [_vm._v("\r\nAlamat Domisili Pemohon Sesuai KTP "), _c("span", {
     staticClass: "text-red-500"
   }, [_vm._v("*")])]);
 }, function () {
@@ -8454,7 +8516,7 @@ var staticRenderFns = [function () {
     staticClass: "inline-flex items-center gap-1 text-[11px] font-semibold text-[#388e3c]"
   }, [_c("span", {
     staticClass: "w-1.5 h-1.5 rounded-full bg-[#4CAF50]"
-  }), _vm._v(" Cek Tunggakan Otomatis (On Blur)\n")])]);
+  }), _vm._v(" Cek Tunggakan Otomatis (On Blur)\r\n")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -8463,7 +8525,7 @@ var staticRenderFns = [function () {
     attrs: {
       "for": "nama-subjek-pbb"
     }
-  }, [_vm._v("\nNama Wajib Pajak pada SPPT "), _c("span", {
+  }, [_vm._v("\r\nNama Wajib Pajak pada SPPT "), _c("span", {
     staticClass: "text-red-500"
   }, [_vm._v("*")])]);
 }, function () {
@@ -8473,7 +8535,7 @@ var staticRenderFns = [function () {
     staticClass: "text-xs text-[#388e3c] font-medium flex items-center gap-1"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[14px]"
-  }, [_vm._v("check_circle")]), _vm._v(" Sesuai database BPKAD Kab. Haltim\n")]);
+  }, [_vm._v("check_circle")]), _vm._v(" Sesuai database BPKAD Kab. Haltim\r\n")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -8482,7 +8544,7 @@ var staticRenderFns = [function () {
     attrs: {
       "for": "alamat-objek-pajak"
     }
-  }, [_vm._v("\nAlamat Lokasi Objek Pajak (Letak Tanah / Bangunan) "), _c("span", {
+  }, [_vm._v("\r\nAlamat Lokasi Objek Pajak (Letak Tanah / Bangunan) "), _c("span", {
     staticClass: "text-red-500"
   }, [_vm._v("*")])]);
 }, function () {
@@ -8493,7 +8555,7 @@ var staticRenderFns = [function () {
     attrs: {
       "for": "no-hp-pemohon"
     }
-  }, [_vm._v("\nNomor Kontak / WhatsApp Pemohon "), _c("span", {
+  }, [_vm._v("\r\nNomor Kontak / WhatsApp Pemohon "), _c("span", {
     staticClass: "text-red-500"
   }, [_vm._v("*")])]);
 }, function () {
@@ -8521,7 +8583,7 @@ var staticRenderFns = [function () {
     staticClass: "material-symbols-outlined text-[#4CAF50] text-[22px] shrink-0"
   }, [_vm._v("info")]), _vm._v(" "), _c("p", {
     staticClass: "text-xs leading-relaxed"
-  }, [_vm._v("\nSemua berkas fisik diverifikasi saat serah terima di Loket Pelayanan BPHTB BPKAD Kab. Haltim. Pastikan cap basah Notaris/PPAT tercantum pada berkas permohonan.\n")])]);
+  }, [_vm._v("\r\nSemua berkas fisik diverifikasi saat serah terima di Loket Pelayanan BPHTB BPKAD Kab. Haltim. Pastikan cap basah Notaris/PPAT tercantum pada berkas permohonan.\r\n")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -8583,7 +8645,7 @@ var staticRenderFns = [function () {
     staticClass: "text-xs text-white/90 mt-1 flex items-center gap-1.5"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[16px]"
-  }, [_vm._v("verified")]), _vm._v(" Nilai penetapan sementara\n")]);
+  }, [_vm._v("verified")]), _vm._v(" Nilai penetapan sementara\r\n")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -10887,6 +10949,57 @@ render._withStripped = true;
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/PlaceholderPage.vue?vue&type=template&id=5c16a3f5":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/PlaceholderPage.vue?vue&type=template&id=5c16a3f5 ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "p-6"
+  }, [_c("div", {
+    staticClass: "bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-4xl mx-auto"
+  }, [_c("div", {
+    staticClass: "flex items-center space-x-4 mb-6"
+  }, [_vm._m(0), _vm._v(" "), _c("div", [_c("h1", {
+    staticClass: "text-2xl font-bold text-gray-800"
+  }, [_vm._v(_vm._s(_vm.pageTitle))]), _vm._v(" "), _c("p", {
+    staticClass: "text-sm text-gray-500"
+  }, [_vm._v("Fitur dalam pengembangan untuk kebutuhan sistem BPHTB Online")])])]), _vm._v(" "), _c("div", {
+    staticClass: "border-t border-gray-100 pt-6"
+  }, [_c("div", {
+    staticClass: "bg-emerald-50 border border-emerald-200 rounded-lg p-4 flex items-start space-x-3"
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-emerald-600 mt-0.5"
+  }, [_vm._v("info")]), _vm._v(" "), _c("div", [_c("h4", {
+    staticClass: "text-sm font-semibold text-emerald-900"
+  }, [_vm._v("Informasi Modul")]), _vm._v(" "), _c("p", {
+    staticClass: "text-sm text-emerald-700 mt-1"
+  }, [_vm._v("\n            Menu "), _c("strong", [_vm._v(_vm._s(_vm.pageTitle))]), _vm._v(" telah terdaftar di navigasi sistem. Halaman ini siap untuk diintegrasikan dengan modul logika & API backend selanjutnya.\n          ")])])])])])]);
+};
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "w-12 h-12 rounded-lg bg-green-100 text-green-700 flex items-center justify-center"
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-2xl"
+  }, [_vm._v("construction")])]);
+}];
+render._withStripped = true;
+
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/UploadPersyaratan.vue?vue&type=template&id=5f5426a6":
 /*!************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/UploadPersyaratan.vue?vue&type=template&id=5f5426a6 ***!
@@ -11876,8 +11989,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var _layouts_AuthLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../layouts/AuthLayout.vue */ "./resources/assets/js/layouts/AuthLayout.vue");
 /* harmony import */ var _layouts_MainLayout_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../layouts/MainLayout.vue */ "./resources/assets/js/layouts/MainLayout.vue");
 /* harmony import */ var _pages_Login_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../pages/Login.vue */ "./resources/assets/js/pages/Login.vue");
@@ -11885,6 +11998,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pages_InputPendaftaran_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../pages/InputPendaftaran.vue */ "./resources/assets/js/pages/InputPendaftaran.vue");
 /* harmony import */ var _pages_UploadPersyaratan_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../pages/UploadPersyaratan.vue */ "./resources/assets/js/pages/UploadPersyaratan.vue");
 /* harmony import */ var _pages_InputSspd_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../pages/InputSspd.vue */ "./resources/assets/js/pages/InputSspd.vue");
+/* harmony import */ var _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../pages/PlaceholderPage.vue */ "./resources/assets/js/pages/PlaceholderPage.vue");
 
 
 
@@ -11894,7 +12008,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vue_router__WEBPACK_IMPORTED_MODULE_8__["default"]);
+
+vue__WEBPACK_IMPORTED_MODULE_8__["default"].use(vue_router__WEBPACK_IMPORTED_MODULE_9__["default"]);
 var routes = [{
   path: '/auth',
   component: _layouts_AuthLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
@@ -11915,19 +12030,143 @@ var routes = [{
   children: [{
     path: 'dashboard',
     name: 'dashboard',
-    component: _pages_Dashboard_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
-  }, {
+    component: _pages_Dashboard_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    meta: {
+      title: 'Dashboard'
+    }
+  },
+  // Group Pelayanan
+  {
     path: 'pendaftaran-baru',
     name: 'pendaftaran-baru',
-    component: _pages_InputPendaftaran_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
+    component: _pages_InputPendaftaran_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
+    meta: {
+      title: 'Input Nomor Pelayanan'
+    }
   }, {
     path: 'upload-persyaratan',
     name: 'upload-persyaratan',
-    component: _pages_UploadPersyaratan_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
+    component: _pages_UploadPersyaratan_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+    meta: {
+      title: 'Upload Persyaratan'
+    }
   }, {
+    path: 'edit-nomor-pelayanan',
+    name: 'edit-nomor-pelayanan',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Edit Nomor Pelayanan'
+    }
+  },
+  // Group Transaksi
+  {
     path: 'input-sspd',
     name: 'input-sspd',
-    component: _pages_InputSspd_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
+    component: _pages_InputSspd_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
+    meta: {
+      title: 'Input Data Surat Setoran'
+    }
+  }, {
+    path: 'cetak-surat-setoran',
+    name: 'cetak-surat-setoran',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Cetak Surat Setoran'
+    }
+  }, {
+    path: 'input-sspd-kb',
+    name: 'input-sspd-kb',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Input SSPD-BPHTB KB'
+    }
+  }, {
+    path: 'cetak-bukti-nihil',
+    name: 'cetak-bukti-nihil',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Cetak Bukti Transaksi Nihil'
+    }
+  }, {
+    path: 'cetak-kwitansi-nihil',
+    name: 'cetak-kwitansi-nihil',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Cetak Ulang Kwitansi Nihil'
+    }
+  }, {
+    path: 'pembatalan-nihil',
+    name: 'pembatalan-nihil',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Pembatalan BPHTB Nihil'
+    }
+  },
+  // Verifikasi (Tanpa Group)
+  {
+    path: 'verifikasi-berkas',
+    name: 'verifikasi-berkas',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Verifikasi'
+    }
+  },
+  // Group Pembayaran
+  {
+    path: 'pembayaran-bphtb',
+    name: 'pembayaran-bphtb',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Pembayaran BPHTB'
+    }
+  }, {
+    path: 'pembatalan-pembayaran',
+    name: 'pembatalan-pembayaran',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Pembatalan Pembayaran BPHTB'
+    }
+  }, {
+    path: 'cetak-kwitansi-pembayaran',
+    name: 'cetak-kwitansi-pembayaran',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Cetak Ulang Kwitansi Pembayaran BPHTB'
+    }
+  },
+  // Group Monitoring
+  {
+    path: 'monitoring/sudah-bayar',
+    name: 'monitoring-sudah-bayar',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Monitoring - Sudah Bayar'
+    }
+  }, {
+    path: 'monitoring/siap-bayar',
+    name: 'monitoring-siap-bayar',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Monitoring - Siap Bayar'
+    }
+  },
+  // Group Laporan
+  {
+    path: 'rekap-laporan',
+    name: 'rekap-laporan',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Rekap & Laporan'
+    }
+  },
+  // Group Ganti Password
+  {
+    path: 'ganti-password',
+    name: 'ganti-password',
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'Ganti Password'
+    }
   }, {
     path: '',
     redirect: '/dashboard'
@@ -11943,7 +12182,7 @@ function getBasePath() {
   }
   return '/';
 }
-var router = new vue_router__WEBPACK_IMPORTED_MODULE_8__["default"]({
+var router = new vue_router__WEBPACK_IMPORTED_MODULE_9__["default"]({
   mode: 'history',
   base: getBasePath(),
   routes: routes
@@ -27193,7 +27432,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n#app {\r\n  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\r\n  color: #2c3e50;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n#app {\n  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\n  color: #2c3e50;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -27241,7 +27480,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\na[data-v-28cb1975] {\r\n  text-decoration: none !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\na[data-v-28cb1975] {\n  text-decoration: none !important;\n}\n.custom-scrollbar[data-v-28cb1975]::-webkit-scrollbar {\n  width: 4px;\n}\n.custom-scrollbar[data-v-28cb1975]::-webkit-scrollbar-track {\n  background: transparent;\n}\n.custom-scrollbar[data-v-28cb1975]::-webkit-scrollbar-thumb {\n  background: #cbd5e1;\n  border-radius: 4px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -50540,6 +50779,45 @@ component.options.__file = "resources/assets/js/pages/Login.vue"
 
 /***/ }),
 
+/***/ "./resources/assets/js/pages/PlaceholderPage.vue":
+/*!*******************************************************!*\
+  !*** ./resources/assets/js/pages/PlaceholderPage.vue ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _PlaceholderPage_vue_vue_type_template_id_5c16a3f5__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PlaceholderPage.vue?vue&type=template&id=5c16a3f5 */ "./resources/assets/js/pages/PlaceholderPage.vue?vue&type=template&id=5c16a3f5");
+/* harmony import */ var _PlaceholderPage_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PlaceholderPage.vue?vue&type=script&lang=js */ "./resources/assets/js/pages/PlaceholderPage.vue?vue&type=script&lang=js");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _PlaceholderPage_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"],
+  _PlaceholderPage_vue_vue_type_template_id_5c16a3f5__WEBPACK_IMPORTED_MODULE_0__.render,
+  _PlaceholderPage_vue_vue_type_template_id_5c16a3f5__WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/assets/js/pages/PlaceholderPage.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/assets/js/pages/UploadPersyaratan.vue":
 /*!*********************************************************!*\
   !*** ./resources/assets/js/pages/UploadPersyaratan.vue ***!
@@ -50723,6 +51001,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/assets/js/pages/PlaceholderPage.vue?vue&type=script&lang=js":
+/*!*******************************************************************************!*\
+  !*** ./resources/assets/js/pages/PlaceholderPage.vue?vue&type=script&lang=js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PlaceholderPage_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./PlaceholderPage.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/PlaceholderPage.vue?vue&type=script&lang=js");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PlaceholderPage_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/assets/js/pages/UploadPersyaratan.vue?vue&type=script&lang=js":
 /*!*********************************************************************************!*\
   !*** ./resources/assets/js/pages/UploadPersyaratan.vue?vue&type=script&lang=js ***!
@@ -50888,6 +51182,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Login_vue_vue_type_template_id_5b96cafc_scoped_true__WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Login_vue_vue_type_template_id_5b96cafc_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Login.vue?vue&type=template&id=5b96cafc&scoped=true */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/Login.vue?vue&type=template&id=5b96cafc&scoped=true");
+
+
+/***/ }),
+
+/***/ "./resources/assets/js/pages/PlaceholderPage.vue?vue&type=template&id=5c16a3f5":
+/*!*************************************************************************************!*\
+  !*** ./resources/assets/js/pages/PlaceholderPage.vue?vue&type=template&id=5c16a3f5 ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PlaceholderPage_vue_vue_type_template_id_5c16a3f5__WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PlaceholderPage_vue_vue_type_template_id_5c16a3f5__WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PlaceholderPage_vue_vue_type_template_id_5c16a3f5__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./PlaceholderPage.vue?vue&type=template&id=5c16a3f5 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/PlaceholderPage.vue?vue&type=template&id=5c16a3f5");
 
 
 /***/ }),
