@@ -13367,6 +13367,12 @@ textarea.form-control-lg {
   .active\:scale-\[0\.98\]:active {
     scale: 0.98;
   }
+  .disabled\:cursor-not-allowed:disabled {
+    cursor: not-allowed;
+  }
+  .disabled\:bg-slate-300:disabled {
+    background-color: var(--color-slate-300);
+  }
   @media (width >= 40rem) {
     .sm\:col-span-2 {
       grid-column: span 2 / span 2;
@@ -13472,9 +13478,6 @@ textarea.form-control-lg {
     }
     .md\:flex {
       display: flex;
-    }
-    .md\:inline-block {
-      display: inline-block;
     }
     .md\:w-72 {
       width: calc(var(--spacing) * 72);

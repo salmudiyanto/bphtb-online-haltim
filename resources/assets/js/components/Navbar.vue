@@ -9,10 +9,9 @@
         <div class="flex items-center gap-2">
           <span class="font-headline-sm text-[16px] lg:text-headline-sm text-[#264332] font-semibold hidden sm:block">Sistem Informasi BPHTB Online</span>
           <span class="font-headline-sm text-[16px] text-[#264332] font-semibold sm:hidden">BPHTB Online</span>
-          <span class="hidden md:inline-block px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-[#ebf6ee] text-[#2e7d32] font-medium border border-[#cfe0d4]">Provinsi / Kab-Kota</span>
         </div>
         <div class="flex items-center gap-2">
-          <span class="font-body-sm text-[11px] lg:text-body-sm text-on-surface-variant">Badan Pendapatan Daerah</span>
+          <span class="font-body-sm text-[11px] lg:text-body-sm text-on-surface-variant">BPKAD Kab. Haltim</span>
           <span class="text-outline text-[10px] lg:text-body-sm hidden xs:inline-block">•</span>
           <div class="hidden xs:flex items-center gap-1 text-[#2e7d32]">
             <span class="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-[#4CAF50] inline-block"></span>
