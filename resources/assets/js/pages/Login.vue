@@ -109,22 +109,6 @@
                 </p>
               </div>
 
-              <!-- Quick Demo Helper Pill -->
-              <div class="demo-credentials-bar">
-                <span><i class="bi bi-info-circle me-1" style="color: #4CAF50;"></i> <strong>Akun Uji Coba:</strong></span>
-                <div class="d-flex gap-2">
-                  <button @click="fillTestAccount('petugas_bphtb', 'admin123', 'success')" class="btn-demo-tag" type="button">
-                    <i class="bi bi-check-circle me-1" style="color: #4CAF50;"></i>Akun Valid
-                  </button>
-                  <button @click="fillTestAccount('salah', 'salah', 'error')" class="btn-demo-tag tag-danger" type="button">
-                    <i class="bi bi-x-circle me-1"></i>Akun Salah
-                  </button>
-                  <button @click="fillTestAccount('server_error', 'admin123', 'warning')" class="btn-demo-tag tag-warning" type="button">
-                    <i class="bi bi-exclamation-triangle me-1"></i>Simulasi Error
-                  </button>
-                </div>
-              </div>
-
               <!-- Login Form -->
               <form @submit.prevent="handleLogin" class="needs-validation">
                 <!-- Username -->
@@ -223,27 +207,6 @@ export default {
     };
   },
   methods: {
-    fillTestAccount(username, password, state) {
-      this.form.username = username;
-      this.form.password = password;
-      this.errors = { username: false, password: false };
-      
-      const toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1500,
-        timerProgressBar: true
-      });
-
-      if (state === 'success') {
-        toast.fire({ icon: 'info', title: 'Data akun valid dimuat. Klik Masuk.' });
-      } else if (state === 'error') {
-        toast.fire({ icon: 'warning', title: 'Data akun salah dimuat. Klik Masuk.' });
-      } else {
-        toast.fire({ icon: 'question', title: 'Mode server error dimuat. Klik Masuk.' });
-      }
-    },
     handleLogin() {
       this.errors.username = !this.form.username;
       this.errors.password = !this.form.password;
@@ -263,49 +226,54 @@ export default {
         }
       });
 
-      setTimeout(() => {
-        this.isLoading = false;
+      axios.post('/api/v1/login', {
+        username: this.form.username,
+        password: this.form.password
+      })
+      .then(response => {
+        const data = response.data;
+        if (data.status === 'success') {
+          localStorage.setItem('jwt_token', data.access_token);
+          if (data.refresh_token) {
+            localStorage.setItem('refresh_token', data.refresh_token);
+          }
+          if (data.user) {
+            localStorage.setItem('user_info', JSON.stringify(data.user));
+          }
 
-        if (this.form.username === 'server_error') {
-          Swal.fire({
-            icon: 'error',
-            title: 'Gangguan Sistem',
-            text: 'Terjadi kesalahan pada sistem. Silakan coba kembali beberapa saat lagi.',
-            confirmButtonColor: '#4CAF50',
-            confirmButtonText: 'Tutup'
-          });
-        } else if (this.form.username === 'petugas_bphtb' && this.form.password === 'admin123' || (this.form.username.length >= 4 && this.form.password === 'admin123')) {
           Swal.fire({
             icon: 'success',
             title: 'Login Berhasil!',
             html: 'Selamat datang kembali di <b>Sistem Informasi BPHTB Online</b>.<br><span class="text-muted small">Mengarahkan ke Dashboard Utama...</span>',
-            timer: 2200,
+            timer: 1500,
             timerProgressBar: true,
             showConfirmButton: false,
             willClose: () => {
-              this.loginTime = new Date().toLocaleTimeString('id-ID');
-              this.isLoggedIn = true;
-              localStorage.setItem('jwt_token', 'mock_token');
               this.$router.push('/dashboard');
             }
           });
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Autentikasi Gagal',
-            text: 'Username atau kata sandi tidak valid. Pastikan data yang dimasukkan sudah benar.',
-            confirmButtonColor: '#4CAF50',
-            confirmButtonText: 'Coba Lagi'
-          }).then(() => {
-            this.form.password = '';
-          });
+          throw new Error(data.message || 'Login gagal.');
         }
-      }, 1400);
-    },
-    resetLogin() {
-      this.isLoggedIn = false;
-      this.form.username = '';
-      this.form.password = '';
+      })
+      .catch(error => {
+        const msg = (error.response && error.response.data && error.response.data.message)
+          ? error.response.data.message
+          : (error.message || 'Terjadi kesalahan pada sistem.');
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Autentikasi Gagal',
+          text: msg,
+          confirmButtonColor: '#4CAF50',
+          confirmButtonText: 'Coba Lagi'
+        }).then(() => {
+          this.form.password = '';
+        });
+      })
+      .finally(() => {
+        this.isLoading = false;
+      });
     },
     showBantuanLogin() {
       Swal.fire({
@@ -419,18 +387,50 @@ export default {
 .form-header-title { font-size: 1.65rem; font-weight: 800; color: #233b2e; letter-spacing: -0.02em; }
 .form-header-subtitle { color: #5e776a; font-size: 0.925rem; }
 
+.form-floating {
+  position: relative;
+}
 .form-floating > .form-control {
-  border: 1.5px solid #d0ded4; border-radius: 0.65rem; height: calc(3.5rem + 2px);
-  padding: 1rem 0.85rem; font-size: 0.95rem; color: #233b2e; background-color: #fafdfa; transition: all 0.2s ease-in-out;
+  border: 1.5px solid #d0ded4;
+  border-radius: 0.65rem;
+  height: calc(3.85rem + 2px);
+  min-height: calc(3.85rem + 2px);
+  padding-top: 1.65rem !important;
+  padding-bottom: 0.5rem !important;
+  padding-left: 0.85rem;
+  padding-right: 0.85rem;
+  font-size: 0.95rem;
+  color: #233b2e;
+  background-color: #fafdfa;
+  transition: all 0.2s ease-in-out;
 }
 .form-floating > .form-control:focus {
-  background-color: #ffffff; border-color: #4CAF50; box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.15);
+  background-color: #ffffff;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.15);
 }
-.form-floating > label { padding: 1rem 0.85rem; color: #5e776a; font-size: 0.9rem; font-weight: 500; }
+.form-floating > label {
+  padding: 0.9rem 0.85rem;
+  color: #5e776a;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+  pointer-events: none;
+}
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+  transform: scale(0.78) translateY(-0.65rem) translateX(0.15rem);
+  opacity: 0.8;
+}
 
 .input-icon-group { position: relative; }
-.input-icon-group .form-control { padding-left: 2.75rem; }
-.input-icon-group > label { padding-left: 2.75rem; }
+.input-icon-group .form-control {
+  padding-left: 2.85rem !important;
+  padding-right: 2.85rem !important;
+}
+.input-icon-group > label {
+  padding-left: 2.85rem !important;
+}
 .input-leading-icon {
   position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #8fa395;
   font-size: 1.15rem; z-index: 5; pointer-events: none; transition: color 0.2s ease;

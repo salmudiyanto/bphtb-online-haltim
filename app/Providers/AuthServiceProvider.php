@@ -25,6 +25,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        \Illuminate\Support\Facades\Auth::provider('odbc', function ($app, array $config) {
+            return new \App\Auth\OdbcUserProvider();
+        });
     }
 }

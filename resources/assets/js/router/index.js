@@ -69,13 +69,7 @@ function getBasePath() {
   if (path.includes('/public/')) {
     return path.split('/public/')[0] + '/public/';
   }
-  const knownRoutes = ['/dashboard', '/login', '/auth', '/permohonan-masuk', '/verifikasi-berkas', '/surat-ketetapan', '/rekap-laporan', '/peta-geografis', '/pengaturan-sistem', '/pendaftaran-baru', '/upload-persyaratan', '/input-sspd'];
-  for (let i = 0; i < knownRoutes.length; i++) {
-    if (path.indexOf(knownRoutes[i]) !== -1) {
-      return path.substring(0, path.indexOf(knownRoutes[i])) + '/';
-    }
-  }
-  return path.endsWith('/') ? path : path + '/';
+  return '/';
 }
 
 const router = new VueRouter({

@@ -62,6 +62,22 @@ import Swal from 'sweetalert2';
 
 export default {
   name: 'Navbar',
+  data() {
+    return {
+      user: {
+        username: 'Petugas BPHTB',
+        email: 'petugas@bphtb.go.id'
+      }
+    };
+  },
+  mounted() {
+    const userInfo = localStorage.getItem('user_info');
+    if (userInfo) {
+      try {
+        this.user = JSON.parse(userInfo);
+      } catch (e) {}
+    }
+  },
   methods: {
     logout() {
       Swal.fire({
@@ -75,8 +91,14 @@ export default {
         cancelButtonText: 'Batal'
       }).then((result) => {
         if (result.isConfirmed) {
-          localStorage.removeItem('jwt_token');
-          this.$router.push({ name: 'login' }).catch(() => {});
+          const refreshToken = localStorage.getItem('refresh_token');
+          axios.post('/api/v1/logout', { refresh_token: refreshToken })
+            .finally(() => {
+              localStorage.removeItem('jwt_token');
+              localStorage.removeItem('refresh_token');
+              localStorage.removeItem('user_info');
+              this.$router.push({ name: 'login' }).catch(() => {});
+            });
         }
       });
     }
