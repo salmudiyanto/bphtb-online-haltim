@@ -60,9 +60,15 @@ export default {
     },
     methods: {
         logout() {
-            localStorage.removeItem('jwt_token');
-            this.$router.push({ name: 'login' }).catch(() => {});
-            this.$emit('logout');
+            const refreshToken = localStorage.getItem('refresh_token');
+            axios.post('/api/v1/logout', { refresh_token: refreshToken })
+                .finally(() => {
+                    localStorage.removeItem('jwt_token');
+                    localStorage.removeItem('refresh_token');
+                    localStorage.removeItem('user_info');
+                    this.$router.push({ name: 'login' }).catch(() => {});
+                    this.$emit('logout');
+                });
         }
     }
 }

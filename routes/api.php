@@ -15,13 +15,9 @@ use Illuminate\Http\Request;
 
 Route::prefix('v1')->group(function () {
     // Public Routes
-    Route::post('/login', function (Request $request) {
-        return response()->json([
-            'status' => 'success',
-            'token' => 'demo_token_123',
-            'message' => 'Login berhasil (Scaffolding Demo)'
-        ]);
-    });
+    Route::post('/login', 'Auth\AuthController@login');
+    Route::post('/refresh', 'Auth\AuthController@refresh');
+    Route::post('/logout', 'Auth\AuthController@logout');
 
     Route::post('/register', function (Request $request) {
         return response()->json([
@@ -32,7 +28,7 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/test-db', function () {
         try {
-            $pdo = \DB::connection()->getPdo();
+            $pdo = \DB::connection('odbc')->getPdo();
             
             return response()->json([
                 'status' => 'success',
@@ -51,13 +47,7 @@ Route::prefix('v1')->group(function () {
 
     // Protected Routes (JWT Auth)
     Route::middleware('auth:api')->group(function () {
-        Route::get('/me', function (Request $request) {
-            return response()->json($request->user());
-        });
-
-        Route::post('/logout', function () {
-            return response()->json(['message' => 'Logout berhasil']);
-        });
+        Route::get('/me', 'Auth\AuthController@me');
 
         Route::get('/dashboard/stats', function () {
             return response()->json([
