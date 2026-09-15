@@ -24,6 +24,10 @@ const routes = [
     ]
   },
   {
+    path: '/login',
+    redirect: '/auth/login'
+  },
+  {
     path: '/',
     component: MainLayout,
     meta: { requiresAuth: true },
