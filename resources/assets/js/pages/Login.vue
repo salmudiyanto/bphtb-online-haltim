@@ -21,24 +21,7 @@
                   Sistem Informasi Validasi &amp; Pembayaran Bea Perolehan Hak atas Tanah dan Bangunan untuk mewujudkan tata kelola perpajakan daerah yang akuntabel dan modern.
                 </p>
 
-                <div class="brand-feature-item">
-                  <div class="feature-icon-wrapper">
-                    <i class="bi bi-patch-check-fill"></i>
-                  </div>
-                  <div>
-                    <div class="fw-semibold text-white small">Validasi NOP Terkoneksi PBB</div>
-                    <div class="text-white-50" style="font-size: 0.775rem;">Sinkronisasi otomatis basis data SISMIOP dan sistem pertanahan nasional (ATR/BPN).</div>
-                  </div>
-                </div>
-                <div class="brand-feature-item">
-                  <div class="feature-icon-wrapper">
-                    <i class="bi bi-speedometer2"></i>
-                  </div>
-                  <div>
-                    <div class="fw-semibold text-white small">Verifikasi Berkas Real-Time</div>
-                    <div class="text-white-50" style="font-size: 0.775rem;">Pelacakan status verifikasi berkas SSPD BPHTB secara langsung oleh wajib pajak.</div>
-                  </div>
-                </div>
+
               </div>
             </div>
 

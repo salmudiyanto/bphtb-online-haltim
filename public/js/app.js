@@ -7753,31 +7753,7 @@ var render = function render() {
     _c = _vm._self._c;
   return _c("div", [_c("div", {
     staticClass: "w-full max-w-[1440px] mx-auto px-6 lg:px-10 py-8 flex flex-col gap-8"
-  }, [_c("div", {
-    staticClass: "flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200"
   }, [_vm._m(0), _vm._v(" "), _c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("div", {
-    staticClass: "flex items-center gap-2.5 bg-white border border-slate-200 px-3.5 py-2 rounded-lg shadow-sm"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[#4CAF50] text-[20px]"
-  }, [_vm._v("draft")]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col text-left"
-  }, [_c("span", {
-    staticClass: "text-[11px] text-slate-400 font-medium"
-  }, [_vm._v("Nomor Draft Sesi")]), _vm._v(" "), _c("span", {
-    staticClass: "font-mono text-xs font-semibold text-slate-800 tracking-wide"
-  }, [_vm._v(_vm._s(_vm.nomorDraftSesi))])])]), _vm._v(" "), _c("button", {
-    staticClass: "inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all duration-150 text-xs font-semibold shadow-sm",
-    attrs: {
-      type: "button"
-    },
-    on: {
-      click: _vm.panduanSingkat
-    }
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[18px] text-[#4CAF50]"
-  }, [_vm._v("help_outline")]), _vm._v(" "), _c("span", [_vm._v("Panduan Singkat")])])])]), _vm._v(" "), _c("div", {
     staticClass: "grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
   }, [_c("div", {
     staticClass: "lg:col-span-8 flex flex-col gap-8"
@@ -7810,19 +7786,7 @@ var render = function render() {
         _vm.$set(_vm.form, "nomorPelayanan", $event.target.value);
       }
     }
-  }), _vm._v(" "), _c("button", {
-    staticClass: "absolute right-2 px-2.5 py-1 rounded bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-1 transition-colors shadow-xs",
-    attrs: {
-      id: "btn-regenerate",
-      title: "Generate nomor acak baru",
-      type: "button"
-    },
-    on: {
-      click: _vm.refreshNomorPelayanan
-    }
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
-  }, [_vm._v("refresh")]), _vm._v(" "), _c("span", [_vm._v("Refresh")])])]), _vm._v(" "), _c("p", {
+  })]), _vm._v(" "), _c("p", {
     staticClass: "text-xs text-slate-400"
   }, [_vm._v("Format baku register: PLY-BPHTB/TAHUN/BULAN/URUT")])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5 md:col-span-2 lg:col-span-1"
@@ -7964,7 +7928,7 @@ var render = function render() {
     attrs: {
       "for": "tgl-selesai-est"
     }
-  }, [_vm._v("\r\nPerkiraan Selesai (SLA Standar 3 Hari)\r\n")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\r\nPerkiraan Selesai\r\n")]), _vm._v(" "), _c("div", {
     staticClass: "relative flex items-center"
   }, [_c("span", {
     staticClass: "material-symbols-outlined absolute left-3 text-slate-500 text-[18px]"
@@ -8011,7 +7975,6 @@ var render = function render() {
     staticClass: "w-full bg-white border border-slate-300 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all",
     attrs: {
       id: "nama-pemohon",
-      placeholder: "Contoh: Ir. Muhammad Rizky Kurniawan, M.Eng.",
       type: "text"
     },
     domProps: {
@@ -8097,7 +8060,7 @@ var render = function render() {
     staticClass: "material-symbols-outlined text-[14px]"
   }, [_vm._v("check_circle")]), _vm._v(" NOP Bebas Tunggakan PBB\r\n")]) : _c("p", {
     staticClass: "text-xs text-slate-400"
-  }, [_vm._v("Format 18 digit: 82.06.###.###.###.####.# (otomatis masking saat mengetik)")])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Format 18 digit: 82.06.###.###.###.####.#")])]), _vm._v(" "), _c("div", {
     staticClass: "md:col-span-5 flex flex-col gap-1.5"
   }, [_vm._m(11), _vm._v(" "), _c("div", {
     staticClass: "relative flex items-center"
@@ -8113,7 +8076,6 @@ var render = function render() {
     staticClass: "w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none font-medium",
     attrs: {
       id: "nama-subjek-pbb",
-      placeholder: "Diisi sesuai SPPT",
       type: "text"
     },
     domProps: {
@@ -8178,16 +8140,14 @@ var render = function render() {
         _vm.$set(_vm.form, "nomorKontak", $event.target.value);
       }
     }
-  })]), _vm._v(" "), _c("p", {
-    staticClass: "text-xs text-slate-400"
-  }, [_vm._v("Nomor aktif untuk notifikasi billing kode bayar")])]), _vm._v(" "), _c("div", {
+  })])]), _vm._v(" "), _c("div", {
     staticClass: "md:col-span-7 flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "text-xs font-semibold text-slate-700",
     attrs: {
       "for": "keterangan-riwayat"
     }
-  }, [_vm._v("\r\nKeterangan Tambahan / Catatan Peralihan Hak\r\n")]), _vm._v(" "), _c("input", {
+  }, [_vm._v("\r\nKeterangan Tambahan\r\n")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -8197,7 +8157,6 @@ var render = function render() {
     staticClass: "w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all",
     attrs: {
       id: "keterangan-riwayat",
-      placeholder: "Catatan transaksi, riwayat akta terdahulu, nomor sertifikat...",
       type: "text"
     },
     domProps: {
@@ -8209,9 +8168,7 @@ var render = function render() {
         _vm.$set(_vm.form, "keteranganTambahan", $event.target.value);
       }
     }
-  }), _vm._v(" "), _c("p", {
-    staticClass: "text-xs text-slate-400"
-  }, [_vm._v("Opsional: isi riwayat singkat alas hak sertifikat")])])])])]), _vm._v(" "), _c("div", {
+  })])])])]), _vm._v(" "), _c("div", {
     staticClass: "bg-white rounded-xl border border-slate-200 shadow-sm p-6 lg:p-7 flex flex-col gap-6"
   }, [_c("div", {
     staticClass: "flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-4"
@@ -8360,6 +8317,8 @@ var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
+    staticClass: "flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200"
+  }, [_c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("nav", {
     staticClass: "flex items-center gap-2 text-slate-500 text-xs"
@@ -8385,7 +8344,7 @@ var staticRenderFns = [function () {
     staticClass: "w-1.5 h-1.5 rounded-full bg-[#4CAF50]"
   }), _vm._v("\r\nMode Input Petugas\r\n")])]), _vm._v(" "), _c("p", {
     staticClass: "text-sm text-slate-600 max-w-3xl"
-  }, [_vm._v("\r\nPerekaman berkas dan pendataan permohonan baru Bea Perolehan Hak atas Tanah dan Bangunan (BPHTB) wilayah kerja BPKAD Kab. Haltim.\r\n")])]);
+  }, [_vm._v("\r\nPerekaman berkas dan pendataan permohonan baru Bea Perolehan Hak atas Tanah dan Bangunan (BPHTB) wilayah kerja BPKAD Kab. Haltim.\r\n")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -8403,9 +8362,7 @@ var staticRenderFns = [function () {
     staticClass: "text-base font-bold text-slate-900"
   }, [_vm._v("1. Nomor & Status Pelayanan")]), _vm._v(" "), _c("p", {
     staticClass: "text-xs text-slate-500"
-  }, [_vm._v("Penomoran berkas registrasi resmi loket pendaftaran BPKAD Kab. Haltim")])])]), _vm._v(" "), _c("span", {
-    staticClass: "px-2.5 py-1 rounded bg-slate-100 border border-slate-200 font-mono text-xs text-slate-600 font-medium"
-  }, [_vm._v("SYS-AUTO-ID")])]);
+  }, [_vm._v("Penomoran berkas registrasi resmi loket pendaftaran BPKAD Kab. Haltim")])])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -8525,7 +8482,7 @@ var staticRenderFns = [function () {
     attrs: {
       "for": "nama-subjek-pbb"
     }
-  }, [_vm._v("\r\nNama Wajib Pajak pada SPPT "), _c("span", {
+  }, [_vm._v("\r\nNama Wajib Pajak "), _c("span", {
     staticClass: "text-red-500"
   }, [_vm._v("*")])]);
 }, function () {
@@ -8583,21 +8540,17 @@ var staticRenderFns = [function () {
     staticClass: "material-symbols-outlined text-[#4CAF50] text-[22px] shrink-0"
   }, [_vm._v("info")]), _vm._v(" "), _c("p", {
     staticClass: "text-xs leading-relaxed"
-  }, [_vm._v("\r\nSemua berkas fisik diverifikasi saat serah terima di Loket Pelayanan BPHTB BPKAD Kab. Haltim. Pastikan cap basah Notaris/PPAT tercantum pada berkas permohonan.\r\n")])]);
+  }, [_vm._v("\r\nSemua berkas fisik diverifikasi saat serah terima di Loket Pelayanan BPHTB BPKAD Kab. Haltim.\r\n")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "flex items-center justify-between"
-  }, [_c("div", {
     staticClass: "flex items-center gap-2.5"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[#4CAF50] text-[22px]"
   }, [_vm._v("calculate")]), _vm._v(" "), _c("h3", {
     staticClass: "text-base font-bold text-slate-900"
-  }, [_vm._v("Simulasi Terutang")])]), _vm._v(" "), _c("span", {
-    staticClass: "font-mono text-xs bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded text-slate-700 font-semibold"
-  }, [_vm._v("Tarif 5%")])]);
+  }, [_vm._v("Simulasi Terutang")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -10782,33 +10735,7 @@ var staticRenderFns = [function () {
     staticClass: "fw-bold text-white mb-2"
   }, [_vm._v("Pelayanan Pajak Daerah Transparan & Cepat")]), _vm._v(" "), _c("p", {
     staticClass: "text-white-50 small mb-4"
-  }, [_vm._v("\n                Sistem Informasi Validasi & Pembayaran Bea Perolehan Hak atas Tanah dan Bangunan untuk mewujudkan tata kelola perpajakan daerah yang akuntabel dan modern.\n              ")]), _vm._v(" "), _c("div", {
-    staticClass: "brand-feature-item"
-  }, [_c("div", {
-    staticClass: "feature-icon-wrapper"
-  }, [_c("i", {
-    staticClass: "bi bi-patch-check-fill"
-  })]), _vm._v(" "), _c("div", [_c("div", {
-    staticClass: "fw-semibold text-white small"
-  }, [_vm._v("Validasi NOP Terkoneksi PBB")]), _vm._v(" "), _c("div", {
-    staticClass: "text-white-50",
-    staticStyle: {
-      "font-size": "0.775rem"
-    }
-  }, [_vm._v("Sinkronisasi otomatis basis data SISMIOP dan sistem pertanahan nasional (ATR/BPN).")])])]), _vm._v(" "), _c("div", {
-    staticClass: "brand-feature-item"
-  }, [_c("div", {
-    staticClass: "feature-icon-wrapper"
-  }, [_c("i", {
-    staticClass: "bi bi-speedometer2"
-  })]), _vm._v(" "), _c("div", [_c("div", {
-    staticClass: "fw-semibold text-white small"
-  }, [_vm._v("Verifikasi Berkas Real-Time")]), _vm._v(" "), _c("div", {
-    staticClass: "text-white-50",
-    staticStyle: {
-      "font-size": "0.775rem"
-    }
-  }, [_vm._v("Pelacakan status verifikasi berkas SSPD BPHTB secara langsung oleh wajib pajak.")])])])])])]);
+  }, [_vm._v("\n                Sistem Informasi Validasi & Pembayaran Bea Perolehan Hak atas Tanah dan Bangunan untuk mewujudkan tata kelola perpajakan daerah yang akuntabel dan modern.\n              ")])])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
