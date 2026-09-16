@@ -25,19 +25,7 @@ Mode Input Petugas
 Perekaman berkas dan pendataan permohonan baru Bea Perolehan Hak atas Tanah dan Bangunan (BPHTB) wilayah kerja BPKAD Kab. Haltim.
 </p>
 </div>
-<div class="flex items-center gap-3">
-<div class="flex items-center gap-2.5 bg-white border border-slate-200 px-3.5 py-2 rounded-lg shadow-sm">
-<span class="material-symbols-outlined text-[#4CAF50] text-[20px]">draft</span>
-<div class="flex flex-col text-left">
-<span class="text-[11px] text-slate-400 font-medium">Nomor Draft Sesi</span>
-<span class="font-mono text-xs font-semibold text-slate-800 tracking-wide">{{ nomorDraftSesi }}</span>
-</div>
-</div>
-<button @click="panduanSingkat" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all duration-150 text-xs font-semibold shadow-sm" type="button">
-<span class="material-symbols-outlined text-[18px] text-[#4CAF50]">help_outline</span>
-<span>Panduan Singkat</span>
-</button>
-</div>
+
 </div>
 <!-- Main Grid Layout -->
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -55,7 +43,7 @@ Perekaman berkas dan pendataan permohonan baru Bea Perolehan Hak atas Tanah dan 
 <p class="text-xs text-slate-500">Penomoran berkas registrasi resmi loket pendaftaran BPKAD Kab. Haltim</p>
 </div>
 </div>
-<span class="px-2.5 py-1 rounded bg-slate-100 border border-slate-200 font-mono text-xs text-slate-600 font-medium">SYS-AUTO-ID</span>
+
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 <!-- Nomor Pelayanan -->
@@ -66,10 +54,6 @@ Perekaman berkas dan pendataan permohonan baru Bea Perolehan Hak atas Tanah dan 
 </label>
 <div class="relative flex items-center">
 <input class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-mono text-sm px-3.5 py-2.5 rounded-lg outline-none cursor-not-allowed select-all" readonly="" type="text" v-model="form.nomorPelayanan"/>
-<button @click="refreshNomorPelayanan" class="absolute right-2 px-2.5 py-1 rounded bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-1 transition-colors shadow-xs" id="btn-regenerate" title="Generate nomor acak baru" type="button">
-<span class="material-symbols-outlined text-[16px] text-[#4CAF50]">refresh</span>
-<span>Refresh</span>
-</button>
 </div>
 <p class="text-xs text-slate-400">Format baku register: PLY-BPHTB/TAHUN/BULAN/URUT</p>
 </div>
@@ -126,7 +110,7 @@ Tanggal Penerimaan Berkas <span class="text-red-500">*</span>
 <!-- Tanggal Perkiraan Selesai -->
 <div class="flex flex-col gap-1.5">
 <label class="text-xs font-semibold text-slate-700" for="tgl-selesai-est">
-Perkiraan Selesai (SLA Standar 3 Hari)
+Perkiraan Selesai
 </label>
 <div class="relative flex items-center">
 <span class="material-symbols-outlined absolute left-3 text-slate-500 text-[18px]">timer</span>
@@ -158,7 +142,7 @@ Perkiraan Selesai (SLA Standar 3 Hari)
 </label>
 <div class="relative flex items-center">
 <span class="material-symbols-outlined absolute left-3 text-slate-400 text-[18px]">badge</span>
-<input class="w-full bg-white border border-slate-300 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="nama-pemohon" placeholder="Contoh: Ir. Muhammad Rizky Kurniawan, M.Eng." type="text" v-model="form.namaWajibPajak"/>
+<input class="w-full bg-white border border-slate-300 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="nama-pemohon" type="text" v-model="form.namaWajibPajak"/>
 </div>
 </div>
 <!-- Baris 2: Alamat Pemohon -->
@@ -192,16 +176,16 @@ Alamat Domisili Pemohon Sesuai KTP <span class="text-red-500">*</span>
 <p class="text-xs text-[#2e7d32] font-medium flex items-center gap-1" v-else-if="nopVerified &amp;&amp; !hasTunggakan">
 <span class="material-symbols-outlined text-[14px]">check_circle</span> NOP Bebas Tunggakan PBB
 </p>
-<p class="text-xs text-slate-400" v-else="">Format 18 digit: 82.06.###.###.###.####.# (otomatis masking saat mengetik)</p>
+<p class="text-xs text-slate-400" v-else="">Format 18 digit: 82.06.###.###.###.####.#</p>
 </div>
 <!-- Nama Subjek Pajak Terdaftar SPPT -->
 <div class="md:col-span-5 flex flex-col gap-1.5">
 <label class="text-xs font-semibold text-slate-700" for="nama-subjek-pbb">
-Nama Wajib Pajak pada SPPT <span class="text-red-500">*</span>
+Nama Wajib Pajak <span class="text-red-500">*</span>
 </label>
 <div class="relative flex items-center">
 <span class="material-symbols-outlined absolute left-3 text-slate-400 text-[18px]">account_box</span>
-<input class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none font-medium" id="nama-subjek-pbb" placeholder="Diisi sesuai SPPT" type="text" v-model="form.namaWpSppt"/>
+<input class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none font-medium" id="nama-subjek-pbb" type="text" v-model="form.namaWpSppt"/>
 </div>
 <p class="text-xs text-[#388e3c] font-medium flex items-center gap-1">
 <span class="material-symbols-outlined text-[14px]">check_circle</span> Sesuai database BPKAD Kab. Haltim
@@ -225,14 +209,12 @@ Nomor Kontak / WhatsApp Pemohon <span class="text-red-500">*</span>
 <span class="absolute left-3 font-mono text-sm font-semibold text-slate-400 select-none">+62</span>
 <input class="w-full bg-white border border-slate-300 text-slate-800 font-mono text-sm pl-12 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="no-hp-pemohon" placeholder="812xxxxxxxx" type="tel" v-model="form.nomorKontak"/>
 </div>
-<p class="text-xs text-slate-400">Nomor aktif untuk notifikasi billing kode bayar</p>
 </div>
 <div class="md:col-span-7 flex flex-col gap-1.5">
 <label class="text-xs font-semibold text-slate-700" for="keterangan-riwayat">
-Keterangan Tambahan / Catatan Peralihan Hak
+Keterangan Tambahan
 </label>
-<input class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="keterangan-riwayat" placeholder="Catatan transaksi, riwayat akta terdahulu, nomor sertifikat..." type="text" v-model="form.keteranganTambahan"/>
-<p class="text-xs text-slate-400">Opsional: isi riwayat singkat alas hak sertifikat</p>
+<input class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="keterangan-riwayat" type="text" v-model="form.keteranganTambahan"/>
 </div>
 </div>
 </div>
@@ -290,7 +272,7 @@ Pilih Jenis Transaksi / Pelayanan di atas untuk menampilkan daftar persyaratan b
 <div class="flex items-center gap-3 p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-600">
 <span class="material-symbols-outlined text-[#4CAF50] text-[22px] shrink-0">info</span>
 <p class="text-xs leading-relaxed">
-Semua berkas fisik diverifikasi saat serah terima di Loket Pelayanan BPHTB BPKAD Kab. Haltim. Pastikan cap basah Notaris/PPAT tercantum pada berkas permohonan.
+Semua berkas fisik diverifikasi saat serah terima di Loket Pelayanan BPHTB BPKAD Kab. Haltim.
 </p>
 </div>
 </div>
@@ -301,12 +283,9 @@ Semua berkas fisik diverifikasi saat serah terima di Loket Pelayanan BPHTB BPKAD
 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
 <div class="h-1.5 w-full bg-[#4CAF50]"></div>
 <div class="p-6 flex flex-col gap-4">
-<div class="flex items-center justify-between">
 <div class="flex items-center gap-2.5">
 <span class="material-symbols-outlined text-[#4CAF50] text-[22px]">calculate</span>
 <h3 class="text-base font-bold text-slate-900">Simulasi Terutang</h3>
-</div>
-<span class="font-mono text-xs bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded text-slate-700 font-semibold">Tarif 5%</span>
 </div>
 <p class="text-xs text-slate-500">
 Kalkulasi otomatis berdasarkan estimasi nilai transaksi dan NJOP sistem PBB.
