@@ -10782,33 +10782,7 @@ var staticRenderFns = [function () {
     staticClass: "fw-bold text-white mb-2"
   }, [_vm._v("Pelayanan Pajak Daerah Transparan & Cepat")]), _vm._v(" "), _c("p", {
     staticClass: "text-white-50 small mb-4"
-  }, [_vm._v("\n                Sistem Informasi Validasi & Pembayaran Bea Perolehan Hak atas Tanah dan Bangunan untuk mewujudkan tata kelola perpajakan daerah yang akuntabel dan modern.\n              ")]), _vm._v(" "), _c("div", {
-    staticClass: "brand-feature-item"
-  }, [_c("div", {
-    staticClass: "feature-icon-wrapper"
-  }, [_c("i", {
-    staticClass: "bi bi-patch-check-fill"
-  })]), _vm._v(" "), _c("div", [_c("div", {
-    staticClass: "fw-semibold text-white small"
-  }, [_vm._v("Validasi NOP Terkoneksi PBB")]), _vm._v(" "), _c("div", {
-    staticClass: "text-white-50",
-    staticStyle: {
-      "font-size": "0.775rem"
-    }
-  }, [_vm._v("Sinkronisasi otomatis basis data SISMIOP dan sistem pertanahan nasional (ATR/BPN).")])])]), _vm._v(" "), _c("div", {
-    staticClass: "brand-feature-item"
-  }, [_c("div", {
-    staticClass: "feature-icon-wrapper"
-  }, [_c("i", {
-    staticClass: "bi bi-speedometer2"
-  })]), _vm._v(" "), _c("div", [_c("div", {
-    staticClass: "fw-semibold text-white small"
-  }, [_vm._v("Verifikasi Berkas Real-Time")]), _vm._v(" "), _c("div", {
-    staticClass: "text-white-50",
-    staticStyle: {
-      "font-size": "0.775rem"
-    }
-  }, [_vm._v("Pelacakan status verifikasi berkas SSPD BPHTB secara langsung oleh wajib pajak.")])])])])])]);
+  }, [_vm._v("\n                Sistem Informasi Validasi & Pembayaran Bea Perolehan Hak atas Tanah dan Bangunan untuk mewujudkan tata kelola perpajakan daerah yang akuntabel dan modern.\n              ")])])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
