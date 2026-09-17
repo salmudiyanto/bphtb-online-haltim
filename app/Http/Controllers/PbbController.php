@@ -82,6 +82,10 @@ class PbbController extends Controller
                                isnull(dat_objek_pajak.blok_kav_no_op, '') as blok_op,   
                                dat_objek_pajak.rw_op,   
                                dat_objek_pajak.rt_op,   
+                               dat_objek_pajak.total_luas_bumi,
+                               dat_objek_pajak.njop_bumi,
+                               dat_objek_pajak.total_luas_bng,
+                               dat_objek_pajak.njop_bng,
                                rf_kecamatan.kec_nama,   
                                rf_keldesa.keld_nama  
                         FROM dat_objek_pajak,   
@@ -133,9 +137,25 @@ class PbbController extends Controller
                             $addressParts[] = 'KEC. ' . trim($row->kec_nama);
                         }
 
+                        $luasBumi = (float) ($row->total_luas_bumi ?? 0);
+                        $njopBumi = (float) ($row->njop_bumi ?? 0);
+                        $luasBng = (float) ($row->total_luas_bng ?? 0);
+                        $njopBng = (float) ($row->njop_bng ?? 0);
+
+                        $totalNjopBumi = $njopBumi;
+                        $totalNjopBng = $njopBng;
+                        $totalNjopPbb = $totalNjopBumi + $totalNjopBng;
+
                         $dataOp = [
                             'nama_wp_sppt' => $namaWp,
-                            'alamat_objek_pajak' => implode(', ', $addressParts)
+                            'alamat_objek_pajak' => implode(', ', $addressParts),
+                            'luas_bumi' => $luasBumi,
+                            'njop_bumi' => $njopBumi,
+                            'luas_bng' => $luasBng,
+                            'njop_bng' => $njopBng,
+                            'total_njop_bumi' => $totalNjopBumi,
+                            'total_njop_bng' => $totalNjopBng,
+                            'total_njop_pbb' => $totalNjopPbb
                         ];
                     }
                 } catch (\Exception $exOp) {

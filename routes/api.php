@@ -48,6 +48,7 @@ Route::prefix('v1')->group(function () {
     // Referensi & Transaksi Routes
     Route::get('/referensi/jenis-transaksi', 'ReferensiController@getJenisTransaksi');
     Route::get('/referensi/persyaratan/{kode_transaksi}', 'ReferensiController@getPersyaratan');
+    Route::get('/referensi/tarif-bphtb', 'ReferensiController@getTarifBphtb');
     Route::get('/pendaftaran/generate-no-surat', 'PendaftaranController@generateNoSurat');
     Route::post('/pbb/cek-tunggakan', 'PbbController@cekTunggakan');
 

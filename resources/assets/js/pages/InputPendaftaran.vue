@@ -283,54 +283,171 @@ Semua berkas fisik diverifikasi saat serah terima di Loket Pelayanan BPHTB BPKAD
 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
 <div class="h-1.5 w-full bg-[#4CAF50]"></div>
 <div class="p-6 flex flex-col gap-4">
+<div class="flex items-center justify-between">
 <div class="flex items-center gap-2.5">
 <span class="material-symbols-outlined text-[#4CAF50] text-[22px]">calculate</span>
 <h3 class="text-base font-bold text-slate-900">Simulasi Terutang</h3>
 </div>
+<span class="px-2.5 py-0.5 rounded-full bg-[#edf7ee] text-[#2e7d32] border border-[#c8e6c9] text-[11px] font-semibold" v-if="nopVerified &amp;&amp; !hasTunggakan">
+Terbaca
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 text-[11px] font-medium" v-else="">
+Belum Input NOP
+</span>
+</div>
 <p class="text-xs text-slate-500">
-Kalkulasi otomatis berdasarkan estimasi nilai transaksi dan NJOP sistem PBB.
+Kalkulasi otomatis berdasarkan data NOP PBB-P2 dan Nilai Pasar yang diinput.
 </p>
-<div class="flex flex-col gap-2 pt-2">
-<!-- NPOP -->
+
+<div class="flex flex-col gap-2 pt-1">
+<!-- Rincian Objek Pajak (Tanah & Bangunan) -->
+<div class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex flex-col gap-2">
+<span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-[#4CAF50]">landscape</span>
+Rincian NJOP PBB Objek Pajak
+</span>
+<!-- Tanah -->
+<div class="flex items-center justify-between text-xs pt-1 border-t border-slate-200/80">
+<div class="flex flex-col">
+<span class="font-medium text-slate-700">Bumi / Tanah</span>
+<span class="text-[11px] text-slate-400">Luas: {{ formatRupiah(simulasi.luasBumi) }} m² × Rp {{ formatRupiah(simulasi.njopBumi) }}</span>
+</div>
+<span class="font-mono text-xs font-semibold text-slate-800">Rp {{ formatRupiah(simulasi.totalNjopBumi) }}</span>
+</div>
+<!-- Bangunan -->
+<div class="flex items-center justify-between text-xs pt-1 border-t border-slate-200/80">
+<div class="flex flex-col">
+<span class="font-medium text-slate-700">Bangunan</span>
+<span class="text-[11px] text-slate-400">Luas: {{ formatRupiah(simulasi.luasBng) }} m² × Rp {{ formatRupiah(simulasi.njopBng) }}</span>
+</div>
+<span class="font-mono text-xs font-semibold text-slate-800">Rp {{ formatRupiah(simulasi.totalNjopBng) }}</span>
+</div>
+<!-- Total NJOP PBB -->
+<div class="flex items-center justify-between text-xs pt-1.5 border-t border-slate-300 font-bold">
+<span class="text-slate-900">Total NJOP PBB</span>
+<span class="font-mono text-slate-900">Rp {{ formatRupiah(simulasi.totalNjopPbb) }}</span>
+</div>
+</div>
+
+<!-- Form Input Nilai Pasar / Harga Transaksi -->
+<div class="flex flex-col gap-1.5 p-3 rounded-lg bg-emerald-50/60 border border-emerald-200">
+<label class="text-xs font-bold text-slate-800 flex items-center justify-between" for="input-nilai-pasar-sidebar">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-[#4CAF50]">payments</span>
+Nilai Pasar / Transaksi
+</span>
+<span class="text-[10px] text-emerald-700 font-semibold uppercase">Input Simulasi</span>
+</label>
+<div class="relative flex items-center">
+<span class="absolute left-3 font-mono text-xs font-bold text-slate-400 select-none">Rp</span>
+<input @input="onNilaiPasarInput" class="w-full bg-white border border-slate-300 text-slate-800 font-mono text-sm pl-9 pr-3 py-1.5 rounded-md outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all font-bold" id="input-nilai-pasar-sidebar" placeholder="0" type="text" v-model="formattedNilaiPasar"/>
+</div>
+<p class="text-[11px] text-slate-500">Nilai pasar akta / risalah lelang (opsional / pembanding)</p>
+</div>
+
+<!-- Nilai Transaksi (NPOP) -->
 <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
 <div class="flex flex-col">
-<span class="text-xs font-semibold text-slate-800">Nilai Transaksi (NPOP)</span>
-<span class="text-[11px] text-slate-400">Harga Akta Pasar</span>
+<span class="text-xs font-semibold text-slate-800">Nilai Perolehan (NPOP)</span>
+<span class="text-[11px] text-slate-400">MAX (NJOP PBB, Nilai Pasar)</span>
 </div>
-<span class="font-mono text-sm font-semibold text-slate-900">Rp {{ formatRupiah(simulasi.npop) }}</span>
+<span class="font-mono text-sm font-bold text-slate-900">Rp {{ formatRupiah(npop) }}</span>
 </div>
-<!-- NJOP Total PBB -->
-<div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50/70 border border-slate-200">
-<div class="flex flex-col">
-<span class="text-xs font-semibold text-slate-800">Total NJOP PBB</span>
-<span class="text-[11px] text-slate-400">Luas Bumi &amp; Bangunan</span>
+
+<!-- Status Pemotongan NIK Switch Tab -->
+<div class="flex flex-col gap-1.5 p-2 bg-slate-100 rounded-lg">
+<span class="text-[11px] font-bold text-slate-700 px-1">Status Pemotongan NIK Pemohon:</span>
+<div class="grid grid-cols-2 gap-1 text-xs font-semibold">
+<button :class="statusPemotonganNIK === 'belum' ? 'bg-white text-[#2e7d32] shadow-xs font-bold border border-slate-200' : 'text-slate-500 hover:text-slate-800'" @click="statusPemotonganNIK = 'belum'" class="py-1.5 px-2 rounded-md transition-all text-center text-[11px]" type="button">
+Tidak Pernah
+</button>
+<button :class="statusPemotonganNIK === 'sudah' ? 'bg-white text-rose-700 shadow-xs font-bold border border-slate-200' : 'text-slate-500 hover:text-slate-800'" @click="statusPemotonganNIK = 'sudah'" class="py-1.5 px-2 rounded-md transition-all text-center text-[11px]" type="button">
+Sudah Pernah
+</button>
 </div>
-<span class="font-mono text-sm text-slate-600">Rp {{ formatRupiah(simulasi.njopTotal) }}</span>
 </div>
-<!-- NPOPTKP -->
+
+<!-- NPOPTKP Daerah -->
 <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
 <div class="flex flex-col">
 <span class="text-xs font-semibold text-amber-700">NPOPTKP Daerah</span>
-<span class="text-[11px] text-slate-400">Pengurang Standar Transaksi</span>
+<span class="text-[11px] text-slate-400">{{ activeNpoptkpLabel }}</span>
 </div>
-<span class="font-mono text-sm font-semibold text-amber-700">- Rp {{ formatRupiah(npoptkpDaerah) }}</span>
+<span class="font-mono text-sm font-semibold text-amber-700">- Rp {{ formatRupiah(activeNpoptkp) }}</span>
 </div>
+
 <!-- NPOPKP -->
 <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50/70 border border-slate-200">
 <div class="flex flex-col">
-<span class="text-xs font-semibold text-slate-800">NPOP Kena Pajak</span>
-<span class="text-[11px] text-slate-400">(NPOP - NPOPTKP)</span>
+<span class="text-xs font-semibold text-slate-800">NPOP Kena Pajak (NPOPKP)</span>
+<span class="text-[11px] text-slate-400">NPOP - NPOPTKP</span>
 </div>
-<span class="font-mono text-sm font-bold text-slate-900">Rp {{ formatRupiah(npopKenaPajak) }}</span>
+<span class="font-mono text-sm font-bold text-slate-900">Rp {{ formatRupiah(activeNpopKenaPajak) }}</span>
 </div>
-<div class="h-[1px] bg-slate-200 my-1"></div>
-<!-- Total BPHTB Terutang Highlight Box -->
-<div class="p-4 rounded-xl bg-[#4CAF50] text-white flex flex-col gap-1 shadow-sm">
-<span class="text-xs text-white/90 tracking-wide uppercase font-semibold">BPHTB Terutang (5% x NPOPKP)</span>
-<span class="text-2xl font-bold font-mono tracking-tight text-white">Rp {{ formatRupiah(bphtbTerutang) }}</span>
-<span class="text-xs text-white/90 mt-1 flex items-center gap-1.5">
-<span class="material-symbols-outlined text-[16px]">verified</span> Nilai penetapan sementara
+
+<div class="h-[1px] bg-slate-200 my-0.5"></div>
+
+<!-- BPHTB Terutang -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-slate-100 border border-slate-300">
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-900">BPHTB Terutang</span>
+<span class="text-[11px] text-slate-500">Tarif {{ (tarifBphtb.persen * 100).toFixed(0) }}% × NPOPKP</span>
+</div>
+<span class="font-mono text-base font-bold text-[#2e7d32]">Rp {{ formatRupiah(activeBphtbTerutang) }}</span>
+</div>
+
+<!-- BPHTB Yang Harus Dibayar -->
+<div :class="statusPemotonganNIK === 'sudah' ? 'bg-amber-800' : 'bg-[#2e7d32]'" class="flex items-center justify-between p-3.5 rounded-xl text-white shadow-sm transition-colors">
+<div class="flex flex-col">
+<span class="text-xs text-white/90 font-semibold tracking-wide uppercase">BPHTB Harus Dibayar</span>
+<span class="text-[11px] text-white/80">{{ activeStatusText }}</span>
+</div>
+<span class="font-mono text-xl font-bold tracking-tight text-white">Rp {{ formatRupiah(activeBphtbHarusDibayar) }}</span>
+</div>
+
+<!-- Perbandingan 2 Skenario (Belum Pernah vs Sudah Pernah Pemotongan) -->
+<div class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex flex-col gap-2 mt-1">
+<span class="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-slate-500">compare_arrows</span>
+Perbandingan 2 Skenario NIK:
 </span>
+<div class="grid grid-cols-2 gap-2 text-[11px]">
+<!-- Skenario 1: Tidak Pernah Pemotongan -->
+<div class="p-2 rounded bg-white border border-slate-200 flex flex-col gap-1">
+<span class="font-semibold text-[#2e7d32]">1. Tidak Pernah</span>
+<span class="text-[10px] text-slate-400">NPOPTKP Rp {{ formatRupiah(npoptkpDaerah) }}</span>
+<div class="flex justify-between text-[10px] text-slate-600 pt-1 border-t border-slate-100">
+<span>NPOPKP:</span>
+<span class="font-mono">Rp {{ formatRupiah(npopKenaPajak) }}</span>
+</div>
+<div class="flex justify-between text-[10px] text-slate-600">
+<span>Terutang:</span>
+<span class="font-mono">Rp {{ formatRupiah(bphtbTerutang) }}</span>
+</div>
+<div class="flex justify-between text-[11px] font-bold text-[#2e7d32] pt-1 border-t border-slate-200">
+<span>Harus Dibayar:</span>
+<span class="font-mono">Rp {{ formatRupiah(bphtbHarusDibayar) }}</span>
+</div>
+</div>
+
+<!-- Skenario 2: Sudah Pernah Pemotongan -->
+<div class="p-2 rounded bg-white border border-slate-200 flex flex-col gap-1">
+<span class="font-semibold text-rose-700">2. Sudah Pernah</span>
+<span class="text-[10px] text-slate-400">NPOPTKP Rp 0</span>
+<div class="flex justify-between text-[10px] text-slate-600 pt-1 border-t border-slate-100">
+<span>NPOPKP:</span>
+<span class="font-mono">Rp {{ formatRupiah(npopKenaPajakPernah) }}</span>
+</div>
+<div class="flex justify-between text-[10px] text-slate-600">
+<span>Terutang:</span>
+<span class="font-mono">Rp {{ formatRupiah(bphtbTerutangPernah) }}</span>
+</div>
+<div class="flex justify-between text-[11px] font-bold text-rose-700 pt-1 border-t border-slate-200">
+<span>Harus Dibayar:</span>
+<span class="font-mono">Rp {{ formatRupiah(bphtbHarusDibayarPernah) }}</span>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -395,6 +512,7 @@ export default {
       jenisTransaksiList: [],
       listPersyaratan: [],
       dokumenChecked: {},
+      formattedNilaiPasar: '0',
       form: {
         nomorPelayanan: '',
         jenisTransaksi: '',
@@ -407,13 +525,25 @@ export default {
         nop: '',
         namaWpSppt: '',
         alamatObjekPajak: '',
+        nilaiPasar: 0,
         nomorKontak: '',
         keteranganTambahan: ''
       },
       simulasi: {
-        npop: 450000000,
-        njopTotal: 315000000
+        luasBumi: 0,
+        njopBumi: 0,
+        totalNjopBumi: 0,
+        luasBng: 0,
+        njopBng: 0,
+        totalNjopBng: 0,
+        totalNjopPbb: 0
       },
+      tarifBphtb: {
+        persen: 0.05,
+        rek_minim1: 80000000,
+        rek_minim2: 300000000
+      },
+      statusPemotonganNIK: 'belum', // 'belum' | 'sudah'
       isGeneratingNoSurat: false,
       isCheckingTunggakan: false,
       nopVerified: false,
@@ -425,17 +555,56 @@ export default {
   },
   computed: {
     npoptkpDaerah() {
-      if (this.form.jenisTransaksi === '04' || this.form.jenisTransaksi === '05') {
-        return 300000000;
+      // Tarif Khusus (Waris: '02', Hibah: '03', Hibah Wasiat: '04')
+      if (['02', '03', '04'].includes(this.form.jenisTransaksi)) {
+        return this.tarifBphtb.rek_minim2 || 300000000;
       }
-      return 60000000;
+      return this.tarifBphtb.rek_minim1 || 80000000;
     },
+    npop() {
+      const totalNjop = this.simulasi.totalNjopPbb || 0;
+      const pasar = parseFloat(this.form.nilaiPasar) || 0;
+      return Math.max(totalNjop, pasar);
+    },
+    // Skenario 1: Tidak Pernah Kena Pemotongan (Fasilitas NPOPTKP Utuh)
     npopKenaPajak() {
-      const p = this.simulasi.npop - this.npoptkpDaerah;
+      const p = this.npop - this.npoptkpDaerah;
       return p > 0 ? p : 0;
     },
     bphtbTerutang() {
-      return this.npopKenaPajak * 0.05;
+      return Math.round(this.npopKenaPajak * (this.tarifBphtb.persen || 0.05));
+    },
+    bphtbHarusDibayar() {
+      return this.bphtbTerutang;
+    },
+    // Skenario 2: Sudah Pernah Kena Pemotongan (NPOPTKP = 0)
+    npopKenaPajakPernah() {
+      return this.npop;
+    },
+    bphtbTerutangPernah() {
+      return Math.round(this.npopKenaPajakPernah * (this.tarifBphtb.persen || 0.05));
+    },
+    bphtbHarusDibayarPernah() {
+      return this.bphtbTerutangPernah;
+    },
+    // Active computed based on toggle status
+    activeNpoptkp() {
+      return this.statusPemotonganNIK === 'sudah' ? 0 : this.npoptkpDaerah;
+    },
+    activeNpoptkpLabel() {
+      return this.statusPemotonganNIK === 'sudah' ? 'Sudah Pernah Pemotongan (NPOPTKP Rp 0)' : 'Tidak Pernah Pemotongan';
+    },
+    activeNpopKenaPajak() {
+      return this.statusPemotonganNIK === 'sudah' ? this.npopKenaPajakPernah : this.npopKenaPajak;
+    },
+    activeBphtbTerutang() {
+      return this.statusPemotonganNIK === 'sudah' ? this.bphtbTerutangPernah : this.bphtbTerutang;
+    },
+    activeBphtbHarusDibayar() {
+      return this.statusPemotonganNIK === 'sudah' ? this.bphtbHarusDibayarPernah : this.bphtbHarusDibayar;
+    },
+    activeStatusText() {
+      return this.statusPemotonganNIK === 'sudah' ? 'Skenario: Sudah Pernah Pemotongan (Tanpa NPOPTKP)' : 'Skenario: Tidak Pernah Pemotongan (Fasilitas NPOPTKP)';
     },
     jumlahDokumenTercentang() {
       let count = 0;
@@ -490,12 +659,13 @@ export default {
     d.setDate(d.getDate() + 3);
     this.form.perkiraanSelesai = d.toISOString().split('T')[0];
 
-    // Load Jenis Transaksi dari API
+    // Load Jenis Transaksi & Tarif BPHTB dari API
     this.fetchJenisTransaksi();
+    this.fetchTarifBphtb();
   },
   methods: {
     formatRupiah(value) {
-      return new Intl.NumberFormat('id-ID').format(value);
+      return new Intl.NumberFormat('id-ID').format(value || 0);
     },
     /**
      * Centralized Error Handler for API responses using SweetAlert2.
@@ -524,6 +694,39 @@ export default {
         confirmButtonColor: '#4CAF50',
         confirmButtonText: 'Tutup'
       });
+    },
+
+    fetchTarifBphtb() {
+      axios.get('/api/v1/referensi/tarif-bphtb')
+        .then(res => {
+          if (res.data && res.data.status === 'success' && res.data.data) {
+            this.tarifBphtb = res.data.data;
+          }
+        })
+        .catch(() => {
+          // Fallback silent ke default initial value
+        });
+    },
+
+    onNilaiPasarInput(e) {
+      let val = e.target.value.replace(/[^0-9]/g, '');
+      if (!val) {
+        this.form.nilaiPasar = 0;
+        this.formattedNilaiPasar = '0';
+        return;
+      }
+      this.form.nilaiPasar = parseInt(val, 10);
+      this.formattedNilaiPasar = this.formatRupiah(this.form.nilaiPasar);
+    },
+
+    resetSimulasi() {
+      this.simulasi.luasBumi = 0;
+      this.simulasi.njopBumi = 0;
+      this.simulasi.totalNjopBumi = 0;
+      this.simulasi.luasBng = 0;
+      this.simulasi.njopBng = 0;
+      this.simulasi.totalNjopBng = 0;
+      this.simulasi.totalNjopPbb = 0;
     },
 
     fetchJenisTransaksi() {
@@ -609,12 +812,14 @@ export default {
       this.nopVerified = false;
       this.hasTunggakan = false;
       this.tunggakanMsg = '';
+      this.resetSimulasi();
     },
 
     cekTunggakanPbb() {
       const cleanDigits = (this.form.nop || '').replace(/[^0-9]/g, '');
       if (cleanDigits.length < 18) {
         this.nopVerified = false;
+        this.resetSimulasi();
         return;
       }
 
@@ -633,6 +838,7 @@ export default {
           this.tunggakanMsg = res.data.message;
 
           if (this.hasTunggakan) {
+            this.resetSimulasi();
             Swal.fire({
               icon: 'warning',
               title: 'Peringatan Tunggakan PBB-P2',
@@ -641,7 +847,7 @@ export default {
               confirmButtonText: 'Tutup'
             });
           } else {
-            // Otomatis isi Nama WP SPPT & Alamat Objek Pajak dari data_op jika ditemukan
+            // Otomatis isi Nama WP SPPT, Alamat Objek Pajak, & Data Simulasi Terutang dari data_op
             if (res.data.data_op) {
               if (res.data.data_op.nama_wp_sppt) {
                 this.form.namaWpSppt = res.data.data_op.nama_wp_sppt;
@@ -649,22 +855,31 @@ export default {
               if (res.data.data_op.alamat_objek_pajak) {
                 this.form.alamatObjekPajak = res.data.data_op.alamat_objek_pajak;
               }
+              this.simulasi.luasBumi = res.data.data_op.luas_bumi || 0;
+              this.simulasi.njopBumi = res.data.data_op.njop_bumi || 0;
+              this.simulasi.totalNjopBumi = res.data.data_op.total_njop_bumi || 0;
+              this.simulasi.luasBng = res.data.data_op.luas_bng || 0;
+              this.simulasi.njopBng = res.data.data_op.njop_bng || 0;
+              this.simulasi.totalNjopBng = res.data.data_op.total_njop_bng || 0;
+              this.simulasi.totalNjopPbb = res.data.data_op.total_njop_pbb || 0;
             }
 
             Swal.fire({
               icon: 'success',
               title: 'NOP Bebas Tunggakan',
-              text: 'Data Wajib Pajak pada SPPT & Alamat Lokasi Objek Pajak berhasil dimuat otomatis.',
+              text: 'Data Wajib Pajak, Alamat, dan Detail Simulasi Terutang PBB berhasil dimuat otomatis.',
               timer: 2200,
               showConfirmButton: false
             });
           }
         } else {
+          this.resetSimulasi();
           this.showApiError(res.data ? res.data.message : 'Gagal mengecek tunggakan PBB', 'Error Pengecekan PBB');
         }
       })
       .catch(err => {
         this.isCheckingTunggakan = false;
+        this.resetSimulasi();
         this.showApiError(err, 'Error Pengecekan PBB');
       });
     },
@@ -672,16 +887,6 @@ export default {
     refreshNomorPelayanan() {
       const rand = Math.floor(Math.random() * 9000) + 1000;
       this.form.nomorPelayanan = 'PLY-BPHTB/2026/09/' + rand;
-    },
-
-    panduanSingkat() {
-      Swal.fire({
-        icon: 'info',
-        title: 'Panduan Singkat Pendaftaran BPHTB',
-        html: '<div class="text-left text-sm"><p>1. Isikan semua field form bertanda bintang merah (*).</p><p>2. Pilih Jenis Transaksi untuk memuat nomor permohonan & persyaratan.</p><p>3. Input NOP 18-digit untuk cek tunggakan otomatis (On Blur).</p><p>4. Centang seluruh berkas fisik sebelum menekan tombol simpan.</p></div>',
-        confirmButtonColor: '#4CAF50',
-        confirmButtonText: 'Saya Mengerti'
-      });
     },
 
     batalForm() {
