@@ -53,6 +53,12 @@ Route::prefix('v1')->group(function () {
     Route::post('/pendaftaran/simpan', 'PendaftaranController@simpanPendaftaran');
     Route::post('/pbb/cek-tunggakan', 'PbbController@cekTunggakan');
 
+    // Persyaratan Routes
+    Route::get('/persyaratan/detail', 'PersyaratanController@getDetailPendaftaran');
+    Route::post('/persyaratan/upload', 'PersyaratanController@uploadBerkas');
+    Route::get('/persyaratan/file', 'PersyaratanController@getFile');
+    Route::post('/persyaratan/delete', 'PersyaratanController@deleteBerkas');
+
     // Protected Routes (JWT Auth)
     Route::middleware('auth:api')->group(function () {
         Route::get('/me', 'Auth\AuthController@me');
