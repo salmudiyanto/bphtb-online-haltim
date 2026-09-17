@@ -5540,7 +5540,8 @@ __webpack_require__.r(__webpack_exports__);
       hasTunggakan: false,
       tunggakanMsg: '',
       isSaving: false,
-      isSaved: false
+      isSaved: false,
+      showConfirmModal: false
     };
   },
   computed: {
@@ -5617,9 +5618,20 @@ __webpack_require__.r(__webpack_exports__);
       }
       return 'flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg font-semibold text-xs shadow-sm';
     },
+    isJenisTanpaBerkas: function isJenisTanpaBerkas() {
+      // Kode jenis transaksi yang tidak memerlukan berkas lampiran
+      return ['02', '06', '07', '09', '10', '11', '12', '13', '14', '16', '17'].includes(this.form.jenisTransaksi);
+    },
+    isFormMandatoryComplete: function isFormMandatoryComplete() {
+      var f = this.form;
+      return !!(f.jenisTransaksi && f.noSuratPengantar && f.tanggalSurat && f.tanggalPenerimaan && f.namaWajibPajak && f.namaWajibPajak.trim() !== '' && f.alamatPemohon && f.alamatPemohon.trim() !== '' && f.nop && f.nop.trim() !== '' && f.namaWpSppt && f.namaWpSppt.trim() !== '' && f.alamatObjekPajak && f.alamatObjekPajak.trim() !== '' && f.nomorKontak && f.nomorKontak.trim() !== '' && f.keteranganTambahan && f.keteranganTambahan.trim() !== '');
+    },
     isSubmitDisabled: function isSubmitDisabled() {
       if (this.isSaving || this.hasTunggakan) return true;
-      if (this.totalDokumenSyarat > 0 && this.jumlahDokumenTercentang < this.totalDokumenSyarat) {
+      // Data Wajib Pajak, Data Objek Pajak, & Keterangan belum diisi lengkap
+      if (!this.isFormMandatoryComplete) return true;
+      // Jika jenis transaksi mewajibkan berkas, minimal 1 berkas harus dicentang
+      if (!this.isJenisTanpaBerkas && this.jumlahDokumenTercentang < 1) {
         return true;
       }
       return false;
@@ -5645,7 +5657,6 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
-    this.refreshNomorPelayanan();
     var d = new Date(this.form.tanggalPenerimaan);
     d.setDate(d.getDate() + 3);
     this.form.perkiraanSelesai = d.toISOString().split('T')[0];
@@ -5887,30 +5898,57 @@ __webpack_require__.r(__webpack_exports__);
         });
         return;
       }
-      if (this.totalDokumenSyarat > 0 && this.jumlahDokumenTercentang < this.totalDokumenSyarat) {
+
+      // Jika jenis transaksi memerlukan berkas dan masih ada berkas yang belum dicentang
+      if (!this.isJenisTanpaBerkas && this.totalDokumenSyarat > 0 && this.jumlahDokumenTercentang < this.totalDokumenSyarat) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
           icon: 'warning',
-          title: 'Persyaratan Belum Lengkap',
-          text: 'Mohon lengkapi seluruh checklist dokumen fisik sebelum mendaftarkan berkas!',
-          confirmButtonColor: '#f59e0b',
-          confirmButtonText: 'Lengkapi Sekarang'
+          title: 'Pemberitahuan Berkas Belum Dilampirkan',
+          text: "Anda baru melampirkan ".concat(this.jumlahDokumenTercentang, " dari ").concat(this.totalDokumenSyarat, " berkas persyaratan. Apakah Anda ingin tetap melanjutkan?"),
+          showCancelButton: true,
+          confirmButtonColor: '#4CAF50',
+          cancelButtonColor: '#94a3b8',
+          confirmButtonText: 'Ya, Lanjutkan Konfirmasi',
+          cancelButtonText: 'Lengkapi Berkas'
+        }).then(function (result) {
+          if (result.isConfirmed) {
+            _this7.showConfirmModal = true;
+          }
         });
-        return;
+      } else {
+        // Berkas sudah lengkap / Jenis transaksi tanpa berkas
+        this.showConfirmModal = true;
       }
+    },
+    submitData: function submitData() {
+      var _this8 = this;
+      this.showConfirmModal = false;
       this.isSaving = true;
-      setTimeout(function () {
-        _this7.isSaving = false;
-        _this7.isSaved = true;
-        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
-          icon: 'success',
-          title: 'Pendaftaran Berhasil!',
-          text: 'Data pendaftaran berhasil disimpan! Anda akan diarahkan ke halaman unggah persyaratan digital.',
-          timer: 2000,
-          showConfirmButton: false
-        }).then(function () {
-          _this7.$router.push('/upload-persyaratan');
-        });
-      }, 1200);
+      var payload = {
+        form: this.form,
+        dokumenChecked: this.dokumenChecked
+      };
+      axios.post('/api/v1/pendaftaran/simpan', payload).then(function (res) {
+        _this8.isSaving = false;
+        if (res.data && res.data.status === 'success') {
+          _this8.isSaved = true;
+          _this8.form.nomorPelayanan = res.data.no_pelayanan;
+          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+            icon: 'success',
+            title: 'Pendaftaran Berhasil!',
+            text: 'Data pendaftaran berhasil disimpan! Anda akan diarahkan ke halaman unggah persyaratan digital.',
+            timer: 2000,
+            showConfirmButton: false
+          }).then(function () {
+            _this8.$router.push('/upload-persyaratan');
+          });
+        } else {
+          _this8.showApiError(res.data ? res.data.message : 'Gagal menyimpan pendaftaran', 'Pendaftaran Gagal');
+        }
+      })["catch"](function (err) {
+        _this8.isSaving = false;
+        _this8.showApiError(err, 'Pendaftaran Gagal');
+      });
     }
   }
 });
@@ -7858,7 +7896,7 @@ var render = function render() {
       value: _vm.form.nomorPelayanan,
       expression: "form.nomorPelayanan"
     }],
-    staticClass: "w-full bg-slate-50 border border-slate-200 text-slate-800 font-mono text-sm px-3.5 py-2.5 rounded-lg outline-none cursor-not-allowed select-all",
+    staticClass: "w-full bg-slate-50 border border-slate-200 text-slate-800 font-mono text-sm px-3.5 py-2.5 rounded-lg outline-none cursor-not-allowed select-all uppercase",
     attrs: {
       readonly: "",
       type: "text"
@@ -7872,9 +7910,7 @@ var render = function render() {
         _vm.$set(_vm.form, "nomorPelayanan", $event.target.value);
       }
     }
-  })]), _vm._v(" "), _c("p", {
-    staticClass: "text-xs text-slate-400"
-  }, [_vm._v("Format baku register: PLY-BPHTB/TAHUN/BULAN/URUT")])]), _vm._v(" "), _c("div", {
+  })])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5 md:col-span-2 lg:col-span-1"
   }, [_vm._m(3), _vm._v(" "), _c("div", {
     staticClass: "relative"
@@ -8058,7 +8094,7 @@ var render = function render() {
       value: _vm.form.namaWajibPajak,
       expression: "form.namaWajibPajak"
     }],
-    staticClass: "w-full bg-white border border-slate-300 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all",
+    staticClass: "w-full bg-white border border-slate-300 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all uppercase",
     attrs: {
       id: "nama-pemohon",
       type: "text"
@@ -8067,10 +8103,12 @@ var render = function render() {
       value: _vm.form.namaWajibPajak
     },
     on: {
-      input: function input($event) {
+      input: [function ($event) {
         if ($event.target.composing) return;
         _vm.$set(_vm.form, "namaWajibPajak", $event.target.value);
-      }
+      }, function ($event) {
+        _vm.form.namaWajibPajak = $event.target.value.toUpperCase();
+      }]
     }
   })])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
@@ -8081,20 +8119,22 @@ var render = function render() {
       value: _vm.form.alamatPemohon,
       expression: "form.alamatPemohon"
     }],
-    staticClass: "w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all resize-none",
+    staticClass: "w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all resize-none uppercase",
     attrs: {
       id: "alamat-pemohon",
-      placeholder: "Tuliskan nama jalan, nomor rumah, RT/RW, kelurahan, dan kota domisili pemohon...",
+      placeholder: "",
       rows: "2"
     },
     domProps: {
       value: _vm.form.alamatPemohon
     },
     on: {
-      input: function input($event) {
+      input: [function ($event) {
         if ($event.target.composing) return;
         _vm.$set(_vm.form, "alamatPemohon", $event.target.value);
-      }
+      }, function ($event) {
+        _vm.form.alamatPemohon = $event.target.value.toUpperCase();
+      }]
     }
   })]), _vm._v(" "), _c("div", {
     staticClass: "h-[1px] bg-slate-200 my-1"
@@ -8159,7 +8199,7 @@ var render = function render() {
       value: _vm.form.namaWpSppt,
       expression: "form.namaWpSppt"
     }],
-    staticClass: "w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none font-medium",
+    staticClass: "w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none font-medium uppercase",
     attrs: {
       id: "nama-subjek-pbb",
       type: "text"
@@ -8168,10 +8208,12 @@ var render = function render() {
       value: _vm.form.namaWpSppt
     },
     on: {
-      input: function input($event) {
+      input: [function ($event) {
         if ($event.target.composing) return;
         _vm.$set(_vm.form, "namaWpSppt", $event.target.value);
-      }
+      }, function ($event) {
+        _vm.form.namaWpSppt = $event.target.value.toUpperCase();
+      }]
     }
   })]), _vm._v(" "), _vm._m(12)])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
@@ -8182,7 +8224,7 @@ var render = function render() {
       value: _vm.form.alamatObjekPajak,
       expression: "form.alamatObjekPajak"
     }],
-    staticClass: "w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all resize-none",
+    staticClass: "w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all resize-none uppercase",
     attrs: {
       id: "alamat-objek-pajak",
       rows: "2"
@@ -8191,10 +8233,12 @@ var render = function render() {
       value: _vm.form.alamatObjekPajak
     },
     on: {
-      input: function input($event) {
+      input: [function ($event) {
         if ($event.target.composing) return;
         _vm.$set(_vm.form, "alamatObjekPajak", $event.target.value);
-      }
+      }, function ($event) {
+        _vm.form.alamatObjekPajak = $event.target.value.toUpperCase();
+      }]
     }
   })]), _vm._v(" "), _c("div", {
     staticClass: "grid grid-cols-1 md:grid-cols-12 gap-4"
@@ -8240,7 +8284,7 @@ var render = function render() {
       value: _vm.form.keteranganTambahan,
       expression: "form.keteranganTambahan"
     }],
-    staticClass: "w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all",
+    staticClass: "w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all uppercase",
     attrs: {
       id: "keterangan-riwayat",
       type: "text"
@@ -8249,10 +8293,12 @@ var render = function render() {
       value: _vm.form.keteranganTambahan
     },
     on: {
-      input: function input($event) {
+      input: [function ($event) {
         if ($event.target.composing) return;
         _vm.$set(_vm.form, "keteranganTambahan", $event.target.value);
-      }
+      }, function ($event) {
+        _vm.form.keteranganTambahan = $event.target.value.toUpperCase();
+      }]
     }
   })])])])]), _vm._v(" "), _c("div", {
     staticClass: "bg-white rounded-xl border border-slate-200 shadow-sm p-6 lg:p-7 flex flex-col gap-6"
@@ -8515,7 +8561,7 @@ var render = function render() {
     staticClass: "flex items-center justify-between text-slate-500 text-xs pt-2 border-t border-slate-200"
   }, [_c("span", [_vm._v("Status Dokumen:")]), _vm._v(" "), _c("span", {
     staticClass: "font-semibold text-[#2e7d32]"
-  }, [_vm._v(_vm._s(_vm.statusDokumenLabel))])])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.statusDokumenLabel))])])])])])]), _vm._v(" "), !_vm.isSaved ? _c("div", {
     staticClass: "static mt-8 lg:mt-0 lg:sticky lg:bottom-4 z-30 w-full bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 p-4 lg:p-5 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
   }, [_vm._m(24), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto justify-end"
@@ -8546,7 +8592,118 @@ var render = function render() {
     staticClass: "material-symbols-outlined text-[20px] animate-spin"
   }, [_vm._v("rotate_right")]) : _vm._e(), _vm._v(" "), _vm.isSaved ? _c("span", {
     staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("done_all")]) : _vm._e(), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.saveButtonLabel))])])])])])]);
+  }, [_vm._v("done_all")]) : _vm._e(), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.saveButtonLabel))])])])]) : _vm._e(), _vm._v(" "), _vm.showConfirmModal ? _c("div", {
+    staticClass: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+  }, [_c("div", {
+    staticClass: "bg-white rounded-2xl shadow-2xl border border-slate-100 w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]"
+  }, [_c("div", {
+    staticClass: "px-6 py-4 bg-gradient-to-r from-[#2e7d32] to-[#4CAF50] text-white flex items-center justify-between"
+  }, [_vm._m(25), _vm._v(" "), _c("button", {
+    staticClass: "text-white/80 hover:text-white hover:bg-white/10 rounded-lg p-1 transition-colors",
+    on: {
+      click: function click($event) {
+        _vm.showConfirmModal = false;
+      }
+    }
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[20px]"
+  }, [_vm._v("close")])])]), _vm._v(" "), _c("div", {
+    staticClass: "p-6 overflow-y-auto flex flex-col gap-5 text-slate-700 text-xs"
+  }, [_c("div", {
+    staticClass: "bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col gap-2.5"
+  }, [_vm._m(26), _vm._v(" "), _c("div", {
+    staticClass: "grid grid-cols-2 gap-x-4 gap-y-2"
+  }, [_c("div", [_c("span", {
+    staticClass: "text-slate-400"
+  }, [_vm._v("No. Pelayanan:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono font-bold text-slate-800 block"
+  }, [_vm._v(_vm._s(_vm.form.nomorPelayanan))])]), _vm._v(" "), _c("div", [_c("span", {
+    staticClass: "text-slate-400"
+  }, [_vm._v("No. Surat Permohonan:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono font-bold text-slate-800 block"
+  }, [_vm._v(_vm._s(_vm.form.noSuratPengantar))])]), _vm._v(" "), _c("div", [_c("span", {
+    staticClass: "text-slate-400"
+  }, [_vm._v("Nama Pemohon:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-semibold text-slate-800 block"
+  }, [_vm._v(_vm._s(_vm.form.namaWajibPajak))])]), _vm._v(" "), _c("div", [_c("span", {
+    staticClass: "text-slate-400"
+  }, [_vm._v("No. Kontak:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono font-semibold text-slate-800 block"
+  }, [_vm._v("+62 " + _vm._s(_vm.form.nomorKontak))])]), _vm._v(" "), _c("div", {
+    staticClass: "col-span-2"
+  }, [_c("span", {
+    staticClass: "text-slate-400"
+  }, [_vm._v("Alamat Pemohon:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-medium text-slate-800 block"
+  }, [_vm._v(_vm._s(_vm.form.alamatPemohon))])])])]), _vm._v(" "), _c("div", {
+    staticClass: "bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col gap-2.5"
+  }, [_vm._m(27), _vm._v(" "), _c("div", {
+    staticClass: "grid grid-cols-2 gap-x-4 gap-y-2"
+  }, [_c("div", [_c("span", {
+    staticClass: "text-slate-400"
+  }, [_vm._v("NOP PBB-P2:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono font-bold text-slate-800 block"
+  }, [_vm._v(_vm._s(_vm.form.nop))])]), _vm._v(" "), _c("div", [_c("span", {
+    staticClass: "text-slate-400"
+  }, [_vm._v("Nama WP di SPPT:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-semibold text-slate-800 block"
+  }, [_vm._v(_vm._s(_vm.form.namaWpSppt))])]), _vm._v(" "), _c("div", {
+    staticClass: "col-span-2"
+  }, [_c("span", {
+    staticClass: "text-slate-400"
+  }, [_vm._v("Alamat Objek Pajak:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-medium text-slate-800 block"
+  }, [_vm._v(_vm._s(_vm.form.alamatObjekPajak))])]), _vm._v(" "), _c("div", {
+    staticClass: "col-span-2"
+  }, [_c("span", {
+    staticClass: "text-slate-400"
+  }, [_vm._v("Keterangan:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-medium text-slate-800 block"
+  }, [_vm._v(_vm._s(_vm.form.keteranganTambahan))])])])]), _vm._v(" "), _c("div", {
+    staticClass: "bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col gap-2"
+  }, [_c("span", {
+    staticClass: "font-bold text-slate-900 text-sm border-b border-slate-200 pb-1.5 flex items-center justify-between"
+  }, [_vm._m(28), _vm._v(" "), _c("span", {
+    staticClass: "text-xs font-semibold px-2 py-0.5 rounded bg-emerald-100 text-[#2e7d32]"
+  }, [_vm._v("\r\n            " + _vm._s(_vm.jumlahDokumenTercentang) + " / " + _vm._s(_vm.totalDokumenSyarat) + " Dicentang\r\n          ")])]), _vm._v(" "), _vm.listPersyaratan.length > 0 ? _c("ul", {
+    staticClass: "divide-y divide-slate-200/60"
+  }, _vm._l(_vm.listPersyaratan, function (item) {
+    return _c("li", {
+      key: item.kd_syarat,
+      staticClass: "py-1.5 flex items-center justify-between text-xs"
+    }, [_c("span", {
+      staticClass: "text-slate-700 font-medium"
+    }, [_vm._v(_vm._s(item.persyaratan))]), _vm._v(" "), _vm.dokumenChecked[item.kd_syarat] ? _c("span", {
+      staticClass: "text-emerald-600 font-bold flex items-center gap-1"
+    }, [_c("span", {
+      staticClass: "material-symbols-outlined text-[14px]"
+    }, [_vm._v("check_circle")]), _vm._v(" Ada\r\n            ")]) : _c("span", {
+      staticClass: "text-slate-400 italic"
+    }, [_vm._v("Tidak ada")])]);
+  }), 0) : _c("div", {
+    staticClass: "text-slate-400 italic text-center py-2"
+  }, [_vm._v("Tidak membutuhkan berkas lampiran")])])]), _vm._v(" "), _c("div", {
+    staticClass: "px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3"
+  }, [_c("button", {
+    staticClass: "px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-semibold transition-colors",
+    on: {
+      click: function click($event) {
+        _vm.showConfirmModal = false;
+      }
+    }
+  }, [_vm._v("\r\n        Kembali & Edit\r\n      ")]), _vm._v(" "), _c("button", {
+    staticClass: "px-5 py-2 rounded-lg bg-[#4CAF50] text-white hover:bg-[#43a047] disabled:bg-slate-300 text-xs font-semibold flex items-center gap-2 shadow-sm transition-all",
+    attrs: {
+      disabled: _vm.isSaving
+    },
+    on: {
+      click: _vm.submitData
+    }
+  }, [!_vm.isSaving ? _c("span", {
+    staticClass: "material-symbols-outlined text-[18px]"
+  }, [_vm._v("send")]) : _vm._e(), _vm._v(" "), _vm.isSaving ? _c("span", {
+    staticClass: "material-symbols-outlined text-[18px] animate-spin"
+  }, [_vm._v("rotate_right")]) : _vm._e(), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.isSaving ? "Memproses..." : "Ya, Lanjutkan Simpan"))])])])])]) : _vm._e()])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -8869,6 +9026,42 @@ var staticRenderFns = [function () {
   }, [_vm._v("Validasi Formulir Pra-Simpan")]), _vm._v(" "), _c("span", {
     staticClass: "text-xs text-slate-500"
   }, [_vm._v("Pastikan NOP PBB bebas tunggakan dan seluruh persyaratan berkas telah dicentang.")])])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "flex items-center gap-3"
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[24px]"
+  }, [_vm._v("assignment_turned_in")]), _vm._v(" "), _c("div", [_c("h3", {
+    staticClass: "font-bold text-base"
+  }, [_vm._v("Konfirmasi Hasil Input Pendaftaran")]), _vm._v(" "), _c("p", {
+    staticClass: "text-xs text-emerald-100"
+  }, [_vm._v("Periksa kembali ringkasan data sebelum didaftarkan ke sistem")])])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("span", {
+    staticClass: "font-bold text-slate-900 text-sm border-b border-slate-200 pb-1.5 flex items-center gap-1.5"
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[18px] text-[#4CAF50]"
+  }, [_vm._v("person")]), _vm._v(" Identitas Pemohon & Nomor Pelayanan\r\n        ")]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("span", {
+    staticClass: "font-bold text-slate-900 text-sm border-b border-slate-200 pb-1.5 flex items-center gap-1.5"
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[18px] text-[#4CAF50]"
+  }, [_vm._v("home_work")]), _vm._v(" Objek Pajak & PBB\r\n        ")]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("span", {
+    staticClass: "flex items-center gap-1.5"
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[18px] text-[#4CAF50]"
+  }, [_vm._v("folder_check")]), _vm._v(" Persyaratan Berkas\r\n          ")]);
 }];
 render._withStripped = true;
 
@@ -27542,7 +27735,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n#app {\n  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\n  color: #2c3e50;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n#app {\r\n  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\r\n  color: #2c3e50;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

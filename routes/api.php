@@ -50,6 +50,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/referensi/persyaratan/{kode_transaksi}', 'ReferensiController@getPersyaratan');
     Route::get('/referensi/tarif-bphtb', 'ReferensiController@getTarifBphtb');
     Route::get('/pendaftaran/generate-no-surat', 'PendaftaranController@generateNoSurat');
+    Route::post('/pendaftaran/simpan', 'PendaftaranController@simpanPendaftaran');
     Route::post('/pbb/cek-tunggakan', 'PbbController@cekTunggakan');
 
     // Protected Routes (JWT Auth)

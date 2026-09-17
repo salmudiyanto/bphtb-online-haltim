@@ -53,9 +53,8 @@ Perekaman berkas dan pendataan permohonan baru Bea Perolehan Hak atas Tanah dan 
 <span class="text-[11px] text-[#388e3c] font-semibold">Tersinkron Otomatis</span>
 </label>
 <div class="relative flex items-center">
-<input class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-mono text-sm px-3.5 py-2.5 rounded-lg outline-none cursor-not-allowed select-all" readonly="" type="text" v-model="form.nomorPelayanan"/>
+<input class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-mono text-sm px-3.5 py-2.5 rounded-lg outline-none cursor-not-allowed select-all uppercase" readonly="" type="text" v-model="form.nomorPelayanan"/>
 </div>
-<p class="text-xs text-slate-400">Format baku register: PLY-BPHTB/TAHUN/BULAN/URUT</p>
 </div>
 <!-- Jenis Pelayanan / Transaksi -->
 <div class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-1">
@@ -142,7 +141,7 @@ Perkiraan Selesai
 </label>
 <div class="relative flex items-center">
 <span class="material-symbols-outlined absolute left-3 text-slate-400 text-[18px]">badge</span>
-<input class="w-full bg-white border border-slate-300 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="nama-pemohon" type="text" v-model="form.namaWajibPajak"/>
+<input @input="form.namaWajibPajak = $event.target.value.toUpperCase()" class="w-full bg-white border border-slate-300 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all uppercase" id="nama-pemohon" type="text" v-model="form.namaWajibPajak"/>
 </div>
 </div>
 <!-- Baris 2: Alamat Pemohon -->
@@ -150,7 +149,7 @@ Perkiraan Selesai
 <label class="text-xs font-semibold text-slate-700" for="alamat-pemohon">
 Alamat Domisili Pemohon Sesuai KTP <span class="text-red-500">*</span>
 </label>
-<textarea class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all resize-none" id="alamat-pemohon" placeholder="Tuliskan nama jalan, nomor rumah, RT/RW, kelurahan, dan kota domisili pemohon..." rows="2" v-model="form.alamatPemohon"></textarea>
+<textarea @input="form.alamatPemohon = $event.target.value.toUpperCase()" class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all resize-none uppercase" id="alamat-pemohon" placeholder="" rows="2" v-model="form.alamatPemohon"></textarea>
 </div>
 <div class="h-[1px] bg-slate-200 my-1"></div>
 <!-- Baris 3: NOP PBB & Auto-Check Tunggakan (On Blur) -->
@@ -185,7 +184,7 @@ Nama Wajib Pajak <span class="text-red-500">*</span>
 </label>
 <div class="relative flex items-center">
 <span class="material-symbols-outlined absolute left-3 text-slate-400 text-[18px]">account_box</span>
-<input class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none font-medium" id="nama-subjek-pbb" type="text" v-model="form.namaWpSppt"/>
+<input @input="form.namaWpSppt = $event.target.value.toUpperCase()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm pl-10 pr-3.5 py-2.5 rounded-lg outline-none font-medium uppercase" id="nama-subjek-pbb" type="text" v-model="form.namaWpSppt"/>
 </div>
 <p class="text-xs text-[#388e3c] font-medium flex items-center gap-1">
 <span class="material-symbols-outlined text-[14px]">check_circle</span> Sesuai database BPKAD Kab. Haltim
@@ -197,7 +196,7 @@ Nama Wajib Pajak <span class="text-red-500">*</span>
 <label class="text-xs font-semibold text-slate-700" for="alamat-objek-pajak">
 Alamat Lokasi Objek Pajak (Letak Tanah / Bangunan) <span class="text-red-500">*</span>
 </label>
-<textarea class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all resize-none" id="alamat-objek-pajak" rows="2" v-model="form.alamatObjekPajak"></textarea>
+<textarea @input="form.alamatObjekPajak = $event.target.value.toUpperCase()" class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all resize-none uppercase" id="alamat-objek-pajak" rows="2" v-model="form.alamatObjekPajak"></textarea>
 </div>
 <!-- Baris 5: Nomor HP/WA & Keterangan Tambahan -->
 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
@@ -214,7 +213,7 @@ Nomor Kontak / WhatsApp Pemohon <span class="text-red-500">*</span>
 <label class="text-xs font-semibold text-slate-700" for="keterangan-riwayat">
 Keterangan Tambahan
 </label>
-<input class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all" id="keterangan-riwayat" type="text" v-model="form.keteranganTambahan"/>
+<input @input="form.keteranganTambahan = $event.target.value.toUpperCase()" class="w-full bg-white border border-slate-300 text-slate-800 text-sm px-3.5 py-2.5 rounded-lg outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all uppercase" id="keterangan-riwayat" type="text" v-model="form.keteranganTambahan"/>
 </div>
 </div>
 </div>
@@ -471,7 +470,7 @@ Perbandingan 2 Skenario NIK:
 </div>
 </div>
 <!-- STICKY BOTTOM ACTION BAR (Desktop Only) -->
-<div class="static mt-8 lg:mt-0 lg:sticky lg:bottom-4 z-30 w-full bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 p-4 lg:p-5 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+<div class="static mt-8 lg:mt-0 lg:sticky lg:bottom-4 z-30 w-full bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 p-4 lg:p-5 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" v-if="!isSaved">
 <div class="flex items-center gap-3">
 <div class="w-9 h-9 rounded-lg bg-[#edf7ee] border border-[#c8e6c9] flex items-center justify-center text-[#4CAF50] shrink-0">
 <span class="material-symbols-outlined text-[20px]">security</span>
@@ -496,6 +495,88 @@ Perbandingan 2 Skenario NIK:
 <span>{{ saveButtonLabel }}</span>
 </button>
 </div>
+</div>
+<!-- Modal Konfirmasi Hasil Inputan -->
+<div v-if="showConfirmModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <!-- Header Modal -->
+    <div class="px-6 py-4 bg-gradient-to-r from-[#2e7d32] to-[#4CAF50] text-white flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-[24px]">assignment_turned_in</span>
+        <div>
+          <h3 class="font-bold text-base">Konfirmasi Hasil Input Pendaftaran</h3>
+          <p class="text-xs text-emerald-100">Periksa kembali ringkasan data sebelum didaftarkan ke sistem</p>
+        </div>
+      </div>
+      <button @click="showConfirmModal = false" class="text-white/80 hover:text-white hover:bg-white/10 rounded-lg p-1 transition-colors">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Body Modal (Scrollable) -->
+    <div class="p-6 overflow-y-auto flex flex-col gap-5 text-slate-700 text-xs">
+      <!-- Section 1: Pelayanan & Subjek -->
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col gap-2.5">
+        <span class="font-bold text-slate-900 text-sm border-b border-slate-200 pb-1.5 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px] text-[#4CAF50]">person</span> Identitas Pemohon &amp; Nomor Pelayanan
+        </span>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+          <div><span class="text-slate-400">No. Pelayanan:</span> <span class="font-mono font-bold text-slate-800 block">{{ form.nomorPelayanan }}</span></div>
+          <div><span class="text-slate-400">No. Surat Permohonan:</span> <span class="font-mono font-bold text-slate-800 block">{{ form.noSuratPengantar }}</span></div>
+          <div><span class="text-slate-400">Nama Pemohon:</span> <span class="font-semibold text-slate-800 block">{{ form.namaWajibPajak }}</span></div>
+          <div><span class="text-slate-400">No. Kontak:</span> <span class="font-mono font-semibold text-slate-800 block">+62 {{ form.nomorKontak }}</span></div>
+          <div class="col-span-2"><span class="text-slate-400">Alamat Pemohon:</span> <span class="font-medium text-slate-800 block">{{ form.alamatPemohon }}</span></div>
+        </div>
+      </div>
+
+      <!-- Section 2: Objek Pajak -->
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col gap-2.5">
+        <span class="font-bold text-slate-900 text-sm border-b border-slate-200 pb-1.5 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px] text-[#4CAF50]">home_work</span> Objek Pajak &amp; PBB
+        </span>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+          <div><span class="text-slate-400">NOP PBB-P2:</span> <span class="font-mono font-bold text-slate-800 block">{{ form.nop }}</span></div>
+          <div><span class="text-slate-400">Nama WP di SPPT:</span> <span class="font-semibold text-slate-800 block">{{ form.namaWpSppt }}</span></div>
+          <div class="col-span-2"><span class="text-slate-400">Alamat Objek Pajak:</span> <span class="font-medium text-slate-800 block">{{ form.alamatObjekPajak }}</span></div>
+          <div class="col-span-2"><span class="text-slate-400">Keterangan:</span> <span class="font-medium text-slate-800 block">{{ form.keteranganTambahan }}</span></div>
+        </div>
+      </div>
+
+      <!-- Section 3: Berkas Persyaratan -->
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col gap-2">
+        <span class="font-bold text-slate-900 text-sm border-b border-slate-200 pb-1.5 flex items-center justify-between">
+          <span class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] text-[#4CAF50]">folder_check</span> Persyaratan Berkas
+          </span>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-100 text-[#2e7d32]">
+            {{ jumlahDokumenTercentang }} / {{ totalDokumenSyarat }} Dicentang
+          </span>
+        </span>
+        <ul class="divide-y divide-slate-200/60" v-if="listPersyaratan.length > 0">
+          <li v-for="item in listPersyaratan" :key="item.kd_syarat" class="py-1.5 flex items-center justify-between text-xs">
+            <span class="text-slate-700 font-medium">{{ item.persyaratan }}</span>
+            <span v-if="dokumenChecked[item.kd_syarat]" class="text-emerald-600 font-bold flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">check_circle</span> Ada
+            </span>
+            <span v-else class="text-slate-400 italic">Tidak ada</span>
+          </li>
+        </ul>
+        <div v-else class="text-slate-400 italic text-center py-2">Tidak membutuhkan berkas lampiran</div>
+      </div>
+    </div>
+
+    <!-- Footer Modal -->
+    <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
+      <button @click="showConfirmModal = false" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-semibold transition-colors">
+        Kembali &amp; Edit
+      </button>
+      <button @click="submitData" :disabled="isSaving" class="px-5 py-2 rounded-lg bg-[#4CAF50] text-white hover:bg-[#43a047] disabled:bg-slate-300 text-xs font-semibold flex items-center gap-2 shadow-sm transition-all">
+        <span class="material-symbols-outlined text-[18px]" v-if="!isSaving">send</span>
+        <span class="material-symbols-outlined text-[18px] animate-spin" v-if="isSaving">rotate_right</span>
+        <span>{{ isSaving ? 'Memproses...' : 'Ya, Lanjutkan Simpan' }}</span>
+      </button>
+    </div>
+  </div>
 </div>
 </div>
 </div>
@@ -550,7 +631,8 @@ export default {
       hasTunggakan: false,
       tunggakanMsg: '',
       isSaving: false,
-      isSaved: false
+      isSaved: false,
+      showConfirmModal: false
     };
   },
   computed: {
@@ -626,9 +708,32 @@ export default {
       }
       return 'flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg font-semibold text-xs shadow-sm';
     },
+    isJenisTanpaBerkas() {
+      // Kode jenis transaksi yang tidak memerlukan berkas lampiran
+      return ['02', '06', '07', '09', '10', '11', '12', '13', '14', '16', '17'].includes(this.form.jenisTransaksi);
+    },
+    isFormMandatoryComplete() {
+      const f = this.form;
+      return !!(
+        f.jenisTransaksi &&
+        f.noSuratPengantar &&
+        f.tanggalSurat &&
+        f.tanggalPenerimaan &&
+        f.namaWajibPajak && f.namaWajibPajak.trim() !== '' &&
+        f.alamatPemohon && f.alamatPemohon.trim() !== '' &&
+        f.nop && f.nop.trim() !== '' &&
+        f.namaWpSppt && f.namaWpSppt.trim() !== '' &&
+        f.alamatObjekPajak && f.alamatObjekPajak.trim() !== '' &&
+        f.nomorKontak && f.nomorKontak.trim() !== '' &&
+        f.keteranganTambahan && f.keteranganTambahan.trim() !== ''
+      );
+    },
     isSubmitDisabled() {
       if (this.isSaving || this.hasTunggakan) return true;
-      if (this.totalDokumenSyarat > 0 && this.jumlahDokumenTercentang < this.totalDokumenSyarat) {
+      // Data Wajib Pajak, Data Objek Pajak, & Keterangan belum diisi lengkap
+      if (!this.isFormMandatoryComplete) return true;
+      // Jika jenis transaksi mewajibkan berkas, minimal 1 berkas harus dicentang
+      if (!this.isJenisTanpaBerkas && this.jumlahDokumenTercentang < 1) {
         return true;
       }
       return false;
@@ -654,7 +759,6 @@ export default {
     }
   },
   mounted() {
-    this.refreshNomorPelayanan();
     const d = new Date(this.form.tanggalPenerimaan);
     d.setDate(d.getDate() + 3);
     this.form.perkiraanSelesai = d.toISOString().split('T')[0];
@@ -917,32 +1021,62 @@ export default {
         });
         return;
       }
-      if (this.totalDokumenSyarat > 0 && this.jumlahDokumenTercentang < this.totalDokumenSyarat) {
+
+      // Jika jenis transaksi memerlukan berkas dan masih ada berkas yang belum dicentang
+      if (!this.isJenisTanpaBerkas && this.totalDokumenSyarat > 0 && this.jumlahDokumenTercentang < this.totalDokumenSyarat) {
         Swal.fire({
           icon: 'warning',
-          title: 'Persyaratan Belum Lengkap',
-          text: 'Mohon lengkapi seluruh checklist dokumen fisik sebelum mendaftarkan berkas!',
-          confirmButtonColor: '#f59e0b',
-          confirmButtonText: 'Lengkapi Sekarang'
+          title: 'Pemberitahuan Berkas Belum Dilampirkan',
+          text: `Anda baru melampirkan ${this.jumlahDokumenTercentang} dari ${this.totalDokumenSyarat} berkas persyaratan. Apakah Anda ingin tetap melanjutkan?`,
+          showCancelButton: true,
+          confirmButtonColor: '#4CAF50',
+          cancelButtonColor: '#94a3b8',
+          confirmButtonText: 'Ya, Lanjutkan Konfirmasi',
+          cancelButtonText: 'Lengkapi Berkas'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.showConfirmModal = true;
+          }
         });
-        return;
+      } else {
+        // Berkas sudah lengkap / Jenis transaksi tanpa berkas
+        this.showConfirmModal = true;
       }
+    },
 
+    submitData() {
+      this.showConfirmModal = false;
       this.isSaving = true;
-      setTimeout(() => {
-        this.isSaving = false;
-        this.isSaved = true;
 
-        Swal.fire({
-          icon: 'success',
-          title: 'Pendaftaran Berhasil!',
-          text: 'Data pendaftaran berhasil disimpan! Anda akan diarahkan ke halaman unggah persyaratan digital.',
-          timer: 2000,
-          showConfirmButton: false
-        }).then(() => {
-          this.$router.push('/upload-persyaratan');
+      const payload = {
+        form: this.form,
+        dokumenChecked: this.dokumenChecked
+      };
+
+      axios.post('/api/v1/pendaftaran/simpan', payload)
+        .then(res => {
+          this.isSaving = false;
+          if (res.data && res.data.status === 'success') {
+            this.isSaved = true;
+            this.form.nomorPelayanan = res.data.no_pelayanan;
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Pendaftaran Berhasil!',
+              text: 'Data pendaftaran berhasil disimpan! Anda akan diarahkan ke halaman unggah persyaratan digital.',
+              timer: 2000,
+              showConfirmButton: false
+            }).then(() => {
+              this.$router.push('/upload-persyaratan');
+            });
+          } else {
+            this.showApiError(res.data ? res.data.message : 'Gagal menyimpan pendaftaran', 'Pendaftaran Gagal');
+          }
+        })
+        .catch(err => {
+          this.isSaving = false;
+          this.showApiError(err, 'Pendaftaran Gagal');
         });
-      }, 1200);
     }
   }
 };
