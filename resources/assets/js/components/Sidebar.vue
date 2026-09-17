@@ -100,6 +100,7 @@ export default {
           isGroup: true,
           items: [
             { label: 'Input Nomor Pelayanan', path: '/pendaftaran-baru', icon: 'add_circle' },
+            { label: 'List Pendaftaran BPHTB', path: '/list-pendaftaran', icon: 'list_alt' },
             { label: 'Upload Persyaratan', path: '/upload-persyaratan', icon: 'upload_file' },
             { label: 'Edit Nomor Pelayanan', path: '/edit-nomor-pelayanan', icon: 'edit_note' }
           ]

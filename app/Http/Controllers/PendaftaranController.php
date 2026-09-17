@@ -173,4 +173,83 @@ class PendaftaranController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get list pendaftaran yang belum diproses (belum ada di t_bphtb)
+     */
+    public function getUnregisteredList()
+    {
+        try {
+            $data = DB::connection($this->connection)->select("
+                SELECT p.no_pelayanan, p.srttglpmhn, p.nama_pemohon, p.alamatop as alamat_pemohon, p.namawp, p.nop 
+                FROM pst_daftar_BPHTB p
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM t_bphtb t WHERE t.no_pelayanan = p.no_pelayanan
+                )
+                ORDER BY p.srttglpmhn DESC
+            ");
+
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data list pendaftaran: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get detail pendaftaran untuk autofill InputPendaftaran & InputSspd
+     */
+    public function getDetail(Request $request, $no_pelayanan = null)
+    {
+        try {
+            if (!$no_pelayanan && $request->has('no_pelayanan')) {
+                $no_pelayanan = $request->query('no_pelayanan');
+            }
+
+            $data = DB::connection($this->connection)->selectOne("
+                SELECT p.*,
+                       op.JALAN_OP as jalan_op,
+                       op.RT_OP as rt_op,
+                       op.RW_OP as rw_op,
+                       op.TOTAL_LUAS_BUMI as total_luas_bumi,
+                       op.TOTAL_LUAS_BNG as total_luas_bng,
+                       op.NJOP_BUMI as njop_bumi,
+                       op.NJOP_BNG as njop_bng,
+                       f_camat(p.kd_kec) as nama_kecamatan,
+                       f_lurah(p.kd_kec, p.kd_kel) as nama_kelurahan
+                FROM pst_daftar_BPHTB p
+                LEFT JOIN dat_objek_pajak op 
+                  ON op.KD_PROPINSI = SUBSTRING(p.nop, 1, 2)
+                 AND op.KD_DATI2 = SUBSTRING(p.nop, 3, 2)
+                 AND op.KD_KECAMATAN = SUBSTRING(p.nop, 5, 3)
+                 AND op.KD_KELURAHAN = SUBSTRING(p.nop, 8, 3)
+                 AND op.KD_BLOK = SUBSTRING(p.nop, 11, 3)
+                 AND op.NO_URUT = SUBSTRING(p.nop, 14, 4)
+                 AND op.KD_JNS_OP = SUBSTRING(p.nop, 18, 1)
+                WHERE p.no_pelayanan = ?
+            ", [$no_pelayanan]);
+
+            if ($data) {
+                return response()->json([
+                    'success' => true,
+                    'data' => $data
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil detail pendaftaran: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
