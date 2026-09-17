@@ -62,4 +62,45 @@ class ReferensiController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get BPHTB rate and NPOPTKP thresholds from t_rekening_bphtb.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTarifBphtb()
+    {
+        try {
+            $data = DB::connection($this->connection)->select('
+                SELECT persen, rek_minim1, rek_minim2 
+                FROM "t_rekening_bphtb"
+            ');
+
+            if (!empty($data)) {
+                $row = $data[0];
+                return response()->json([
+                    'status' => 'success',
+                    'data' => [
+                        'persen' => (float) ($row->persen ?? 0.05),
+                        'rek_minim1' => (float) ($row->rek_minim1 ?? 80000000),
+                        'rek_minim2' => (float) ($row->rek_minim2 ?? 300000000)
+                    ]
+                ]);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'persen' => 0.05,
+                    'rek_minim1' => 80000000,
+                    'rek_minim2' => 300000000
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil data tarif BPHTB: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

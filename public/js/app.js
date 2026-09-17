@@ -5501,6 +5501,7 @@ __webpack_require__.r(__webpack_exports__);
       jenisTransaksiList: [],
       listPersyaratan: [],
       dokumenChecked: {},
+      formattedNilaiPasar: '0',
       form: {
         nomorPelayanan: '',
         jenisTransaksi: '',
@@ -5513,13 +5514,26 @@ __webpack_require__.r(__webpack_exports__);
         nop: '',
         namaWpSppt: '',
         alamatObjekPajak: '',
+        nilaiPasar: 0,
         nomorKontak: '',
         keteranganTambahan: ''
       },
       simulasi: {
-        npop: 450000000,
-        njopTotal: 315000000
+        luasBumi: 0,
+        njopBumi: 0,
+        totalNjopBumi: 0,
+        luasBng: 0,
+        njopBng: 0,
+        totalNjopBng: 0,
+        totalNjopPbb: 0
       },
+      tarifBphtb: {
+        persen: 0.05,
+        rek_minim1: 80000000,
+        rek_minim2: 300000000
+      },
+      statusPemotonganNIK: 'belum',
+      // 'belum' | 'sudah'
       isGeneratingNoSurat: false,
       isCheckingTunggakan: false,
       nopVerified: false,
@@ -5531,17 +5545,56 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     npoptkpDaerah: function npoptkpDaerah() {
-      if (this.form.jenisTransaksi === '04' || this.form.jenisTransaksi === '05') {
-        return 300000000;
+      // Tarif Khusus (Waris: '02', Hibah: '03', Hibah Wasiat: '04')
+      if (['02', '03', '04'].includes(this.form.jenisTransaksi)) {
+        return this.tarifBphtb.rek_minim2 || 300000000;
       }
-      return 60000000;
+      return this.tarifBphtb.rek_minim1 || 80000000;
     },
+    npop: function npop() {
+      var totalNjop = this.simulasi.totalNjopPbb || 0;
+      var pasar = parseFloat(this.form.nilaiPasar) || 0;
+      return Math.max(totalNjop, pasar);
+    },
+    // Skenario 1: Tidak Pernah Kena Pemotongan (Fasilitas NPOPTKP Utuh)
     npopKenaPajak: function npopKenaPajak() {
-      var p = this.simulasi.npop - this.npoptkpDaerah;
+      var p = this.npop - this.npoptkpDaerah;
       return p > 0 ? p : 0;
     },
     bphtbTerutang: function bphtbTerutang() {
-      return this.npopKenaPajak * 0.05;
+      return Math.round(this.npopKenaPajak * (this.tarifBphtb.persen || 0.05));
+    },
+    bphtbHarusDibayar: function bphtbHarusDibayar() {
+      return this.bphtbTerutang;
+    },
+    // Skenario 2: Sudah Pernah Kena Pemotongan (NPOPTKP = 0)
+    npopKenaPajakPernah: function npopKenaPajakPernah() {
+      return this.npop;
+    },
+    bphtbTerutangPernah: function bphtbTerutangPernah() {
+      return Math.round(this.npopKenaPajakPernah * (this.tarifBphtb.persen || 0.05));
+    },
+    bphtbHarusDibayarPernah: function bphtbHarusDibayarPernah() {
+      return this.bphtbTerutangPernah;
+    },
+    // Active computed based on toggle status
+    activeNpoptkp: function activeNpoptkp() {
+      return this.statusPemotonganNIK === 'sudah' ? 0 : this.npoptkpDaerah;
+    },
+    activeNpoptkpLabel: function activeNpoptkpLabel() {
+      return this.statusPemotonganNIK === 'sudah' ? 'Sudah Pernah Pemotongan (NPOPTKP Rp 0)' : 'Tidak Pernah Pemotongan';
+    },
+    activeNpopKenaPajak: function activeNpopKenaPajak() {
+      return this.statusPemotonganNIK === 'sudah' ? this.npopKenaPajakPernah : this.npopKenaPajak;
+    },
+    activeBphtbTerutang: function activeBphtbTerutang() {
+      return this.statusPemotonganNIK === 'sudah' ? this.bphtbTerutangPernah : this.bphtbTerutang;
+    },
+    activeBphtbHarusDibayar: function activeBphtbHarusDibayar() {
+      return this.statusPemotonganNIK === 'sudah' ? this.bphtbHarusDibayarPernah : this.bphtbHarusDibayar;
+    },
+    activeStatusText: function activeStatusText() {
+      return this.statusPemotonganNIK === 'sudah' ? 'Skenario: Sudah Pernah Pemotongan (Tanpa NPOPTKP)' : 'Skenario: Tidak Pernah Pemotongan (Fasilitas NPOPTKP)';
     },
     jumlahDokumenTercentang: function jumlahDokumenTercentang() {
       var _this = this;
@@ -5597,12 +5650,13 @@ __webpack_require__.r(__webpack_exports__);
     d.setDate(d.getDate() + 3);
     this.form.perkiraanSelesai = d.toISOString().split('T')[0];
 
-    // Load Jenis Transaksi dari API
+    // Load Jenis Transaksi & Tarif BPHTB dari API
     this.fetchJenisTransaksi();
+    this.fetchTarifBphtb();
   },
   methods: {
     formatRupiah: function formatRupiah(value) {
-      return new Intl.NumberFormat('id-ID').format(value);
+      return new Intl.NumberFormat('id-ID').format(value || 0);
     },
     /**
      * Centralized Error Handler for API responses using SweetAlert2.
@@ -5631,24 +5685,53 @@ __webpack_require__.r(__webpack_exports__);
         confirmButtonText: 'Tutup'
       });
     },
-    fetchJenisTransaksi: function fetchJenisTransaksi() {
+    fetchTarifBphtb: function fetchTarifBphtb() {
       var _this2 = this;
+      axios.get('/api/v1/referensi/tarif-bphtb').then(function (res) {
+        if (res.data && res.data.status === 'success' && res.data.data) {
+          _this2.tarifBphtb = res.data.data;
+        }
+      })["catch"](function () {
+        // Fallback silent ke default initial value
+      });
+    },
+    onNilaiPasarInput: function onNilaiPasarInput(e) {
+      var val = e.target.value.replace(/[^0-9]/g, '');
+      if (!val) {
+        this.form.nilaiPasar = 0;
+        this.formattedNilaiPasar = '0';
+        return;
+      }
+      this.form.nilaiPasar = parseInt(val, 10);
+      this.formattedNilaiPasar = this.formatRupiah(this.form.nilaiPasar);
+    },
+    resetSimulasi: function resetSimulasi() {
+      this.simulasi.luasBumi = 0;
+      this.simulasi.njopBumi = 0;
+      this.simulasi.totalNjopBumi = 0;
+      this.simulasi.luasBng = 0;
+      this.simulasi.njopBng = 0;
+      this.simulasi.totalNjopBng = 0;
+      this.simulasi.totalNjopPbb = 0;
+    },
+    fetchJenisTransaksi: function fetchJenisTransaksi() {
+      var _this3 = this;
       axios.get('/api/v1/referensi/jenis-transaksi').then(function (res) {
         if (res.data && res.data.status === 'success') {
-          _this2.jenisTransaksiList = res.data.data || [];
-          if (_this2.jenisTransaksiList.length > 0) {
-            _this2.form.jenisTransaksi = _this2.jenisTransaksiList[0].kode;
-            _this2.onJenisTransaksiChange();
+          _this3.jenisTransaksiList = res.data.data || [];
+          if (_this3.jenisTransaksiList.length > 0) {
+            _this3.form.jenisTransaksi = _this3.jenisTransaksiList[0].kode;
+            _this3.onJenisTransaksiChange();
           }
         } else {
-          _this2.showApiError(res.data ? res.data.message : 'Gagal mengambil jenis transaksi', 'Gagal Memuat Jenis Transaksi');
+          _this3.showApiError(res.data ? res.data.message : 'Gagal mengambil jenis transaksi', 'Gagal Memuat Jenis Transaksi');
         }
       })["catch"](function (err) {
-        _this2.showApiError(err, 'Gagal Memuat Jenis Transaksi');
+        _this3.showApiError(err, 'Gagal Memuat Jenis Transaksi');
       });
     },
     onJenisTransaksiChange: function onJenisTransaksiChange() {
-      var _this3 = this;
+      var _this4 = this;
       if (!this.form.jenisTransaksi) return;
 
       // 1. Generate No. Surat Permohonan
@@ -5662,31 +5745,31 @@ __webpack_require__.r(__webpack_exports__);
           tahun: y
         }
       }).then(function (res) {
-        _this3.isGeneratingNoSurat = false;
+        _this4.isGeneratingNoSurat = false;
         if (res.data && res.data.status === 'success') {
-          _this3.form.noSuratPengantar = res.data.no_surat;
+          _this4.form.noSuratPengantar = res.data.no_surat;
         } else {
-          _this3.showApiError(res.data ? res.data.message : 'Gagal generate nomor surat permohonan', 'Gagal Auto-Generate No. Surat');
+          _this4.showApiError(res.data ? res.data.message : 'Gagal generate nomor surat permohonan', 'Gagal Auto-Generate No. Surat');
         }
       })["catch"](function (err) {
-        _this3.isGeneratingNoSurat = false;
-        _this3.showApiError(err, 'Gagal Auto-Generate No. Surat');
+        _this4.isGeneratingNoSurat = false;
+        _this4.showApiError(err, 'Gagal Auto-Generate No. Surat');
       });
 
       // 2. Fetch List Persyaratan Berkas Dinamis
       axios.get("/api/v1/referensi/persyaratan/".concat(this.form.jenisTransaksi)).then(function (res) {
         if (res.data && res.data.status === 'success') {
-          _this3.listPersyaratan = res.data.data || [];
+          _this4.listPersyaratan = res.data.data || [];
           // Reset checked state
-          _this3.dokumenChecked = {};
-          _this3.listPersyaratan.forEach(function (item) {
-            _this3.$set(_this3.dokumenChecked, item.kd_syarat, false);
+          _this4.dokumenChecked = {};
+          _this4.listPersyaratan.forEach(function (item) {
+            _this4.$set(_this4.dokumenChecked, item.kd_syarat, false);
           });
         } else {
-          _this3.showApiError(res.data ? res.data.message : 'Gagal mengambil daftar persyaratan berkas', 'Gagal Memuat Persyaratan');
+          _this4.showApiError(res.data ? res.data.message : 'Gagal mengambil daftar persyaratan berkas', 'Gagal Memuat Persyaratan');
         }
       })["catch"](function (err) {
-        _this3.showApiError(err, 'Gagal Memuat Persyaratan');
+        _this4.showApiError(err, 'Gagal Memuat Persyaratan');
       });
     },
     onNopInput: function onNopInput(e) {
@@ -5706,12 +5789,14 @@ __webpack_require__.r(__webpack_exports__);
       this.nopVerified = false;
       this.hasTunggakan = false;
       this.tunggakanMsg = '';
+      this.resetSimulasi();
     },
     cekTunggakanPbb: function cekTunggakanPbb() {
-      var _this4 = this;
+      var _this5 = this;
       var cleanDigits = (this.form.nop || '').replace(/[^0-9]/g, '');
       if (cleanDigits.length < 18) {
         this.nopVerified = false;
+        this.resetSimulasi();
         return;
       }
       this.isCheckingTunggakan = true;
@@ -5720,60 +5805,61 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/api/v1/pbb/cek-tunggakan', {
         nop: this.form.nop
       }).then(function (res) {
-        _this4.isCheckingTunggakan = false;
+        _this5.isCheckingTunggakan = false;
         if (res.data && res.data.status === 'success') {
-          _this4.nopVerified = true;
-          _this4.hasTunggakan = res.data.has_tunggakan;
-          _this4.tunggakanMsg = res.data.message;
-          if (_this4.hasTunggakan) {
+          _this5.nopVerified = true;
+          _this5.hasTunggakan = res.data.has_tunggakan;
+          _this5.tunggakanMsg = res.data.message;
+          if (_this5.hasTunggakan) {
+            _this5.resetSimulasi();
             sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
               icon: 'warning',
               title: 'Peringatan Tunggakan PBB-P2',
-              text: _this4.tunggakanMsg,
+              text: _this5.tunggakanMsg,
               confirmButtonColor: '#d33',
               confirmButtonText: 'Tutup'
             });
           } else {
-            // Otomatis isi Nama WP SPPT & Alamat Objek Pajak dari data_op jika ditemukan
+            // Otomatis isi Nama WP SPPT, Alamat Objek Pajak, & Data Simulasi Terutang dari data_op
             if (res.data.data_op) {
               if (res.data.data_op.nama_wp_sppt) {
-                _this4.form.namaWpSppt = res.data.data_op.nama_wp_sppt;
+                _this5.form.namaWpSppt = res.data.data_op.nama_wp_sppt;
               }
               if (res.data.data_op.alamat_objek_pajak) {
-                _this4.form.alamatObjekPajak = res.data.data_op.alamat_objek_pajak;
+                _this5.form.alamatObjekPajak = res.data.data_op.alamat_objek_pajak;
               }
+              _this5.simulasi.luasBumi = res.data.data_op.luas_bumi || 0;
+              _this5.simulasi.njopBumi = res.data.data_op.njop_bumi || 0;
+              _this5.simulasi.totalNjopBumi = res.data.data_op.total_njop_bumi || 0;
+              _this5.simulasi.luasBng = res.data.data_op.luas_bng || 0;
+              _this5.simulasi.njopBng = res.data.data_op.njop_bng || 0;
+              _this5.simulasi.totalNjopBng = res.data.data_op.total_njop_bng || 0;
+              _this5.simulasi.totalNjopPbb = res.data.data_op.total_njop_pbb || 0;
             }
             sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
               icon: 'success',
               title: 'NOP Bebas Tunggakan',
-              text: 'Data Wajib Pajak pada SPPT & Alamat Lokasi Objek Pajak berhasil dimuat otomatis.',
+              text: 'Data Wajib Pajak, Alamat, dan Detail Simulasi Terutang PBB berhasil dimuat otomatis.',
               timer: 2200,
               showConfirmButton: false
             });
           }
         } else {
-          _this4.showApiError(res.data ? res.data.message : 'Gagal mengecek tunggakan PBB', 'Error Pengecekan PBB');
+          _this5.resetSimulasi();
+          _this5.showApiError(res.data ? res.data.message : 'Gagal mengecek tunggakan PBB', 'Error Pengecekan PBB');
         }
       })["catch"](function (err) {
-        _this4.isCheckingTunggakan = false;
-        _this4.showApiError(err, 'Error Pengecekan PBB');
+        _this5.isCheckingTunggakan = false;
+        _this5.resetSimulasi();
+        _this5.showApiError(err, 'Error Pengecekan PBB');
       });
     },
     refreshNomorPelayanan: function refreshNomorPelayanan() {
       var rand = Math.floor(Math.random() * 9000) + 1000;
       this.form.nomorPelayanan = 'PLY-BPHTB/2026/09/' + rand;
     },
-    panduanSingkat: function panduanSingkat() {
-      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
-        icon: 'info',
-        title: 'Panduan Singkat Pendaftaran BPHTB',
-        html: '<div class="text-left text-sm"><p>1. Isikan semua field form bertanda bintang merah (*).</p><p>2. Pilih Jenis Transaksi untuk memuat nomor permohonan & persyaratan.</p><p>3. Input NOP 18-digit untuk cek tunggakan otomatis (On Blur).</p><p>4. Centang seluruh berkas fisik sebelum menekan tombol simpan.</p></div>',
-        confirmButtonColor: '#4CAF50',
-        confirmButtonText: 'Saya Mengerti'
-      });
-    },
     batalForm: function batalForm() {
-      var _this5 = this;
+      var _this6 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
         title: 'Batalkan Pendaftaran?',
         text: 'Data yang telah Anda isi akan hilang.',
@@ -5785,12 +5871,12 @@ __webpack_require__.r(__webpack_exports__);
         cancelButtonText: 'Kembali'
       }).then(function (result) {
         if (result.isConfirmed) {
-          _this5.$router.push('/dashboard');
+          _this6.$router.push('/dashboard');
         }
       });
     },
     simpanPendaftaran: function simpanPendaftaran() {
-      var _this6 = this;
+      var _this7 = this;
       if (this.hasTunggakan) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
           icon: 'error',
@@ -5813,8 +5899,8 @@ __webpack_require__.r(__webpack_exports__);
       }
       this.isSaving = true;
       setTimeout(function () {
-        _this6.isSaving = false;
-        _this6.isSaved = true;
+        _this7.isSaving = false;
+        _this7.isSaved = true;
         sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
           icon: 'success',
           title: 'Pendaftaran Berhasil!',
@@ -5822,7 +5908,7 @@ __webpack_require__.r(__webpack_exports__);
           timer: 2000,
           showConfirmButton: false
         }).then(function () {
-          _this6.$router.push('/upload-persyaratan');
+          _this7.$router.push('/upload-persyaratan');
         });
       }, 1200);
     }
@@ -8246,35 +8332,184 @@ var render = function render() {
     staticClass: "h-1.5 w-full bg-[#4CAF50]"
   }), _vm._v(" "), _c("div", {
     staticClass: "p-6 flex flex-col gap-4"
-  }, [_vm._m(17), _vm._v(" "), _c("p", {
-    staticClass: "text-xs text-slate-500"
-  }, [_vm._v("\r\nKalkulasi otomatis berdasarkan estimasi nilai transaksi dan NJOP sistem PBB.\r\n")]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col gap-2 pt-2"
   }, [_c("div", {
-    staticClass: "flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200"
-  }, [_vm._m(18), _vm._v(" "), _c("span", {
-    staticClass: "font-mono text-sm font-semibold text-slate-900"
-  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.simulasi.npop)))])]), _vm._v(" "), _c("div", {
-    staticClass: "flex items-center justify-between p-2.5 rounded-lg bg-slate-50/70 border border-slate-200"
-  }, [_vm._m(19), _vm._v(" "), _c("span", {
-    staticClass: "font-mono text-sm text-slate-600"
-  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.simulasi.njopTotal)))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center justify-between"
+  }, [_vm._m(17), _vm._v(" "), _vm.nopVerified && !_vm.hasTunggakan ? _c("span", {
+    staticClass: "px-2.5 py-0.5 rounded-full bg-[#edf7ee] text-[#2e7d32] border border-[#c8e6c9] text-[11px] font-semibold"
+  }, [_vm._v("\r\nTerbaca\r\n")]) : _c("span", {
+    staticClass: "px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 text-[11px] font-medium"
+  }, [_vm._v("\r\nBelum Input NOP\r\n")])]), _vm._v(" "), _c("p", {
+    staticClass: "text-xs text-slate-500"
+  }, [_vm._v("\r\nKalkulasi otomatis berdasarkan data NOP PBB-P2 dan Nilai Pasar yang diinput.\r\n")]), _vm._v(" "), _c("div", {
+    staticClass: "flex flex-col gap-2 pt-1"
+  }, [_c("div", {
+    staticClass: "p-3 rounded-lg bg-slate-50 border border-slate-200 flex flex-col gap-2"
+  }, [_vm._m(18), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center justify-between text-xs pt-1 border-t border-slate-200/80"
+  }, [_c("div", {
+    staticClass: "flex flex-col"
+  }, [_c("span", {
+    staticClass: "font-medium text-slate-700"
+  }, [_vm._v("Bumi / Tanah")]), _vm._v(" "), _c("span", {
+    staticClass: "text-[11px] text-slate-400"
+  }, [_vm._v("Luas: " + _vm._s(_vm.formatRupiah(_vm.simulasi.luasBumi)) + " m² × Rp " + _vm._s(_vm.formatRupiah(_vm.simulasi.njopBumi)))])]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono text-xs font-semibold text-slate-800"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.simulasi.totalNjopBumi)))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center justify-between text-xs pt-1 border-t border-slate-200/80"
+  }, [_c("div", {
+    staticClass: "flex flex-col"
+  }, [_c("span", {
+    staticClass: "font-medium text-slate-700"
+  }, [_vm._v("Bangunan")]), _vm._v(" "), _c("span", {
+    staticClass: "text-[11px] text-slate-400"
+  }, [_vm._v("Luas: " + _vm._s(_vm.formatRupiah(_vm.simulasi.luasBng)) + " m² × Rp " + _vm._s(_vm.formatRupiah(_vm.simulasi.njopBng)))])]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono text-xs font-semibold text-slate-800"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.simulasi.totalNjopBng)))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center justify-between text-xs pt-1.5 border-t border-slate-300 font-bold"
+  }, [_c("span", {
+    staticClass: "text-slate-900"
+  }, [_vm._v("Total NJOP PBB")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono text-slate-900"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.simulasi.totalNjopPbb)))])])]), _vm._v(" "), _c("div", {
+    staticClass: "flex flex-col gap-1.5 p-3 rounded-lg bg-emerald-50/60 border border-emerald-200"
+  }, [_vm._m(19), _vm._v(" "), _c("div", {
+    staticClass: "relative flex items-center"
+  }, [_c("span", {
+    staticClass: "absolute left-3 font-mono text-xs font-bold text-slate-400 select-none"
+  }, [_vm._v("Rp")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.formattedNilaiPasar,
+      expression: "formattedNilaiPasar"
+    }],
+    staticClass: "w-full bg-white border border-slate-300 text-slate-800 font-mono text-sm pl-9 pr-3 py-1.5 rounded-md outline-none focus:border-[#4CAF50] focus:ring-2 focus:ring-[#4CAF50]/20 transition-all font-bold",
+    attrs: {
+      id: "input-nilai-pasar-sidebar",
+      placeholder: "0",
+      type: "text"
+    },
+    domProps: {
+      value: _vm.formattedNilaiPasar
+    },
+    on: {
+      input: [function ($event) {
+        if ($event.target.composing) return;
+        _vm.formattedNilaiPasar = $event.target.value;
+      }, _vm.onNilaiPasarInput]
+    }
+  })]), _vm._v(" "), _c("p", {
+    staticClass: "text-[11px] text-slate-500"
+  }, [_vm._v("Nilai pasar akta / risalah lelang (opsional / pembanding)")])]), _vm._v(" "), _c("div", {
     staticClass: "flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200"
   }, [_vm._m(20), _vm._v(" "), _c("span", {
+    staticClass: "font-mono text-sm font-bold text-slate-900"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.npop)))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex flex-col gap-1.5 p-2 bg-slate-100 rounded-lg"
+  }, [_c("span", {
+    staticClass: "text-[11px] font-bold text-slate-700 px-1"
+  }, [_vm._v("Status Pemotongan NIK Pemohon:")]), _vm._v(" "), _c("div", {
+    staticClass: "grid grid-cols-2 gap-1 text-xs font-semibold"
+  }, [_c("button", {
+    staticClass: "py-1.5 px-2 rounded-md transition-all text-center text-[11px]",
+    "class": _vm.statusPemotonganNIK === "belum" ? "bg-white text-[#2e7d32] shadow-xs font-bold border border-slate-200" : "text-slate-500 hover:text-slate-800",
+    attrs: {
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        _vm.statusPemotonganNIK = "belum";
+      }
+    }
+  }, [_vm._v("\r\nTidak Pernah\r\n")]), _vm._v(" "), _c("button", {
+    staticClass: "py-1.5 px-2 rounded-md transition-all text-center text-[11px]",
+    "class": _vm.statusPemotonganNIK === "sudah" ? "bg-white text-rose-700 shadow-xs font-bold border border-slate-200" : "text-slate-500 hover:text-slate-800",
+    attrs: {
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        _vm.statusPemotonganNIK = "sudah";
+      }
+    }
+  }, [_vm._v("\r\nSudah Pernah\r\n")])])]), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200"
+  }, [_c("div", {
+    staticClass: "flex flex-col"
+  }, [_c("span", {
+    staticClass: "text-xs font-semibold text-amber-700"
+  }, [_vm._v("NPOPTKP Daerah")]), _vm._v(" "), _c("span", {
+    staticClass: "text-[11px] text-slate-400"
+  }, [_vm._v(_vm._s(_vm.activeNpoptkpLabel))])]), _vm._v(" "), _c("span", {
     staticClass: "font-mono text-sm font-semibold text-amber-700"
-  }, [_vm._v("- Rp " + _vm._s(_vm.formatRupiah(_vm.npoptkpDaerah)))])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("- Rp " + _vm._s(_vm.formatRupiah(_vm.activeNpoptkp)))])]), _vm._v(" "), _c("div", {
     staticClass: "flex items-center justify-between p-2.5 rounded-lg bg-slate-50/70 border border-slate-200"
   }, [_vm._m(21), _vm._v(" "), _c("span", {
     staticClass: "font-mono text-sm font-bold text-slate-900"
-  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.npopKenaPajak)))])]), _vm._v(" "), _c("div", {
-    staticClass: "h-[1px] bg-slate-200 my-1"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.activeNpopKenaPajak)))])]), _vm._v(" "), _c("div", {
+    staticClass: "h-[1px] bg-slate-200 my-0.5"
   }), _vm._v(" "), _c("div", {
-    staticClass: "p-4 rounded-xl bg-[#4CAF50] text-white flex flex-col gap-1 shadow-sm"
+    staticClass: "flex items-center justify-between p-3 rounded-lg bg-slate-100 border border-slate-300"
+  }, [_c("div", {
+    staticClass: "flex flex-col"
   }, [_c("span", {
-    staticClass: "text-xs text-white/90 tracking-wide uppercase font-semibold"
-  }, [_vm._v("BPHTB Terutang (5% x NPOPKP)")]), _vm._v(" "), _c("span", {
-    staticClass: "text-2xl font-bold font-mono tracking-tight text-white"
-  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.bphtbTerutang)))]), _vm._v(" "), _vm._m(22)])])]), _vm._v(" "), _c("div", {
+    staticClass: "text-xs font-bold text-slate-900"
+  }, [_vm._v("BPHTB Terutang")]), _vm._v(" "), _c("span", {
+    staticClass: "text-[11px] text-slate-500"
+  }, [_vm._v("Tarif " + _vm._s((_vm.tarifBphtb.persen * 100).toFixed(0)) + "% × NPOPKP")])]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono text-base font-bold text-[#2e7d32]"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.activeBphtbTerutang)))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center justify-between p-3.5 rounded-xl text-white shadow-sm transition-colors",
+    "class": _vm.statusPemotonganNIK === "sudah" ? "bg-amber-800" : "bg-[#2e7d32]"
+  }, [_c("div", {
+    staticClass: "flex flex-col"
+  }, [_c("span", {
+    staticClass: "text-xs text-white/90 font-semibold tracking-wide uppercase"
+  }, [_vm._v("BPHTB Harus Dibayar")]), _vm._v(" "), _c("span", {
+    staticClass: "text-[11px] text-white/80"
+  }, [_vm._v(_vm._s(_vm.activeStatusText))])]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono text-xl font-bold tracking-tight text-white"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.activeBphtbHarusDibayar)))])]), _vm._v(" "), _c("div", {
+    staticClass: "p-3 rounded-lg bg-slate-50 border border-slate-200 flex flex-col gap-2 mt-1"
+  }, [_vm._m(22), _vm._v(" "), _c("div", {
+    staticClass: "grid grid-cols-2 gap-2 text-[11px]"
+  }, [_c("div", {
+    staticClass: "p-2 rounded bg-white border border-slate-200 flex flex-col gap-1"
+  }, [_c("span", {
+    staticClass: "font-semibold text-[#2e7d32]"
+  }, [_vm._v("1. Tidak Pernah")]), _vm._v(" "), _c("span", {
+    staticClass: "text-[10px] text-slate-400"
+  }, [_vm._v("NPOPTKP Rp " + _vm._s(_vm.formatRupiah(_vm.npoptkpDaerah)))]), _vm._v(" "), _c("div", {
+    staticClass: "flex justify-between text-[10px] text-slate-600 pt-1 border-t border-slate-100"
+  }, [_c("span", [_vm._v("NPOPKP:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.npopKenaPajak)))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex justify-between text-[10px] text-slate-600"
+  }, [_c("span", [_vm._v("Terutang:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.bphtbTerutang)))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex justify-between text-[11px] font-bold text-[#2e7d32] pt-1 border-t border-slate-200"
+  }, [_c("span", [_vm._v("Harus Dibayar:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.bphtbHarusDibayar)))])])]), _vm._v(" "), _c("div", {
+    staticClass: "p-2 rounded bg-white border border-slate-200 flex flex-col gap-1"
+  }, [_c("span", {
+    staticClass: "font-semibold text-rose-700"
+  }, [_vm._v("2. Sudah Pernah")]), _vm._v(" "), _c("span", {
+    staticClass: "text-[10px] text-slate-400"
+  }, [_vm._v("NPOPTKP Rp 0")]), _vm._v(" "), _c("div", {
+    staticClass: "flex justify-between text-[10px] text-slate-600 pt-1 border-t border-slate-100"
+  }, [_c("span", [_vm._v("NPOPKP:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.npopKenaPajakPernah)))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex justify-between text-[10px] text-slate-600"
+  }, [_c("span", [_vm._v("Terutang:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.bphtbTerutangPernah)))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex justify-between text-[11px] font-bold text-rose-700 pt-1 border-t border-slate-200"
+  }, [_c("span", [_vm._v("Harus Dibayar:")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono"
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.bphtbHarusDibayarPernah)))])])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "p-5 bg-slate-50 border-t border-slate-200 flex flex-col gap-3"
   }, [_vm._m(23), _vm._v(" "), _c("div", {
     staticClass: "flex items-center justify-between text-slate-500 text-xs pt-2 border-t border-slate-200"
@@ -8554,13 +8789,26 @@ var staticRenderFns = [function () {
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "flex flex-col"
+  return _c("span", {
+    staticClass: "text-xs font-bold text-slate-800 flex items-center gap-1.5"
   }, [_c("span", {
-    staticClass: "text-xs font-semibold text-slate-800"
-  }, [_vm._v("Nilai Transaksi (NPOP)")]), _vm._v(" "), _c("span", {
-    staticClass: "text-[11px] text-slate-400"
-  }, [_vm._v("Harga Akta Pasar")])]);
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("landscape")]), _vm._v("\r\nRincian NJOP PBB Objek Pajak\r\n")]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("label", {
+    staticClass: "text-xs font-bold text-slate-800 flex items-center justify-between",
+    attrs: {
+      "for": "input-nilai-pasar-sidebar"
+    }
+  }, [_c("span", {
+    staticClass: "flex items-center gap-1.5"
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("payments")]), _vm._v("\r\nNilai Pasar / Transaksi\r\n")]), _vm._v(" "), _c("span", {
+    staticClass: "text-[10px] text-emerald-700 font-semibold uppercase"
+  }, [_vm._v("Input Simulasi")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -8568,19 +8816,9 @@ var staticRenderFns = [function () {
     staticClass: "flex flex-col"
   }, [_c("span", {
     staticClass: "text-xs font-semibold text-slate-800"
-  }, [_vm._v("Total NJOP PBB")]), _vm._v(" "), _c("span", {
+  }, [_vm._v("Nilai Perolehan (NPOP)")]), _vm._v(" "), _c("span", {
     staticClass: "text-[11px] text-slate-400"
-  }, [_vm._v("Luas Bumi & Bangunan")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "flex flex-col"
-  }, [_c("span", {
-    staticClass: "text-xs font-semibold text-amber-700"
-  }, [_vm._v("NPOPTKP Daerah")]), _vm._v(" "), _c("span", {
-    staticClass: "text-[11px] text-slate-400"
-  }, [_vm._v("Pengurang Standar Transaksi")])]);
+  }, [_vm._v("MAX (NJOP PBB, Nilai Pasar)")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -8588,17 +8826,17 @@ var staticRenderFns = [function () {
     staticClass: "flex flex-col"
   }, [_c("span", {
     staticClass: "text-xs font-semibold text-slate-800"
-  }, [_vm._v("NPOP Kena Pajak")]), _vm._v(" "), _c("span", {
+  }, [_vm._v("NPOP Kena Pajak (NPOPKP)")]), _vm._v(" "), _c("span", {
     staticClass: "text-[11px] text-slate-400"
-  }, [_vm._v("(NPOP - NPOPTKP)")])]);
+  }, [_vm._v("NPOP - NPOPTKP")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("span", {
-    staticClass: "text-xs text-white/90 mt-1 flex items-center gap-1.5"
+    staticClass: "text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1"
   }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[16px]"
-  }, [_vm._v("verified")]), _vm._v(" Nilai penetapan sementara\r\n")]);
+    staticClass: "material-symbols-outlined text-[14px] text-slate-500"
+  }, [_vm._v("compare_arrows")]), _vm._v("\r\nPerbandingan 2 Skenario NIK:\r\n")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -27352,7 +27590,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\na[data-v-28cb1975] {\n  text-decoration: none !important;\n}\n.custom-scrollbar[data-v-28cb1975]::-webkit-scrollbar {\n  width: 4px;\n}\n.custom-scrollbar[data-v-28cb1975]::-webkit-scrollbar-track {\n  background: transparent;\n}\n.custom-scrollbar[data-v-28cb1975]::-webkit-scrollbar-thumb {\n  background: #cbd5e1;\n  border-radius: 4px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\na[data-v-28cb1975] {\r\n  text-decoration: none !important;\n}\n.custom-scrollbar[data-v-28cb1975]::-webkit-scrollbar {\r\n  width: 4px;\n}\n.custom-scrollbar[data-v-28cb1975]::-webkit-scrollbar-track {\r\n  background: transparent;\n}\n.custom-scrollbar[data-v-28cb1975]::-webkit-scrollbar-thumb {\r\n  background: #cbd5e1;\r\n  border-radius: 4px;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
