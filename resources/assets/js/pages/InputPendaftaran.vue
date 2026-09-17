@@ -1067,7 +1067,7 @@ export default {
               timer: 2000,
               showConfirmButton: false
             }).then(() => {
-              this.$router.push('/upload-persyaratan');
+              this.$router.push({ path: '/upload-persyaratan', query: { no_pelayanan: res.data.no_pelayanan } });
             });
           } else {
             this.showApiError(res.data ? res.data.message : 'Gagal menyimpan pendaftaran', 'Pendaftaran Gagal');

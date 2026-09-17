@@ -11319,6 +11319,9 @@ textarea.form-control-lg {
   .m-3 {
     margin: calc(var(--spacing) * 3);
   }
+  .m-auto {
+    margin: auto;
+  }
   .m-gutter-sm {
     margin: 0.5rem;
   }
@@ -11360,6 +11363,9 @@ textarea.form-control-lg {
   }
   .mt-1 {
     margin-top: var(--spacing);
+  }
+  .mt-1\.5 {
+    margin-top: calc(var(--spacing) * 1.5);
   }
   .mt-2 {
     margin-top: calc(var(--spacing) * 2);
@@ -11414,6 +11420,9 @@ textarea.form-control-lg {
   }
   .-ml-1 {
     margin-left: calc(var(--spacing) * -1);
+  }
+  .ml-0\.5 {
+    margin-left: calc(var(--spacing) * 0.5);
   }
   .ml-2 {
     margin-left: calc(var(--spacing) * 2);
@@ -11568,6 +11577,9 @@ textarea.form-control-lg {
   .h-\[380px\] {
     height: 380px;
   }
+  .h-\[650px\] {
+    height: 650px;
+  }
   .h-full {
     height: 100%;
   }
@@ -11580,8 +11592,14 @@ textarea.form-control-lg {
   .max-h-\[92vh\] {
     max-height: 92vh;
   }
+  .min-h-\[500px\] {
+    min-height: 500px;
+  }
   .min-h-\[520px\] {
     min-height: 520px;
+  }
+  .min-h-\[600px\] {
+    min-height: 600px;
   }
   .min-h-screen {
     min-height: 100vh;
@@ -11679,6 +11697,9 @@ textarea.form-control-lg {
   .max-w-4xl {
     max-width: var(--container-4xl);
   }
+  .max-w-\[150px\] {
+    max-width: 150px;
+  }
   .max-w-\[180px\] {
     max-width: 180px;
   }
@@ -11688,6 +11709,9 @@ textarea.form-control-lg {
   .max-w-\[1440px\] {
     max-width: 1440px;
   }
+  .max-w-full {
+    max-width: 100%;
+  }
   .max-w-md {
     max-width: var(--container-md);
   }
@@ -11696,6 +11720,9 @@ textarea.form-control-lg {
   }
   .min-w-0 {
     min-width: 0px;
+  }
+  .min-w-\[45px\] {
+    min-width: 45px;
   }
   .min-w-full {
     min-width: 100%;
@@ -11973,6 +12000,10 @@ textarea.form-control-lg {
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
+  }
+  .border-0 {
+    border-style: var(--tw-border-style);
+    border-width: 0px;
   }
   .border-2 {
     border-style: var(--tw-border-style);
@@ -12274,6 +12305,9 @@ textarea.form-control-lg {
   .bg-slate-700 {
     background-color: var(--color-slate-700);
   }
+  .bg-slate-900 {
+    background-color: var(--color-slate-900);
+  }
   .bg-slate-900\/50 {
     background-color: color-mix(in srgb, oklch(20.8% 0.042 265.755) 50%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -12367,6 +12401,9 @@ textarea.form-control-lg {
   }
   .p-8 {
     padding: calc(var(--spacing) * 8);
+  }
+  .p-10 {
+    padding: calc(var(--spacing) * 10);
   }
   .p-12 {
     padding: calc(var(--spacing) * 12);
@@ -12515,6 +12552,9 @@ textarea.form-control-lg {
   .pr-10 {
     padding-right: calc(var(--spacing) * 10);
   }
+  .pr-11 {
+    padding-right: calc(var(--spacing) * 11);
+  }
   .pb-1 {
     padding-bottom: var(--spacing);
   }
@@ -12541,6 +12581,9 @@ textarea.form-control-lg {
   }
   .pl-1 {
     padding-left: var(--spacing);
+  }
+  .pl-3\.5 {
+    padding-left: calc(var(--spacing) * 3.5);
   }
   .pl-6 {
     padding-left: calc(var(--spacing) * 6);
@@ -13280,6 +13323,9 @@ textarea.form-control-lg {
     .hover\:border-\[\#81c784\]:hover {
       border-color: #81c784;
     }
+    .hover\:border-emerald-200:hover {
+      border-color: var(--color-emerald-200);
+    }
     .hover\:border-primary:hover {
       border-color: #4CAF50;
     }
@@ -13318,6 +13364,9 @@ textarea.form-control-lg {
     }
     .hover\:bg-blue-700:hover {
       background-color: var(--color-blue-700);
+    }
+    .hover\:bg-emerald-50:hover {
+      background-color: var(--color-emerald-50);
     }
     .hover\:bg-error-container:hover {
       background-color: #ffebee;
@@ -13396,6 +13445,9 @@ textarea.form-control-lg {
     .hover\:text-\[\#264332\]:hover {
       color: #264332;
     }
+    .hover\:text-emerald-700:hover {
+      color: var(--color-emerald-700);
+    }
     .hover\:text-gray-500:hover {
       color: var(--color-gray-500);
     }
@@ -13444,8 +13496,14 @@ textarea.form-control-lg {
   .focus\:border-red-500:focus {
     border-color: var(--color-red-500);
   }
+  .focus\:border-transparent:focus {
+    border-color: transparent;
+  }
   .focus\:bg-gray-100:focus {
     background-color: var(--color-gray-100);
+  }
+  .focus\:bg-white:focus {
+    background-color: var(--color-white);
   }
   .focus\:ring-2:focus {
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
@@ -13498,6 +13556,12 @@ textarea.form-control-lg {
   }
   .disabled\:bg-slate-300:disabled {
     background-color: var(--color-slate-300);
+  }
+  .disabled\:opacity-30:disabled {
+    opacity: 30%;
+  }
+  .disabled\:opacity-50:disabled {
+    opacity: 50%;
   }
   @media (width >= 40rem) {
     .sm\:col-span-2 {

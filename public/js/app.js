@@ -5940,7 +5940,12 @@ __webpack_require__.r(__webpack_exports__);
             timer: 2000,
             showConfirmButton: false
           }).then(function () {
-            _this8.$router.push('/upload-persyaratan');
+            _this8.$router.push({
+              path: '/upload-persyaratan',
+              query: {
+                no_pelayanan: res.data.no_pelayanan
+              }
+            });
           });
         } else {
           _this8.showApiError(res.data ? res.data.message : 'Gagal menyimpan pendaftaran', 'Pendaftaran Gagal');
@@ -6223,17 +6228,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'UploadPersyaratan',
   data: function data() {
     return {
+      searchNoPelayanan: '',
+      isLoading: false,
+      hasData: false,
       pendaftaran: {
-        nomorPelayanan: 'PLY-BPHTB/2026/09/00482',
-        nopPbb: '35.73.010.005.012-0045.0',
-        jenisPerolehan: 'Jual Beli / Peralihan Hak Pokok',
-        namaWajibPajak: 'Ir. Muhammad Rizky Kurniawan, M.Eng.',
-        tanggalPendaftaran: '19 September 2026 • 09:15 WIB',
-        mitraPpat: 'Kantor Notaris Farida Hanum, S.H., M.Kn.'
+        nomorPelayanan: '',
+        nopPbb: '',
+        plyKode: '',
+        jenisPerolehan: '',
+        namaWajibPajak: '',
+        tanggalPendaftaran: ''
       },
       activeFilter: 'all',
       currentTargetDoc: null,
@@ -6245,88 +6259,34 @@ __webpack_require__.r(__webpack_exports__);
       },
       previewModalOpen: false,
       currentPreviewDoc: null,
-      previewZoom: 1,
-      dokumenList: [{
-        id: 'doc-1',
-        urutan: 1,
-        nama: 'KTP Pemohon / Kuasa',
-        wajib: true,
-        status: 'uploaded',
-        icon: 'badge',
-        formatInfo: 'Format: PDF, JPG, PNG • Maks. 5MB',
-        filename: 'ktp_pemohon_rizky_kurniawan.pdf',
-        filesize: '1.8 MB',
-        uploadedDate: '19 Sep 2026, 09:20 WIB',
-        targetLabel: 'KTP Pemohon',
-        namaPreview: 'KTP Pemohon - Ir. Muhammad Rizky Kurniawan',
-        regCode: '2026-09-482-KTP',
-        docHeading: 'KARTU TANDA PENDUDUK ELEKTRONIK (e-KTP)'
-      }, {
-        id: 'doc-2',
-        urutan: 2,
-        nama: 'Surat Keterangan / Sertifikat Tanah (SHM/HGB)',
-        wajib: true,
-        status: 'uploaded',
-        icon: 'verified_user',
-        formatInfo: 'Format: PDF • Maks. 15MB',
-        filename: 'sertifikat_tanah_shm_04112.pdf',
-        filesize: '4.2 MB',
-        uploadedDate: '19 Sep 2026, 09:22 WIB',
-        targetLabel: 'Sertifikat Tanah',
-        namaPreview: 'Sertifikat Hak Milik (SHM) No. 04112',
-        regCode: '2026-09-482-SHM',
-        docHeading: 'SERTIFIKAT HAK ATAS TANAH (SHM)'
-      }, {
-        id: 'doc-3',
-        urutan: 3,
-        nama: 'Bukti Lunas SPPT PBB Tahun Berjalan (2026)',
-        wajib: true,
-        status: 'uploaded',
-        icon: 'receipt',
-        formatInfo: 'Format: PDF, JPG • Maks. 5MB',
-        filename: 'bukti_lunas_pbb_2026.pdf',
-        filesize: '950 KB',
-        uploadedDate: '19 Sep 2026, 09:25 WIB',
-        targetLabel: 'Bukti SPPT PBB',
-        namaPreview: 'Bukti Lunas SPPT PBB Tahun 2026',
-        regCode: '2026-09-482-PBB',
-        docHeading: 'SURAT PEMBERITAHUAN PAJAK TERHUTANG (SPPT PBB)'
-      }, {
-        id: 'doc-4',
-        urutan: 4,
-        nama: 'Akta Jual Beli (AJB) / PPJB Notaris',
-        wajib: true,
-        status: 'pending',
-        icon: 'draw',
-        formatInfo: 'Format Dokumen: Dokumen PDF Asli Bertanda Tangan Notaris PPAT • Maks. 20MB',
-        keterangan: 'Diperlukan untuk memvalidasi dasar nilai perolehan objek pajak (NPOP)',
-        filename: '',
-        filesize: '',
-        uploadedDate: '',
-        targetLabel: 'AJB / PPJB',
-        namaPreview: 'Akta Jual Beli (AJB) PPAT',
-        regCode: '2026-09-482-AJB',
-        docHeading: 'SALINAN RESMI AKTA JUAL BELI (AJB) NOTARIS'
-      }, {
-        id: 'doc-5',
-        urutan: 5,
-        nama: 'Surat Pernyataan NPOPTKP & Riwayat Perolehan',
-        wajib: false,
-        status: 'pending',
-        icon: 'history_edu',
-        formatInfo: 'Format Dokumen: PDF • Maks. 5MB',
-        note: 'Formulir pernyataan perolehan hak pertama atau riwayat kepemilikan sebelumnya bermeterai Rp 10.000',
-        filename: '',
-        filesize: '',
-        uploadedDate: '',
-        targetLabel: 'Surat Pernyataan NPOPTKP',
-        namaPreview: 'Surat Pernyataan Bebas NPOPTKP',
-        regCode: '2026-09-482-NPOPTKP',
-        docHeading: 'SURAT PERNYATAAN RIWAYAT KEPEMILIKAN OBJEK'
-      }]
+      previewUrl: '',
+      isPdfPreview: false,
+      zoomLevel: 1.0,
+      dokumenList: []
     };
   },
   computed: {
+    imageZoomStyle: function imageZoomStyle() {
+      if (this.zoomLevel === 1.0) {
+        return {
+          maxWidth: '100%',
+          maxHeight: '580px',
+          objectFit: 'contain'
+        };
+      }
+      return {
+        width: "".concat(Math.round(this.zoomLevel * 100), "%"),
+        maxWidth: 'none',
+        maxHeight: 'none',
+        height: 'auto'
+      };
+    },
+    formattedNop: function formattedNop() {
+      if (!this.pendaftaran.nopPbb) return '-';
+      var clean = this.pendaftaran.nopPbb.replace(/\D/g, '');
+      if (clean.length !== 18) return this.pendaftaran.nopPbb;
+      return "".concat(clean.substr(0, 2), ".").concat(clean.substr(2, 2), ".").concat(clean.substr(4, 3), ".").concat(clean.substr(7, 3), ".").concat(clean.substr(10, 3), "-").concat(clean.substr(13, 4), ".").concat(clean.substr(17, 1));
+    },
     totalCount: function totalCount() {
       return this.dokumenList.length;
     },
@@ -6341,12 +6301,8 @@ __webpack_require__.r(__webpack_exports__);
       }).length;
     },
     progressPercent: function progressPercent() {
+      if (this.totalCount === 0) return 0;
       return Math.round(this.uploadedCount / this.totalCount * 100);
-    },
-    isComplete: function isComplete() {
-      return this.dokumenList.every(function (d) {
-        return !d.wajib || d.status === 'uploaded';
-      });
     },
     filteredDokumenList: function filteredDokumenList() {
       if (this.activeFilter === 'uploaded') {
@@ -6369,114 +6325,259 @@ __webpack_require__.r(__webpack_exports__);
         _this.closeDocPreview();
       }
     });
-    this.currentTargetDoc = this.dokumenList.find(function (d) {
-      return d.status === 'pending';
-    }) || this.dokumenList[3];
+    var queryNoPelayanan = this.$route.query.no_pelayanan;
+    if (queryNoPelayanan) {
+      this.searchNoPelayanan = queryNoPelayanan;
+      this.cariNoPelayanan();
+    }
   },
   methods: {
+    cariNoPelayanan: function cariNoPelayanan() {
+      var _this2 = this;
+      if (!this.searchNoPelayanan || !this.searchNoPelayanan.trim()) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+          icon: 'warning',
+          title: 'Nomor Pelayanan Kosong',
+          text: 'Masukkan Nomor Pelayanan untuk melakukan pencarian.'
+        });
+        return;
+      }
+      var noPel = this.searchNoPelayanan.trim();
+      this.isLoading = true;
+      axios__WEBPACK_IMPORTED_MODULE_1___default().get('/api/v1/persyaratan/detail', {
+        params: {
+          no_pelayanan: noPel
+        }
+      }).then(function (res) {
+        _this2.isLoading = false;
+        if (res.data && res.data.status === 'success') {
+          var data = res.data.data;
+          _this2.pendaftaran.nomorPelayanan = data.pendaftaran.no_pelayanan;
+          _this2.pendaftaran.nopPbb = data.pendaftaran.nop;
+          _this2.pendaftaran.plyKode = data.pendaftaran.ply_kode;
+          _this2.pendaftaran.jenisPerolehan = data.pendaftaran.jenis_perolehan;
+          _this2.pendaftaran.namaWajibPajak = data.pendaftaran.nama_pemohon;
+          _this2.pendaftaran.tanggalPendaftaran = data.pendaftaran.tanggal_pendaftaran;
+          _this2.dokumenList = data.persyaratan || [];
+          _this2.hasData = true;
+          _this2.currentTargetDoc = _this2.dokumenList.find(function (d) {
+            return d.status === 'pending';
+          }) || _this2.dokumenList[0];
+        } else {
+          _this2.hasData = false;
+          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+            icon: 'error',
+            title: 'Data Tidak Ditemukan',
+            text: res.data ? res.data.message : 'Nomor pelayanan tidak ditemukan.'
+          });
+        }
+      })["catch"](function (err) {
+        _this2.isLoading = false;
+        _this2.hasData = false;
+        var msg = err.response && err.response.data && err.response.data.message ? err.response.data.message : 'Gagal mengambil data pendaftaran.';
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+          icon: 'error',
+          title: 'Terjadi Kesalahan',
+          text: msg
+        });
+      });
+    },
+    openFilePicker: function openFilePicker() {
+      if (this.$refs.fileInputRef) {
+        this.$refs.fileInputRef.click();
+      }
+    },
     selectDocumentForUpload: function selectDocumentForUpload(doc) {
       this.currentTargetDoc = doc;
-      var dropArea = document.getElementById('drag-drop-area') || document.getElementById('dropzone-box');
-      if (dropArea) {
-        dropArea.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-        dropArea.classList.add('ring-2', 'ring-[#4CAF50]');
-        setTimeout(function () {
-          dropArea.classList.remove('ring-2', 'ring-[#4CAF50]');
-        }, 1500);
-      }
+      this.openFilePicker();
+    },
+    triggerReupload: function triggerReupload(doc) {
+      this.currentTargetDoc = doc;
+      this.openFilePicker();
     },
     handleFileInput: function handleFileInput(event) {
       var files = event.target.files;
       if (files && files.length > 0) {
-        this.simulateUpload(files[0]);
+        this.processFileUpload(files[0]);
       }
+      event.target.value = '';
     },
     handleFileDrop: function handleFileDrop(event) {
       this.isDragging = false;
       var files = event.dataTransfer.files;
       if (files && files.length > 0) {
-        this.simulateUpload(files[0]);
+        this.processFileUpload(files[0]);
       }
     },
-    simulateUpload: function simulateUpload(file) {
-      var _this2 = this;
+    processFileUpload: function processFileUpload(file) {
+      var _this3 = this;
+      if (!this.hasData || !this.pendaftaran.nomorPelayanan) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+          icon: 'warning',
+          title: 'Belum Memilih Pendaftaran',
+          text: 'Silakan cari Nomor Pelayanan terlebih dahulu.'
+        });
+        return;
+      }
       var target = this.currentTargetDoc || this.dokumenList.find(function (d) {
         return d.status === 'pending';
-      }) || this.dokumenList[3];
+      }) || this.dokumenList[0];
+      if (!target) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+          icon: 'warning',
+          title: 'Pilih Dokumen',
+          text: 'Silakan pilih dokumen persyaratan yang akan diunggah.'
+        });
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+          icon: 'error',
+          title: 'Ukuran File Terlalu Besar',
+          text: 'Maksimal ukuran file adalah 5 MB.'
+        });
+        return;
+      }
+      var allowedExts = ['pdf', 'jpg', 'jpeg', 'png'];
+      var ext = file.name.split('.').pop().toLowerCase();
+      if (!allowedExts.includes(ext)) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+          icon: 'error',
+          title: 'Format File Tidak Diizinkan',
+          text: 'Hanya mendukung file format PDF, JPG, JPEG, dan PNG.'
+        });
+        return;
+      }
+      var formData = new FormData();
+      formData.append('no_pelayanan', this.pendaftaran.nomorPelayanan);
+      formData.append('jenis_transaksi', target.jenis_transaksi || this.pendaftaran.plyKode);
+      formData.append('kd_syarat', target.kd_syarat);
+      formData.append('file', file);
       this.uploadProgress.active = true;
-      this.uploadProgress.fileName = file.name || target.targetLabel.toLowerCase().replace(/\s+/g, '_') + '.pdf';
+      this.uploadProgress.fileName = file.name;
       this.uploadProgress.percentage = 0;
-      var interval = setInterval(function () {
-        _this2.uploadProgress.percentage += 20;
-        if (_this2.uploadProgress.percentage >= 100) {
-          _this2.uploadProgress.percentage = 100;
-          clearInterval(interval);
-          setTimeout(function () {
-            target.status = 'uploaded';
-            target.filename = _this2.uploadProgress.fileName;
-            target.filesize = file.size ? (file.size / (1024 * 1024)).toFixed(1) + ' MB' : '2.4 MB';
-            var now = new Date();
-            target.uploadedDate = now.getDate() + ' Sep 2026, ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' WIB';
-            _this2.uploadProgress.active = false;
-            _this2.uploadProgress.percentage = 0;
-            alert('Dokumen ' + target.nama + ' berhasil diunggah!');
-          }, 400);
+      axios__WEBPACK_IMPORTED_MODULE_1___default().post('/api/v1/persyaratan/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: function onUploadProgress(progressEvent) {
+          if (progressEvent.total > 0) {
+            _this3.uploadProgress.percentage = Math.round(progressEvent.loaded * 100 / progressEvent.total);
+          }
         }
-      }, 100);
+      }).then(function (res) {
+        _this3.uploadProgress.active = false;
+        if (res.data && res.data.status === 'success') {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+            icon: 'success',
+            title: 'Unggah Berhasil!',
+            text: 'Dokumen "' + target.nama + '" telah berhasil disimpan.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          _this3.cariNoPelayanan();
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+            icon: 'error',
+            title: 'Gagal Unggah',
+            text: res.data ? res.data.message : 'Gagal mengunggah file.'
+          });
+        }
+      })["catch"](function (err) {
+        _this3.uploadProgress.active = false;
+        var msg = err.response && err.response.data && err.response.data.message ? err.response.data.message : 'Terjadi kesalahan saat mengunggah berkas.';
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+          icon: 'error',
+          title: 'Gagal Unggah',
+          text: msg
+        });
+      });
     },
     removeDocumentFile: function removeDocumentFile(doc) {
-      if (confirm('Apakah Anda yakin ingin menghapus ' + doc.nama + '?')) {
-        doc.status = 'pending';
-        doc.filename = '';
-        doc.filesize = '';
-        doc.uploadedDate = '';
-        alert('Berkas berhasil dihapus.');
+      var _this4 = this;
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+        title: 'Hapus Berkas?',
+        text: 'Apakah Anda yakin ingin menghapus berkas "' + doc.nama + '"?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal'
+      }).then(function (result) {
+        if (result.isConfirmed) {
+          axios__WEBPACK_IMPORTED_MODULE_1___default().post('/api/v1/persyaratan/delete', {
+            no_pelayanan: _this4.pendaftaran.nomorPelayanan,
+            jenis_transaksi: doc.jenis_transaksi || _this4.pendaftaran.plyKode,
+            kd_syarat: doc.kd_syarat
+          }).then(function (res) {
+            if (res.data && res.data.status === 'success') {
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+                icon: 'success',
+                title: 'Terhapus!',
+                text: 'Berkas berhasil dihapus.',
+                timer: 1500,
+                showConfirmButton: false
+              });
+              _this4.cariNoPelayanan();
+            } else {
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+                icon: 'error',
+                title: 'Gagal Hapus',
+                text: res.data ? res.data.message : 'Gagal menghapus berkas.'
+              });
+            }
+          })["catch"](function (err) {
+            var msg = err.response && err.response.data && err.response.data.message ? err.response.data.message : 'Terjadi kesalahan server.';
+            sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+              icon: 'error',
+              title: 'Gagal Hapus',
+              text: msg
+            });
+          });
+        }
+      });
+    },
+    zoomIn: function zoomIn() {
+      if (this.zoomLevel < 3.0) {
+        this.zoomLevel = Math.min(3.0, Math.round((this.zoomLevel + 0.25) * 100) / 100);
+      }
+    },
+    zoomOut: function zoomOut() {
+      if (this.zoomLevel > 0.5) {
+        this.zoomLevel = Math.max(0.5, Math.round((this.zoomLevel - 0.25) * 100) / 100);
+      }
+    },
+    resetZoom: function resetZoom() {
+      this.zoomLevel = 1.0;
+    },
+    handleWheelZoom: function handleWheelZoom(event) {
+      if (this.isPdfPreview) return;
+      if (event.deltaY < 0) {
+        this.zoomIn();
+      } else {
+        this.zoomOut();
       }
     },
     openDocPreview: function openDocPreview(doc) {
       this.currentPreviewDoc = doc;
-      this.previewZoom = 1;
+      var url = "/api/v1/persyaratan/file?no_pelayanan=".concat(encodeURIComponent(this.pendaftaran.nomorPelayanan), "&jenis_transaksi=").concat(encodeURIComponent(doc.jenis_transaksi || this.pendaftaran.plyKode), "&kd_syarat=").concat(encodeURIComponent(doc.kd_syarat), "&t=").concat(Date.now());
+      this.previewUrl = url;
+      var filename = doc.filename || doc.file_simpan || '';
+      var ext = filename.split('.').pop().toLowerCase();
+      this.isPdfPreview = ext === 'pdf';
+      this.zoomLevel = 1.0;
       this.previewModalOpen = true;
     },
     closeDocPreview: function closeDocPreview() {
       this.previewModalOpen = false;
+      this.previewUrl = '';
+      this.zoomLevel = 1.0;
     },
-    zoomIn: function zoomIn() {
-      if (this.previewZoom < 1.4) {
-        this.previewZoom += 0.1;
-      }
-    },
-    zoomOut: function zoomOut() {
-      if (this.previewZoom > 0.8) {
-        this.previewZoom -= 0.1;
-      }
-    },
-    downloadDoc: function downloadDoc() {
-      alert('Dokumen ' + (this.currentPreviewDoc ? this.currentPreviewDoc.filename : '') + ' sedang diunduh.');
-    },
-    printDoc: function printDoc() {
-      window.print();
-    },
-    viewNopDetail: function viewNopDetail() {
-      alert('Detail SISMIOP:\nNOP: ' + this.pendaftaran.nopPbb + '\nWajib Pajak: ' + this.pendaftaran.namaWajibPajak + '\nStatus: LUNAS 2026');
-    },
-    handleEdit: function handleEdit() {
-      alert('Membuka formulir perubahan identitas objek dan pemohon.');
-    },
-    handleDelete: function handleDelete() {
-      if (confirm('Data berkas dan draft permohonan ' + this.pendaftaran.nomorPelayanan + ' akan dibatalkan. Lanjutkan?')) {
-        alert('Pendaftaran dibatalkan.');
-      }
-    },
-    handleProses: function handleProses() {
-      if (!this.isComplete) {
-        alert('Persyaratan Belum Lengkap. Silakan lengkapi seluruh dokumen wajib.');
-        return;
-      }
-      alert('Permohonan Berhasil Diproses! Berkas telah diteruskan ke tim Verifikator.');
+    downloadDocFile: function downloadDocFile(doc) {
+      if (!doc) return;
+      var link = "/api/v1/persyaratan/file?no_pelayanan=".concat(encodeURIComponent(this.pendaftaran.nomorPelayanan), "&jenis_transaksi=").concat(encodeURIComponent(doc.jenis_transaksi || this.pendaftaran.plyKode), "&kd_syarat=").concat(encodeURIComponent(doc.kd_syarat), "&download=1");
+      window.open(link, '_blank');
     }
   }
 });
@@ -11328,7 +11429,7 @@ var render = function render() {
     staticClass: "w-full max-w-[1440px] mx-auto px-6 lg:px-10 py-8 flex flex-col gap-8"
   }, [_c("div", {
     staticClass: "flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200"
-  }, [_vm._m(0), _vm._v(" "), _c("div", {
+  }, [_vm._m(0), _vm._v(" "), _vm.hasData ? _c("div", {
     staticClass: "flex items-center gap-4 bg-white border border-slate-200 rounded-xl p-3 shadow-sm"
   }, [_c("div", {
     staticClass: "relative w-12 h-12 flex items-center justify-center"
@@ -11361,87 +11462,103 @@ var render = function render() {
     staticClass: "text-xs text-slate-500 font-medium"
   }, [_vm._v("Kelengkapan")]), _vm._v(" "), _c("span", {
     staticClass: "text-sm font-bold text-slate-800"
-  }, [_vm._v(_vm._s(_vm.uploadedCount) + " dari " + _vm._s(_vm.totalCount) + " Berkas")])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.uploadedCount) + " dari " + _vm._s(_vm.totalCount) + " Berkas")])])]) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-6 w-full"
   }, [_c("div", {
     staticClass: "w-full bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden"
   }, [_vm._m(1), _vm._v(" "), _c("div", {
-    staticClass: "grid grid-cols-1 md:grid-cols-3 gap-6 p-6"
+    staticClass: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6"
   }, [_c("div", {
-    staticClass: "flex flex-col gap-4"
-  }, [_c("div", {
-    staticClass: "flex flex-col"
-  }, [_c("span", {
-    staticClass: "text-[11.5px] font-semibold text-slate-400 uppercase tracking-wider"
-  }, [_vm._v("Nomor Pelayanan")]), _vm._v(" "), _c("span", {
-    staticClass: "text-[15px] font-bold text-slate-900 mt-1 font-mono"
-  }, [_vm._v(_vm._s(_vm.pendaftaran.nomorPelayanan))])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col"
-  }, [_c("span", {
-    staticClass: "text-[11.5px] font-semibold text-slate-400 uppercase tracking-wider"
-  }, [_vm._v("NOP PBB")]), _vm._v(" "), _c("div", {
-    staticClass: "flex items-center gap-2 mt-1"
-  }, [_c("span", {
-    staticClass: "font-mono text-[14px] font-bold text-emerald-700"
-  }, [_vm._v(_vm._s(_vm.pendaftaran.nopPbb))]), _vm._v(" "), _c("button", {
-    staticClass: "text-slate-600 hover:text-[#4CAF50] transition-colors flex items-center gap-0.5 text-[12px] font-medium",
+    staticClass: "flex flex-col gap-1.5"
+  }, [_c("label", {
+    staticClass: "text-[11.5px] font-semibold text-slate-500 uppercase tracking-wider"
+  }, [_vm._v("Nomor Pelayanan")]), _vm._v(" "), _c("div", {
+    staticClass: "relative flex items-center mt-0.5"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.searchNoPelayanan,
+      expression: "searchNoPelayanan"
+    }],
+    staticClass: "w-full pl-3.5 pr-11 py-2 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-[13.5px] font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#4CAF50] focus:border-transparent transition-all shadow-2xs",
     attrs: {
-      type: "button"
+      type: "text",
+      placeholder: "Contoh: 2026.09.0001"
+    },
+    domProps: {
+      value: _vm.searchNoPelayanan
     },
     on: {
-      click: _vm.viewNopDetail
+      keyup: function keyup($event) {
+        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
+        return _vm.cariNoPelayanan.apply(null, arguments);
+      },
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.searchNoPelayanan = $event.target.value;
+      }
     }
-  }, [_c("span", [_vm._v("Lihat Data PBB")]), _vm._v(" "), _c("span", {
-    staticClass: "material-symbols-outlined text-[15px]"
-  }, [_vm._v("open_in_new")])])])])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col gap-4"
-  }, [_c("div", {
-    staticClass: "flex flex-col"
+  }), _vm._v(" "), _c("button", {
+    staticClass: "absolute right-1.5 p-1.5 rounded-md bg-[#4CAF50] hover:bg-[#43A047] active:scale-95 text-white transition-all flex items-center justify-center disabled:opacity-50 shadow-2xs",
+    attrs: {
+      type: "button",
+      disabled: _vm.isLoading,
+      title: "Cari Nomor Pelayanan"
+    },
+    on: {
+      click: _vm.cariNoPelayanan
+    }
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[18px]",
+    "class": {
+      "animate-spin": _vm.isLoading
+    }
+  }, [_vm._v("\n                  " + _vm._s(_vm.isLoading ? "refresh" : "search") + "\n                ")])])]), _vm._v(" "), _c("span", {
+    staticClass: "text-[11px] text-slate-400"
+  }, [_vm._v("Tekan Enter atau klik tombol cari")])]), _vm._v(" "), _c("div", {
+    staticClass: "flex flex-col justify-center"
+  }, [_c("span", {
+    staticClass: "text-[11.5px] font-semibold text-slate-400 uppercase tracking-wider"
+  }, [_vm._v("NOP PBB")]), _vm._v(" "), _c("span", {
+    staticClass: "font-mono text-[14px] font-bold text-emerald-700 mt-1"
+  }, [_vm._v(_vm._s(_vm.formattedNop))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex flex-col justify-center"
   }, [_c("span", {
     staticClass: "text-[11.5px] font-semibold text-slate-400 uppercase tracking-wider"
   }, [_vm._v("Jenis Perolehan Hak")]), _vm._v(" "), _c("span", {
-    staticClass: "text-[15px] font-bold text-slate-900 mt-1"
-  }, [_vm._v(_vm._s(_vm.pendaftaran.jenisPerolehan))])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col"
+    staticClass: "text-[14px] font-bold text-slate-900 mt-1 truncate"
+  }, [_vm._v(_vm._s(_vm.pendaftaran.jenisPerolehan || "-"))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex flex-col justify-center"
   }, [_c("span", {
     staticClass: "text-[11.5px] font-semibold text-slate-400 uppercase tracking-wider"
   }, [_vm._v("Nama Wajib Pajak (Pemohon)")]), _vm._v(" "), _c("span", {
-    staticClass: "text-[14px] font-semibold text-slate-800 mt-1"
-  }, [_vm._v(_vm._s(_vm.pendaftaran.namaWajibPajak))])])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col gap-4"
-  }, [_c("div", {
-    staticClass: "flex flex-col"
+    staticClass: "text-[14px] font-semibold text-slate-800 mt-1 truncate"
+  }, [_vm._v(_vm._s(_vm.pendaftaran.namaWajibPajak || "-"))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex flex-col justify-center lg:col-span-1"
   }, [_c("span", {
     staticClass: "text-[11.5px] font-semibold text-slate-400 uppercase tracking-wider"
   }, [_vm._v("Tanggal Pendaftaran")]), _vm._v(" "), _c("span", {
     staticClass: "text-[14px] text-slate-800 mt-1 font-medium"
-  }, [_vm._v(_vm._s(_vm.pendaftaran.tanggalPendaftaran))])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col"
-  }, [_c("span", {
-    staticClass: "text-[11.5px] font-semibold text-slate-400 uppercase tracking-wider"
-  }, [_vm._v("Mitra PPAT Pembuat Akta")]), _vm._v(" "), _c("div", {
-    staticClass: "flex items-center gap-1.5 mt-1"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-emerald-600 text-[18px]"
-  }, [_vm._v("verified")]), _vm._v(" "), _c("span", {
-    staticClass: "text-[14px] font-semibold text-slate-800"
-  }, [_vm._v(_vm._s(_vm.pendaftaran.mitraPpat))])])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.pendaftaran.tanggalPendaftaran || "-"))])])])]), _vm._v(" "), !_vm.hasData && !_vm.isLoading ? _c("div", {
+    staticClass: "w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-10 flex flex-col items-center justify-center text-center gap-3"
+  }, [_vm._m(2), _vm._v(" "), _c("h3", {
+    staticClass: "text-base font-bold text-slate-800"
+  }, [_vm._v("Cari Data Pendaftaran BPHTB")]), _vm._v(" "), _vm._m(3)]) : _vm._e(), _vm._v(" "), _vm.hasData ? [_c("div", {
     staticClass: "w-full bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
   }, [_c("div", {
     staticClass: "flex items-center gap-4"
-  }, [_vm._m(2), _vm._v(" "), _c("div", {
+  }, [_vm._m(4), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1"
   }, [_c("div", {
     staticClass: "flex items-center gap-2.5"
   }, [_c("h2", {
     staticClass: "text-[17px] font-bold text-[#166534]"
-  }, [_vm._v(_vm._s(_vm.uploadedCount) + " dari " + _vm._s(_vm.totalCount) + " Persyaratan Telah Diupload")]), _vm._v(" "), _c("span", {
-    staticClass: "px-2.5 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 text-[12px] font-bold"
-  }, [_vm._v(_vm._s(_vm.progressPercent) + "% Lengkap")])]), _vm._v(" "), _c("p", {
+  }, [_vm._v(_vm._s(_vm.uploadedCount) + " dari " + _vm._s(_vm.totalCount) + " Persyaratan Telah Diupload")])]), _vm._v(" "), _c("p", {
     staticClass: "text-[13.5px] text-[#166534]/90"
   }, [_vm.pendingCount > 0 ? [_vm._v("\n                  Berkas permohonan masih memerlukan "), _c("strong", {
     staticClass: "text-amber-800 underline decoration-amber-400"
-  }, [_vm._v(_vm._s(_vm.pendingCount) + " dokumen legal")]), _vm._v(" tambahan agar proses penetapan SKPD-BPHTB dapat diajukan ke Verifikator Pajak.\n                ")] : [_c("span", {
+  }, [_vm._v(_vm._s(_vm.pendingCount) + " dokumen legal")]), _vm._v(" tambahan agar proses penetapan SKPD-BPHTB dapat diajukan.\n                ")] : [_c("span", {
     staticClass: "text-emerald-800 font-semibold"
   }, [_vm._v("Seluruh dokumen digital telah lengkap diupload dan siap diajukan ke Verifikator Pajak BPKAD Kab. Haltim.")])]], 2)])]), _vm._v(" "), _c("div", {
     staticClass: "w-full md:w-72 flex flex-col gap-1.5 shrink-0"
@@ -11464,7 +11581,7 @@ var render = function render() {
     staticClass: "bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden flex flex-col"
   }, [_c("div", {
     staticClass: "p-4 sm:px-6 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-  }, [_vm._m(3), _vm._v(" "), _c("div", {
+  }, [_vm._m(5), _vm._v(" "), _c("div", {
     staticClass: "flex flex-wrap items-center gap-1 bg-slate-200/80 p-1 rounded-lg border border-slate-200 w-full sm:w-auto"
   }, [_c("button", {
     staticClass: "px-3.5 py-1 rounded-md text-[12px] transition-all",
@@ -11518,7 +11635,7 @@ var render = function render() {
       "class": item.status === "uploaded" ? "bg-emerald-50 border-emerald-200 text-emerald-700" : "bg-amber-50 border-amber-200 text-amber-700"
     }, [_c("span", {
       staticClass: "material-symbols-outlined text-[22px]"
-    }, [_vm._v(_vm._s(item.icon))])]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(item.icon || "description"))])]), _vm._v(" "), _c("div", {
       staticClass: "flex flex-col gap-1"
     }, [_c("div", {
       staticClass: "flex items-center gap-2 flex-wrap"
@@ -11538,25 +11655,20 @@ var render = function render() {
     }, [_vm._v("error")]), _vm._v(" Belum Terupload\n                        ")])]), _vm._v(" "), _c("span", {
       staticClass: "text-[12px] text-slate-500"
     }, [_vm._v(_vm._s(item.formatInfo))]), _vm._v(" "), item.status === "uploaded" ? _c("div", {
-      staticClass: "flex flex-wrap items-center gap-2 mt-1 text-slate-500 font-mono text-[12px]"
+      staticClass: "flex flex-wrap items-center gap-3 mt-1.5 text-[12px]"
+    }, [item.filesize ? _c("span", {
+      staticClass: "font-mono font-semibold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded text-[11px]"
+    }, [_vm._v("\n                          Ukuran: " + _vm._s(item.filesize) + "\n                        ")]) : _vm._e(), _vm._v(" "), item.uploadedDate ? _c("span", {
+      staticClass: "text-slate-500 flex items-center gap-1"
     }, [_c("span", {
-      staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
-    }, [_vm._v("attach_file")]), _vm._v(" "), _c("span", {
-      staticClass: "text-slate-800 font-medium"
-    }, [_vm._v(_vm._s(item.filename))]), _vm._v(" "), _c("span", [_vm._v("•")]), _vm._v(" "), _c("span", [_vm._v(_vm._s(item.filesize))]), _vm._v(" "), _c("span", [_vm._v("•")]), _vm._v(" "), _c("span", {
-      staticClass: "text-slate-400"
-    }, [_vm._v(_vm._s(item.uploadedDate))])]) : item.keterangan ? _c("span", {
-      staticClass: "text-[12px] text-amber-700 flex items-center gap-1 mt-0.5 font-medium"
-    }, [_c("span", {
-      staticClass: "material-symbols-outlined text-[15px]"
-    }, [_vm._v("priority_high")]), _vm._v(" " + _vm._s(item.keterangan) + "\n                      ")]) : item.note ? _c("span", {
-      staticClass: "text-[12px] text-slate-500"
-    }, [_vm._v(_vm._s(item.note))]) : _vm._e()])]), _vm._v(" "), _c("div", {
+      staticClass: "material-symbols-outlined text-[15px] text-slate-400"
+    }, [_vm._v("schedule")]), _vm._v("\n                          Diupload pada " + _vm._s(item.uploadedDate) + "\n                        ")]) : _vm._e()]) : _vm._e()])]), _vm._v(" "), _c("div", {
       staticClass: "flex items-center gap-2 self-end lg:self-center"
     }, [item.status === "uploaded" ? [_c("button", {
       staticClass: "px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-[12.5px] font-semibold flex items-center gap-1.5 shadow-xs transition-colors",
       attrs: {
-        type: "button"
+        type: "button",
+        title: "Lihat Preview Berkas"
       },
       on: {
         click: function click($event) {
@@ -11566,14 +11678,27 @@ var render = function render() {
     }, [_c("span", {
       staticClass: "material-symbols-outlined text-[17px] text-slate-500"
     }, [_vm._v("visibility")]), _vm._v(" Preview\n                      ")]), _vm._v(" "), _c("button", {
-      staticClass: "p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200",
+      staticClass: "p-1.5 rounded-lg text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 transition-colors border border-transparent hover:border-emerald-200",
       attrs: {
-        title: "Ganti File",
+        title: "Unduh Berkas",
         type: "button"
       },
       on: {
         click: function click($event) {
-          return _vm.selectDocumentForUpload(item);
+          return _vm.downloadDocFile(item);
+        }
+      }
+    }, [_c("span", {
+      staticClass: "material-symbols-outlined text-[19px]"
+    }, [_vm._v("download")])]), _vm._v(" "), _c("button", {
+      staticClass: "p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200",
+      attrs: {
+        title: "Ganti File (Re-upload)",
+        type: "button"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.triggerReupload(item);
         }
       }
     }, [_c("span", {
@@ -11604,7 +11729,7 @@ var render = function render() {
     }, [_c("span", {
       staticClass: "material-symbols-outlined text-[18px]"
     }, [_vm._v("cloud_upload")]), _vm._v(" Upload Berkas\n                      ")])]], 2)]);
-  }), 0)]), _vm._v(" "), _vm._m(4)]), _vm._v(" "), _c("div", {
+  }), 0)])]), _vm._v(" "), _c("div", {
     staticClass: "xl:col-span-4 flex flex-col gap-6"
   }, [_c("div", {
     staticClass: "bg-white rounded-xl p-6 border border-slate-200 shadow-xs flex flex-col gap-4",
@@ -11612,10 +11737,10 @@ var render = function render() {
       id: "dropzone-box"
     }
   }, [_c("div", {
-    staticClass: "flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2"
-  }, [_vm._m(5), _vm._v(" "), _c("span", {
-    staticClass: "text-[11px] px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold border border-slate-200"
-  }, [_vm._v(_vm._s(_vm.currentTargetDoc ? _vm.currentTargetDoc.targetLabel : "AJB / PPJB"))])]), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center justify-between gap-2"
+  }, [_vm._m(6), _vm._v(" "), _c("span", {
+    staticClass: "text-[11px] px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200 truncate max-w-[150px]"
+  }, [_vm._v("\n                  " + _vm._s(_vm.currentTargetDoc ? _vm.currentTargetDoc.targetLabel : "Pilih Dokumen") + "\n                ")])]), _vm._v(" "), _c("div", {
     staticClass: "relative group cursor-pointer bg-slate-50 hover:bg-slate-100/80 border-2 border-dashed border-slate-200 hover:border-[#4CAF50] transition-all duration-200 rounded-xl p-8 flex flex-col items-center justify-center text-center",
     "class": {
       "border-[#4CAF50] bg-emerald-50/50": _vm.isDragging
@@ -11632,21 +11757,23 @@ var render = function render() {
       drop: function drop($event) {
         $event.preventDefault();
         return _vm.handleFileDrop.apply(null, arguments);
-      }
+      },
+      click: _vm.openFilePicker
     }
   }, [_c("input", {
-    staticClass: "absolute inset-0 opacity-0 cursor-pointer w-full h-full",
+    ref: "fileInputRef",
+    staticClass: "hidden",
     attrs: {
+      type: "file",
       accept: ".pdf,.jpg,.jpeg,.png",
-      id: "file-input-element",
-      type: "file"
+      id: "file-input-element"
     },
     on: {
       change: _vm.handleFileInput
     }
-  }), _vm._v(" "), _vm._m(6), _vm._v(" "), _vm._m(7), _vm._v(" "), _c("p", {
+  }), _vm._v(" "), _vm._m(7), _vm._v(" "), _vm._m(8), _vm._v(" "), _c("p", {
     staticClass: "text-[11.5px] text-slate-500 mt-1"
-  }, [_vm._v("\n                  Mendukung dokumen format PDF, JPG, PNG (Maksimal 20MB per berkas)\n                ")]), _vm._v(" "), _vm._m(8)]), _vm._v(" "), _vm.uploadProgress.active ? _c("div", {
+  }, [_vm._v("\n                  Mendukung format PDF, JPG, PNG (Maksimal 5MB per berkas)\n                ")]), _vm._v(" "), _vm._m(9)]), _vm._v(" "), _vm.uploadProgress.active ? _c("div", {
     staticClass: "flex flex-col gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg"
   }, [_c("div", {
     staticClass: "flex items-center justify-between text-[12px]"
@@ -11661,61 +11788,8 @@ var render = function render() {
     style: {
       width: _vm.uploadProgress.percentage + "%"
     }
-  })])]) : _vm._e()]), _vm._v(" "), _vm._m(9)])]), _vm._v(" "), _c("div", {
-    staticClass: "w-full bg-white rounded-xl p-5 border border-slate-200 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 static mt-8 lg:mt-0 lg:sticky lg:bottom-4 z-30"
-  }, [_c("div", {
-    staticClass: "flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto"
-  }, [_c("button", {
-    staticClass: "flex-1 sm:flex-initial px-4 py-2.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors text-[13px] font-semibold flex items-center justify-center gap-2 shadow-xs",
-    attrs: {
-      type: "button"
-    },
-    on: {
-      click: _vm.handleEdit
-    }
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[18px] text-slate-500"
-  }, [_vm._v("edit")]), _vm._v(" Edit Pendaftaran\n            ")]), _vm._v(" "), _c("button", {
-    staticClass: "flex-1 sm:flex-initial px-4 py-2.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors text-[13px] font-semibold flex items-center justify-center gap-2 border border-transparent hover:border-rose-200",
-    attrs: {
-      type: "button"
-    },
-    on: {
-      click: _vm.handleDelete
-    }
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[18px]"
-  }, [_vm._v("delete")]), _vm._v(" Hapus Pendaftaran\n            ")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex items-center gap-4 w-full sm:w-auto justify-end"
-  }, [_c("div", {
-    staticClass: "hidden md:flex flex-col text-right"
-  }, [!_vm.isComplete ? _c("span", {
-    staticClass: "text-[12px] text-amber-700 font-bold flex items-center justify-end gap-1"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[16px]"
-  }, [_vm._v("pending_actions")]), _vm._v(" Masih ada " + _vm._s(_vm.pendingCount) + " berkas yang belum diupload\n              ")]) : _c("span", {
-    staticClass: "text-[12px] text-emerald-700 font-bold flex items-center justify-end gap-1"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[16px]"
-  }, [_vm._v("check_circle")]), _vm._v(" Seluruh berkas wajib lengkap\n              ")]), _vm._v(" "), _c("span", {
-    staticClass: "text-[11.5px] text-slate-500"
-  }, [_vm._v("Lengkapi seluruh berkas wajib untuk proses penetapan")])]), _vm._v(" "), _c("button", {
-    staticClass: "w-full sm:w-auto px-6 py-2.5 rounded-lg text-white text-[13px] font-bold flex items-center justify-center gap-2 transition-all",
-    "class": _vm.isComplete ? "bg-[#4CAF50] hover:bg-[#43A047] cursor-pointer shadow-md hover:scale-[1.02]" : "bg-[#4CAF50]/60 cursor-not-allowed shadow-none",
-    attrs: {
-      disabled: !_vm.isComplete,
-      id: "btn-submit-registration",
-      type: "button"
-    },
-    on: {
-      click: _vm.handleProses
-    }
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("done_all")]), _vm._v("\n              Proses Pendaftaran\n              "), _c("span", {
-    staticClass: "material-symbols-outlined text-[18px]"
-  }, [_vm._v("arrow_forward")])])])])]), _vm._v(" "), _vm.previewModalOpen ? _c("div", {
-    staticClass: "fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4",
+  })])]) : _vm._e()])])])] : _vm._e()], 2)]), _vm._v(" "), _vm.previewModalOpen ? _c("div", {
+    staticClass: "fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4",
     on: {
       click: function click($event) {
         if ($event.target !== $event.currentTarget) return null;
@@ -11725,23 +11799,24 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "bg-white rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden"
   }, [_c("div", {
-    staticClass: "p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-3"
+    staticClass: "p-4 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3"
   }, [_c("div", {
     staticClass: "flex items-center gap-3 min-w-0"
   }, [_vm._m(10), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col min-w-0"
   }, [_c("span", {
     staticClass: "text-[11px] text-slate-500 font-medium"
-  }, [_vm._v("Preview Dokumen Terverifikasi")]), _vm._v(" "), _c("span", {
+  }, [_vm._v("Preview Dokumen Terupload")]), _vm._v(" "), _c("span", {
     staticClass: "text-[14px] font-bold text-slate-900 truncate"
-  }, [_vm._v("Preview: " + _vm._s(_vm.currentPreviewDoc ? _vm.currentPreviewDoc.namaPreview : "") + " (" + _vm._s(_vm.currentPreviewDoc ? _vm.currentPreviewDoc.filename : "") + ")")])])]), _vm._v(" "), _c("div", {
-    staticClass: "flex items-center gap-1.5"
-  }, [_c("div", {
-    staticClass: "hidden sm:flex items-center gap-1 bg-white border border-slate-200 px-2 py-1 rounded-lg"
+  }, [_vm._v(_vm._s(_vm.currentPreviewDoc ? _vm.currentPreviewDoc.nama : ""))])])]), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center gap-2"
+  }, [!_vm.isPdfPreview ? _c("div", {
+    staticClass: "flex items-center bg-white border border-slate-200 rounded-lg p-0.5 shadow-2xs"
   }, [_c("button", {
-    staticClass: "p-1 hover:bg-slate-100 rounded text-slate-600 transition-colors",
+    staticClass: "p-1.5 hover:bg-slate-100 disabled:opacity-30 rounded text-slate-700 transition-colors flex items-center justify-center",
     attrs: {
-      title: "Perkecil",
+      disabled: _vm.zoomLevel <= 0.5,
+      title: "Perkecil (Zoom Out)",
       type: "button"
     },
     on: {
@@ -11750,11 +11825,12 @@ var render = function render() {
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[18px]"
   }, [_vm._v("zoom_out")])]), _vm._v(" "), _c("span", {
-    staticClass: "font-mono text-[12px] px-1.5 text-slate-600 font-semibold"
-  }, [_vm._v(_vm._s(Math.round(_vm.previewZoom * 100)) + "%")]), _vm._v(" "), _c("button", {
-    staticClass: "p-1 hover:bg-slate-100 rounded text-slate-600 transition-colors",
+    staticClass: "font-mono text-[12px] font-bold px-2 text-slate-800 min-w-[45px] text-center select-none"
+  }, [_vm._v("\n              " + _vm._s(Math.round(_vm.zoomLevel * 100)) + "%\n            ")]), _vm._v(" "), _c("button", {
+    staticClass: "p-1.5 hover:bg-slate-100 disabled:opacity-30 rounded text-slate-700 transition-colors flex items-center justify-center",
     attrs: {
-      title: "Perbesar",
+      disabled: _vm.zoomLevel >= 3.0,
+      title: "Perbesar (Zoom In)",
       type: "button"
     },
     on: {
@@ -11762,30 +11838,32 @@ var render = function render() {
     }
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[18px]"
-  }, [_vm._v("zoom_in")])])]), _vm._v(" "), _vm._m(11), _vm._v(" "), _c("button", {
-    staticClass: "p-2 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors",
+  }, [_vm._v("zoom_in")])]), _vm._v(" "), _vm.zoomLevel !== 1.0 ? _c("button", {
+    staticClass: "p-1.5 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-800 transition-colors flex items-center justify-center ml-0.5 border-l border-slate-200",
+    attrs: {
+      title: "Reset Ukuran (100%)",
+      type: "button"
+    },
+    on: {
+      click: _vm.resetZoom
+    }
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[18px]"
+  }, [_vm._v("restart_alt")])]) : _vm._e()]) : _vm._e(), _vm._v(" "), _c("button", {
+    staticClass: "px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-[12.5px] font-semibold flex items-center gap-1.5 shadow-2xs transition-colors",
     attrs: {
       title: "Unduh Berkas",
       type: "button"
     },
     on: {
-      click: _vm.downloadDoc
+      click: function click($event) {
+        return _vm.downloadDocFile(_vm.currentPreviewDoc);
+      }
     }
   }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("download")])]), _vm._v(" "), _c("button", {
-    staticClass: "p-2 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors",
-    attrs: {
-      title: "Cetak Berkas",
-      type: "button"
-    },
-    on: {
-      click: _vm.printDoc
-    }
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("print")])]), _vm._v(" "), _c("button", {
-    staticClass: "ml-2 p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors",
+    staticClass: "material-symbols-outlined text-[18px]"
+  }, [_vm._v("download")]), _vm._v(" Unduh\n          ")]), _vm._v(" "), _c("button", {
+    staticClass: "p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors",
     attrs: {
       title: "Tutup",
       type: "button"
@@ -11796,39 +11874,31 @@ var render = function render() {
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[20px]"
   }, [_vm._v("close")])])])]), _vm._v(" "), _c("div", {
-    staticClass: "flex-1 overflow-auto bg-slate-100 p-6 flex justify-center items-center"
-  }, [_c("div", {
-    staticClass: "w-full max-w-2xl bg-white rounded-lg shadow-md border border-slate-200 min-h-[520px] p-8 relative flex flex-col justify-between transition-transform duration-200",
-    style: {
-      transform: "scale(" + _vm.previewZoom + ")"
-    }
-  }, [_vm._m(12), _vm._v(" "), _c("div", {
-    staticClass: "flex items-center justify-between pb-4 border-b border-slate-200"
-  }, [_vm._m(13), _vm._v(" "), _c("span", {
-    staticClass: "font-mono text-[11px] text-slate-400"
-  }, [_vm._v("KODE REG: " + _vm._s(_vm.currentPreviewDoc ? _vm.currentPreviewDoc.regCode : "2026-09-482-REG"))])]), _vm._v(" "), _c("div", {
-    staticClass: "flex-1 py-8 flex flex-col gap-5"
-  }, [_c("div", {
-    staticClass: "flex flex-col gap-1 items-center text-center"
-  }, [_c("h4", {
-    staticClass: "text-[15px] font-bold text-slate-900 uppercase tracking-wide"
-  }, [_vm._v("REPUBLIK INDONESIA")]), _vm._v(" "), _c("p", {
-    staticClass: "text-[12px] text-slate-600 font-semibold"
-  }, [_vm._v(_vm._s(_vm.currentPreviewDoc ? _vm.currentPreviewDoc.docHeading : "DOKUMEN PERSYARATAN RESMI"))])]), _vm._v(" "), _vm._m(14), _vm._v(" "), _c("div", {
-    staticClass: "text-center text-[11.5px] text-slate-500"
-  }, [_vm._v("\n                  Dokumen ini diverifikasi secara elektronik melalui interkoneksi e-KTP DUKCAPIL & BPKAD Kab. Haltim.\n                ")])]), _vm._v(" "), _vm._m(15)])]), _vm._v(" "), _c("div", {
-    staticClass: "px-6 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between"
-  }, [_c("span", {
-    staticClass: "text-[12px] text-slate-600 font-medium"
-  }, [_vm._v("Status Berkas: Terverifikasi Digital")]), _vm._v(" "), _c("button", {
-    staticClass: "px-4 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-[12.5px] font-semibold transition-colors shadow-xs",
-    attrs: {
-      type: "button"
-    },
+    staticClass: "flex-1 overflow-auto bg-slate-900 min-h-[500px] relative flex p-2",
     on: {
-      click: _vm.closeDocPreview
+      wheel: function wheel($event) {
+        $event.preventDefault();
+        return _vm.handleWheelZoom.apply(null, arguments);
+      }
     }
-  }, [_vm._v("\n              Tutup\n            ")])])])]) : _vm._e()])]);
+  }, [_vm.previewUrl ? [_vm.isPdfPreview ? _c("iframe", {
+    staticClass: "w-full h-[650px] border-0 rounded-lg bg-white",
+    attrs: {
+      src: _vm.previewUrl
+    }
+  }) : _c("div", {
+    staticClass: "w-full min-h-[600px] overflow-auto flex m-auto transition-all duration-200",
+    "class": _vm.zoomLevel > 1.0 ? "items-start justify-start p-8" : "items-center justify-center p-4"
+  }, [_c("div", {
+    staticClass: "relative max-w-full flex items-center justify-center m-auto"
+  }, [_c("img", {
+    staticClass: "rounded-lg shadow-2xl transition-all duration-150",
+    style: _vm.imageZoomStyle,
+    attrs: {
+      src: _vm.previewUrl,
+      alt: "Preview Dokumen"
+    }
+  })])])] : _vm._e()], 2)])]) : _vm._e()]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -11841,7 +11911,7 @@ var staticRenderFns = [function () {
     staticClass: "hover:text-[#4CAF50] cursor-pointer transition-colors flex items-center gap-1"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[16px]"
-  }, [_vm._v("home")]), _vm._v(" Beranda\n            ")]), _vm._v(" "), _c("span", {
+  }, [_vm._v("home")]), _vm._v(" Beranda\n          ")]), _vm._v(" "), _c("span", {
     staticClass: "text-slate-300"
   }, [_vm._v("/")]), _vm._v(" "), _c("span", {
     staticClass: "hover:text-[#4CAF50] cursor-pointer transition-colors"
@@ -11857,23 +11927,37 @@ var staticRenderFns = [function () {
     staticClass: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#edf7ee] text-[#2e7d32] border border-[#c8e6c9] text-xs font-semibold shadow-xs"
   }, [_c("span", {
     staticClass: "w-1.5 h-1.5 rounded-full bg-[#4CAF50]"
-  }), _vm._v("\n              Tahap Kelengkapan Berkas\n            ")])]), _vm._v(" "), _c("p", {
+  }), _vm._v("\n            Tahap Kelengkapan Berkas\n          ")])]), _vm._v(" "), _c("p", {
     staticClass: "text-sm text-slate-600 max-w-3xl"
-  }, [_vm._v("\n            Kelola dan verifikasi berkas digital persyaratan permohonan BPHTB sebelum diproses ke penetapan validasi oleh tim pemeriksa BPKAD Kab. Haltim.\n          ")])]);
+  }, [_vm._v("\n          Kelola dan verifikasi berkas digital persyaratan permohonan BPHTB sebelum diproses ke penetapan validasi oleh tim pemeriksa BPKAD Kab. Haltim.\n        ")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "px-6 py-3.5 bg-slate-50/80 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2"
+    staticClass: "px-6 py-3.5 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between gap-2"
   }, [_c("div", {
     staticClass: "flex items-center gap-2"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[#4CAF50] text-[20px]"
   }, [_vm._v("assignment")]), _vm._v(" "), _c("span", {
     staticClass: "text-[14px] text-slate-900 font-bold"
-  }, [_vm._v("Identitas Pendaftaran & Objek Pajak")])]), _vm._v(" "), _c("span", {
-    staticClass: "font-mono text-[11px] font-semibold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded"
-  }, [_vm._v("TERCATAT SISMIOP")])]);
+  }, [_vm._v("Identitas Pendaftaran & Objek Pajak")])])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "w-14 h-14 rounded-full bg-emerald-50 text-[#4CAF50] flex items-center justify-center border border-emerald-200 shadow-2xs"
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[32px]"
+  }, [_vm._v("manage_search")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("p", {
+    staticClass: "text-xs text-slate-500 max-w-md"
+  }, [_vm._v("\n          Masukkan Nomor Pelayanan (misal: "), _c("strong", {
+    staticClass: "text-slate-700 font-mono"
+  }, [_vm._v("2026.09.0001")]), _vm._v(") pada form pencarian di atas untuk menampilkan detail permohonan dan kelengkapan dokumen persyaratan.\n        ")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -11896,26 +11980,12 @@ var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex items-start gap-3"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-slate-500 text-[22px] shrink-0 mt-0.5"
-  }, [_vm._v("info")]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col gap-0.5"
-  }, [_c("span", {
-    staticClass: "text-[13px] font-bold text-slate-900"
-  }, [_vm._v("Ketentuan Unggah Berkas Digital e-BPHTB")]), _vm._v(" "), _c("p", {
-    staticClass: "text-[12.5px] text-slate-600 leading-relaxed"
-  }, [_vm._v("\n                  Pastikan seluruh hasil pemindaian (scan) jelas terbaca, tidak buram, dan tidak terpotong. Sesuai Peraturan Daerah tentang Pajak Daerah, manipulasi dokumen perpajakan dapat dikenakan sanksi administrasi dan hukum sesuai undang-undang yang berlaku.\n                ")])])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "flex items-center gap-2"
+    staticClass: "flex items-center gap-2 min-w-0"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[#4CAF50] text-[20px]"
   }, [_vm._v("upload_file")]), _vm._v(" "), _c("h3", {
-    staticClass: "text-[14px] font-bold text-slate-900"
-  }, [_vm._v("Unggah Berkas Baru")])]);
+    staticClass: "text-[14px] font-bold text-slate-900 truncate"
+  }, [_vm._v("Unggah Berkas")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -11944,158 +12014,10 @@ var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "bg-white rounded-xl p-5 border border-slate-200 shadow-xs flex flex-col gap-4"
-  }, [_c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("img", {
-    staticClass: "h-10 w-auto object-contain",
-    attrs: {
-      alt: "Logo BPHTB",
-      src: "https://lh3.googleusercontent.com/aida/AEtjO1UTvogIAOKCALCGyAp4MHlChPHgCFdXhmY6VBhWkgeCj19PRqa-DTVG7qY7u12CHOYFp0rubTYdGowQ4bVQRaCcCBAz1eJ8bLLgo2AxbDmP5POjyX1xxsfeNDKSH6VgAmle3bgSsWiFtYu-d3hPsGafbmDCm1ErBPGPHzTtRsR9W7oZ2MORswhDoJeu4nrNc_0TIVe2JUlahjOvq4QJb81NMifMu5tA6xdeVeLIme_AEK9nrH88VmotBaQ"
-    }
-  }), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col"
-  }, [_c("span", {
-    staticClass: "text-[13.5px] font-bold text-slate-900"
-  }, [_vm._v("Validasi Integritas Berkas")]), _vm._v(" "), _c("span", {
-    staticClass: "text-[11px] text-slate-500"
-  }, [_vm._v("Sistem Verifikasi Otomatis BPKAD Kab. Haltim")])])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col gap-2 text-[12px]"
-  }, [_c("div", {
-    staticClass: "flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 py-2 bg-slate-50 border border-slate-100 px-3 rounded-lg"
-  }, [_c("span", {
-    staticClass: "text-slate-600"
-  }, [_vm._v("Kesesuaian NOP - SISMIOP")]), _vm._v(" "), _c("span", {
-    staticClass: "text-emerald-700 font-bold flex items-center gap-1"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[15px]"
-  }, [_vm._v("done")]), _vm._v(" Sinkron\n                  ")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 py-2 bg-slate-50 border border-slate-100 px-3 rounded-lg"
-  }, [_c("span", {
-    staticClass: "text-slate-600"
-  }, [_vm._v("Cek Tunggakan PBB (5 Thn)")]), _vm._v(" "), _c("span", {
-    staticClass: "text-emerald-700 font-bold flex items-center gap-1"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[15px]"
-  }, [_vm._v("done")]), _vm._v(" Nihil Tunggakan\n                  ")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 py-2 bg-slate-50 border border-slate-100 px-3 rounded-lg"
-  }, [_c("span", {
-    staticClass: "text-slate-600"
-  }, [_vm._v("Sertifikat Tanah ATR/BPN")]), _vm._v(" "), _c("span", {
-    staticClass: "text-emerald-700 font-bold flex items-center gap-1"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[15px]"
-  }, [_vm._v("check")]), _vm._v(" Valid Terdata\n                  ")])])])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
     staticClass: "w-9 h-9 rounded-lg bg-emerald-50 border border-emerald-200 text-[#4CAF50] flex items-center justify-center shrink-0"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("picture_as_pdf")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "hidden sm:flex items-center gap-1 text-slate-500 text-[12px] px-2"
-  }, [_c("span", [_vm._v("Hal")]), _vm._v(" "), _c("span", {
-    staticClass: "font-mono font-bold text-slate-800"
-  }, [_vm._v("1")]), _vm._v(" "), _c("span", [_vm._v("dari")]), _vm._v(" "), _c("span", {
-    staticClass: "font-mono"
-  }, [_vm._v("2")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 rotate-[-25deg]"
-  }, [_c("span", {
-    staticClass: "text-[32px] font-black text-slate-900 tracking-widest uppercase"
-  }, [_vm._v("\n                  BPKAD KAB. HALTIM e-BPHTB DIGITAL ARCHIVE\n                ")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "flex items-center gap-3"
-  }, [_c("img", {
-    staticClass: "h-8 w-auto",
-    attrs: {
-      alt: "Logo Watermark",
-      src: "https://lh3.googleusercontent.com/aida/AEtjO1UTvogIAOKCALCGyAp4MHlChPHgCFdXhmY6VBhWkgeCj19PRqa-DTVG7qY7u12CHOYFp0rubTYdGowQ4bVQRaCcCBAz1eJ8bLLgo2AxbDmP5POjyX1xxsfeNDKSH6VgAmle3bgSsWiFtYu-d3hPsGafbmDCm1ErBPGPHzTtRsR9W7oZ2MORswhDoJeu4nrNc_0TIVe2JUlahjOvq4QJb81NMifMu5tA6xdeVeLIme_AEK9nrH88VmotBaQ"
-    }
-  }), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col"
-  }, [_c("span", {
-    staticClass: "text-[12px] font-bold tracking-wider uppercase text-slate-900"
-  }, [_vm._v("Pemerintah Daerah Terpadu")]), _vm._v(" "), _c("span", {
-    staticClass: "font-mono text-[10px] text-slate-500"
-  }, [_vm._v("ARSIP PERSYARATAN ELEKTRONIK RESMI")])])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "mx-auto w-full max-w-md bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-xs flex gap-4 items-start"
-  }, [_c("div", {
-    staticClass: "w-24 h-32 rounded bg-slate-200 flex flex-col items-center justify-center text-slate-400 shrink-0"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[44px]"
-  }, [_vm._v("account_box")]), _vm._v(" "), _c("span", {
-    staticClass: "text-[9px] mt-1 uppercase font-semibold text-slate-500"
-  }, [_vm._v("Pasfoto")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col gap-1 text-[11px] leading-tight text-slate-800"
-  }, [_c("div", {
-    staticClass: "flex"
-  }, [_c("span", {
-    staticClass: "w-24 text-slate-500"
-  }, [_vm._v("NIK")]), _c("span", {
-    staticClass: "font-mono font-bold"
-  }, [_vm._v(": 3573021908850001")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex"
-  }, [_c("span", {
-    staticClass: "w-24 text-slate-500"
-  }, [_vm._v("Nama")]), _c("span", {
-    staticClass: "font-bold"
-  }, [_vm._v(": IR. MUHAMMAD RIZKY KURNIAWAN, M.ENG.")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex"
-  }, [_c("span", {
-    staticClass: "w-24 text-slate-500"
-  }, [_vm._v("Tempat/Tgl Lahir")]), _c("span", [_vm._v(": MALANG, 19-08-1985")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex"
-  }, [_c("span", {
-    staticClass: "w-24 text-slate-500"
-  }, [_vm._v("Jenis Kelamin")]), _c("span", [_vm._v(": LAKI-LAKI")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex"
-  }, [_c("span", {
-    staticClass: "w-24 text-slate-500"
-  }, [_vm._v("Alamat")]), _c("span", [_vm._v(": JL. IJEN BESAR NO. 44 RT 03 RW 02")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex"
-  }, [_c("span", {
-    staticClass: "w-24 text-slate-500"
-  }, [_vm._v("Pekerjaan")]), _c("span", [_vm._v(": KARYAWAN SWASTA")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex"
-  }, [_c("span", {
-    staticClass: "w-24 text-slate-500"
-  }, [_vm._v("Kewarganegaraan")]), _c("span", [_vm._v(": WNI")])])])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "pt-4 border-t border-slate-200 flex items-center justify-between"
-  }, [_c("div", {
-    staticClass: "flex items-center gap-2"
-  }, [_c("div", {
-    staticClass: "w-12 h-12 rounded-full bg-emerald-50 border border-emerald-300 flex items-center justify-center text-emerald-700 text-[10px] font-bold text-center leading-none p-1"
-  }, [_vm._v("\n                    VALID BPKAD\n                  ")]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col"
-  }, [_c("span", {
-    staticClass: "text-[10px] text-slate-400"
-  }, [_vm._v("Divalidasi Oleh:")]), _vm._v(" "), _c("span", {
-    staticClass: "text-[11px] font-semibold text-slate-800"
-  }, [_vm._v("Sistem Verifikasi e-BPHTB")])])]), _vm._v(" "), _c("div", {
-    staticClass: "text-right"
-  }, [_c("span", {
-    staticClass: "font-mono text-[10px] text-slate-400"
-  }, [_vm._v("SHA-256: 8f9b7c6d...e31a04")])])]);
+  }, [_vm._v("description")])]);
 }];
 render._withStripped = true;
 
