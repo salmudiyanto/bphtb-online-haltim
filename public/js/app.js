@@ -5198,6 +5198,10 @@ __webpack_require__.r(__webpack_exports__);
           path: '/pendaftaran-baru',
           icon: 'add_circle'
         }, {
+          label: 'List Pendaftaran BPHTB',
+          path: '/list-pendaftaran',
+          icon: 'list_alt'
+        }, {
           label: 'Upload Persyaratan',
           path: '/upload-persyaratan',
           icon: 'upload_file'
@@ -5516,7 +5520,8 @@ __webpack_require__.r(__webpack_exports__);
         alamatObjekPajak: '',
         nilaiPasar: 0,
         nomorKontak: '',
-        keteranganTambahan: ''
+        keteranganTambahan: '',
+        dasarPengenaan: []
       },
       simulasi: {
         luasBumi: 0,
@@ -5664,6 +5669,9 @@ __webpack_require__.r(__webpack_exports__);
     // Load Jenis Transaksi & Tarif BPHTB dari API
     this.fetchJenisTransaksi();
     this.fetchTarifBphtb();
+    if (this.$route.query.no_pelayanan) {
+      this.fetchDetailPendaftaran(this.$route.query.no_pelayanan);
+    }
   },
   methods: {
     formatRupiah: function formatRupiah(value) {
@@ -5865,12 +5873,50 @@ __webpack_require__.r(__webpack_exports__);
         _this5.showApiError(err, 'Error Pengecekan PBB');
       });
     },
+    fetchDetailPendaftaran: function fetchDetailPendaftaran(no_pelayanan) {
+      var _this6 = this;
+      axios.get("/api/v1/pendaftaran/detail/".concat(no_pelayanan)).then(function (res) {
+        if (res.data && res.data.success) {
+          var d = res.data.data;
+          _this6.form.namaWajibPajak = d.nama_pemohon || d.namawp || '';
+
+          // Format alamat domisili
+          var alamat = d.alamatop || '';
+          if (d.nama_kelurahan) alamat += ", KEL. ".concat(d.nama_kelurahan);
+          if (d.nama_kecamatan) alamat += ", KEC. ".concat(d.nama_kecamatan);
+          alamat += ", KAB. HALMAHERA TIMUR";
+          _this6.form.alamatPemohon = alamat.toUpperCase();
+          _this6.form.nop = d.nop || '';
+
+          // Format alamat objek pajak
+          var alamatOp = '';
+          if (d.nama_kelurahan) alamatOp += "KEL. ".concat(d.nama_kelurahan);
+          if (d.nama_kecamatan) alamatOp += ", KEC. ".concat(d.nama_kecamatan);
+          alamatOp += ", KAB. HALMAHERA TIMUR";
+          _this6.form.alamatObjekPajak = alamatOp.toUpperCase();
+          _this6.simulasi.luasBumi = 0;
+          _this6.simulasi.luasBng = 0;
+
+          // Automatically trigger NOP check if filled
+          if (_this6.form.nop.length >= 18) {
+            _this6.onNopInput({
+              target: {
+                value: _this6.form.nop
+              }
+            });
+            _this6.cekTunggakanPbb();
+          }
+        }
+      })["catch"](function (err) {
+        console.error("Gagal mengambil detail pendaftaran:", err);
+      });
+    },
     refreshNomorPelayanan: function refreshNomorPelayanan() {
       var rand = Math.floor(Math.random() * 9000) + 1000;
       this.form.nomorPelayanan = 'PLY-BPHTB/2026/09/' + rand;
     },
     batalForm: function batalForm() {
-      var _this6 = this;
+      var _this7 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
         title: 'Batalkan Pendaftaran?',
         text: 'Data yang telah Anda isi akan hilang.',
@@ -5882,12 +5928,12 @@ __webpack_require__.r(__webpack_exports__);
         cancelButtonText: 'Kembali'
       }).then(function (result) {
         if (result.isConfirmed) {
-          _this6.$router.push('/dashboard');
+          _this7.$router.push('/dashboard');
         }
       });
     },
     simpanPendaftaran: function simpanPendaftaran() {
-      var _this7 = this;
+      var _this8 = this;
       if (this.hasTunggakan) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
           icon: 'error',
@@ -5912,7 +5958,7 @@ __webpack_require__.r(__webpack_exports__);
           cancelButtonText: 'Lengkapi Berkas'
         }).then(function (result) {
           if (result.isConfirmed) {
-            _this7.showConfirmModal = true;
+            _this8.showConfirmModal = true;
           }
         });
       } else {
@@ -5921,7 +5967,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     submitData: function submitData() {
-      var _this8 = this;
+      var _this9 = this;
       this.showConfirmModal = false;
       this.isSaving = true;
       var payload = {
@@ -5929,10 +5975,10 @@ __webpack_require__.r(__webpack_exports__);
         dokumenChecked: this.dokumenChecked
       };
       axios.post('/api/v1/pendaftaran/simpan', payload).then(function (res) {
-        _this8.isSaving = false;
+        _this9.isSaving = false;
         if (res.data && res.data.status === 'success') {
-          _this8.isSaved = true;
-          _this8.form.nomorPelayanan = res.data.no_pelayanan;
+          _this9.isSaved = true;
+          _this9.form.nomorPelayanan = res.data.no_pelayanan;
           sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
             icon: 'success',
             title: 'Pendaftaran Berhasil!',
@@ -5940,7 +5986,7 @@ __webpack_require__.r(__webpack_exports__);
             timer: 2000,
             showConfirmButton: false
           }).then(function () {
-            _this8.$router.push({
+            _this9.$router.push({
               path: '/upload-persyaratan',
               query: {
                 no_pelayanan: res.data.no_pelayanan
@@ -5948,11 +5994,11 @@ __webpack_require__.r(__webpack_exports__);
             });
           });
         } else {
-          _this8.showApiError(res.data ? res.data.message : 'Gagal menyimpan pendaftaran', 'Pendaftaran Gagal');
+          _this9.showApiError(res.data ? res.data.message : 'Gagal menyimpan pendaftaran', 'Pendaftaran Gagal');
         }
       })["catch"](function (err) {
-        _this8.isSaving = false;
-        _this8.showApiError(err, 'Pendaftaran Gagal');
+        _this9.isSaving = false;
+        _this9.showApiError(err, 'Pendaftaran Gagal');
       });
     }
   }
@@ -5971,50 +6017,61 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'InputSspd',
   data: function data() {
     return {
-      nomorPelayanan: 'PLY-BPHTB/2026/09/00482',
+      nomorPelayanan: '',
+      tanggalProses: new Date().toISOString().split('T')[0],
       form: {
         noDokumenSspd: 'SYS-AUTO',
-        nik: '3573012345678901',
-        npwp: '01.234.567.8-901.000',
-        namaWajibPajak: 'Ir. Muhammad Rizky Kurniawan, M.Eng.',
-        alamatDomisili: 'Jl. Ijen Boulevard No. 45',
-        provinsi: 'Jawa Timur',
-        kabupaten: 'Kota Malang',
-        kecamatan: 'Klojen',
-        kelurahan: 'Oro-Oro Dowo',
-        rt: '04',
-        rw: '08',
-        kodePos: '65112',
-        namaWpLama: 'Bpk. H. Soetomo',
-        letakTanahBangunan: 'Kav. Perumahan Ijen Nirwana Res. Blok A-12',
-        rtObjek: '01',
-        rwObjek: '05',
-        kelurahanObjek: 'Bareng',
-        kecamatanObjek: 'Klojen',
-        kabupatenObjek: 'Kota Malang',
-        kodePosObjek: '65116',
-        tanahPanjang: 20,
-        tanahLebar: 10,
-        tanahLuas: 200,
-        tanahNjopPerM2: 1250000,
-        bangunanPanjang: 15,
-        bangunanLebar: 8,
-        bangunanLuas: 120,
-        bangunanNjopPerM2: 754545,
+        nik: '',
+        npwp: '',
+        namaWajibPajak: '',
+        alamatDomisili: '',
+        provinsi: 'Maluku Utara',
+        kabupaten: 'Halmahera Timur',
+        kecamatan: '',
+        kelurahan: '',
+        rt: '',
+        rw: '',
+        kodePos: '',
+        namaWpLama: '',
+        letakTanahBangunan: '',
+        rtObjek: '',
+        rwObjek: '',
+        kelurahanObjek: '',
+        kecamatanObjek: '',
+        kabupatenObjek: 'Halmahera Timur',
+        kodePosObjek: '',
+        nop: '',
+        tanahPanjang: 0,
+        tanahLebar: 0,
+        tanahLuas: 0,
+        tanahNjopPerM2: 0,
+        bangunanPanjang: 0,
+        bangunanLebar: 0,
+        bangunanLuas: 0,
+        bangunanNjopPerM2: 0,
         jenisPerolehanHak: 'Jual Beli',
-        nomorSertifikat: 'SHM. 04112 / Bareng',
-        tanggalSertifikat: '2026-09-01',
-        namaNotaris: 'Farida Hanum, S.H., M.Kn.',
-        namaPejabat: 'Drs. Bambang Sudiro (Camat / PPATS Klojen)',
-        npop: 850000000,
+        nomorSertifikat: '',
+        tanggalSertifikat: '',
+        namaNotaris: '',
+        namaPejabat: '',
+        npop: 0,
         npoptkp: 80000000,
         dasarPengenaan: 'self_assessment',
         nomorSkp: '',
         tanggalSkp: '',
+        dihitungSendiri: false,
+        alasanDasarPerhitungan: '',
         persyaratanValid: false
       },
       tarifBphtb: 0.05
@@ -6040,14 +6097,96 @@ __webpack_require__.r(__webpack_exports__);
       return Math.round(this.npopkp * this.tarifBphtb);
     },
     bphtbYangHarusDibayar: function bphtbYangHarusDibayar() {
-      return this.bphtbTerutang; // Asumsi tidak ada denda
+      return this.bphtbTerutang;
     },
     terbilang: function terbilang() {
-      // Sederhana untuk keperluan demo UI
-      return "Tiga Puluh Delapan Juta Lima Ratus Ribu Rupiah";
+      return "Kalkulasi Otomatis Berdasarkan Form";
+    }
+  },
+  mounted: function mounted() {
+    if (this.$route.query.no_pelayanan) {
+      this.nomorPelayanan = this.$route.query.no_pelayanan;
+      this.fetchDetailPendaftaran(this.$route.query.no_pelayanan);
     }
   },
   methods: {
+    fetchDetailPendaftaran: function fetchDetailPendaftaran(no_pelayanan) {
+      var _this = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+        var response, d, luasBumi, njopBumi, luasBng, njopBng, _t;
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.p = _context.n) {
+            case 0:
+              _context.p = 0;
+              _context.n = 1;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/v1/pendaftaran/detail/".concat(encodeURIComponent(no_pelayanan)));
+            case 1:
+              response = _context.v;
+              if (response.data && response.data.success) {
+                d = response.data.data;
+                _this.nomorPelayanan = d.no_pelayanan || no_pelayanan;
+                _this.tanggalProses = d.srttglpmhn || new Date().toISOString().split('T')[0];
+                _this.form.nop = d.nop || '';
+                _this.form.namaWajibPajak = d.nama_pemohon || '';
+                _this.form.alamatDomisili = d.alamat_pemohon || d.alamatop || '';
+                _this.form.rt = d.rt_pmhn ? String(d.rt_pmhn).padStart(2, '0') : '';
+                _this.form.rw = d.rw_pmhn ? String(d.rw_pmhn).padStart(2, '0') : '';
+                _this.form.kelurahan = d.nama_kelurahan || '';
+                _this.form.kecamatan = d.nama_kecamatan || '';
+                _this.form.kabupaten = 'Halmahera Timur';
+                _this.form.provinsi = 'Maluku Utara';
+                _this.form.namaWpLama = d.namawp || '';
+                _this.form.letakTanahBangunan = d.jalan_op || d.alamatop || '';
+                _this.form.rtObjek = d.rt_op !== null && d.rt_op !== undefined && d.rt_op !== '' ? String(d.rt_op) : d.rtop ? String(d.rtop) : '';
+                _this.form.rwObjek = d.rw_op !== null && d.rw_op !== undefined && d.rw_op !== '' ? String(d.rw_op) : d.rwop ? String(d.rwop) : '';
+                _this.form.kelurahanObjek = d.nama_kelurahan || '';
+                _this.form.kecamatanObjek = d.nama_kecamatan || '';
+                _this.form.kabupatenObjek = 'Halmahera Timur';
+
+                // Set panjang & lebar 0 secara default, luas & njop diisi dari dat_objek_pajak
+                _this.form.tanahPanjang = 0;
+                _this.form.tanahLebar = 0;
+                luasBumi = parseFloat(d.total_luas_bumi !== null && d.total_luas_bumi !== undefined ? d.total_luas_bumi : d.luas_bumi) || 0;
+                njopBumi = parseFloat(d.njop_bumi) || 0;
+                _this.form.tanahLuas = luasBumi;
+                _this.form.tanahNjopPerM2 = luasBumi > 0 ? Math.round(njopBumi / luasBumi) : njopBumi;
+                _this.form.bangunanPanjang = 0;
+                _this.form.bangunanLebar = 0;
+                luasBng = parseFloat(d.total_luas_bng !== null && d.total_luas_bng !== undefined ? d.total_luas_bng : d.luas_bng) || 0;
+                njopBng = parseFloat(d.njop_bng) || 0;
+                _this.form.bangunanLuas = luasBng;
+                _this.form.bangunanNjopPerM2 = luasBng > 0 ? Math.round(njopBng / luasBng) : njopBng;
+                if (d.jns_perolehan) _this.form.jenisPerolehanHak = d.jns_perolehan;
+                if (d.no_sertifikat) _this.form.nomorSertifikat = d.no_sertifikat;
+                if (d.tgl_sertifikat) _this.form.tanggalSertifikat = d.tgl_sertifikat;
+                if (d.nama_notaris) _this.form.namaNotaris = d.nama_notaris;
+              }
+              _context.n = 3;
+              break;
+            case 2:
+              _context.p = 2;
+              _t = _context.v;
+              console.error("Gagal memuat detail pendaftaran untuk SSPD:", _t);
+            case 3:
+              return _context.a(2);
+          }
+        }, _callee, null, [[0, 2]]);
+      }))();
+    },
+    formatNOP: function formatNOP(nop) {
+      if (!nop || nop.length !== 18) return nop;
+      return "".concat(nop.substring(0, 2), ".").concat(nop.substring(2, 4), ".").concat(nop.substring(4, 7), ".").concat(nop.substring(7, 10), ".").concat(nop.substring(10, 13), "-").concat(nop.substring(13, 17), ".").concat(nop.substring(17, 18));
+    },
+    formatDate: function formatDate(dateString) {
+      if (!dateString) return '-';
+      var date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString;
+      return new Intl.DateTimeFormat('id-ID', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      }).format(date);
+    },
     formatRupiah: function formatRupiah(value) {
       if (!value) return '0';
       return parseInt(value, 10).toLocaleString('id-ID');
@@ -6079,12 +6218,184 @@ __webpack_require__.r(__webpack_exports__);
       this.submitSSPD();
     },
     submitSSPD: function submitSSPD() {
-      if (!this.form.persyaratanValid && this.form.dasarPengenaan === 'self_assessment' && !this.form.dihitungSendiri) {
-        alert('Pastikan kelengkapan dan dasar perhitungan sudah terisi dengan benar.');
-      } else {
-        alert('Dokumen Surat Setoran BPHTB berhasil diverifikasi & diterbitkan.');
-      }
+      alert('Dokumen Surat Setoran BPHTB berhasil diverifikasi & diterbitkan.');
     }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=script&lang=js":
+/*!***********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=script&lang=js ***!
+  \***********************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: 'ListPendaftaran',
+  data: function data() {
+    return {
+      items: [],
+      isLoading: false,
+      searchQuery: '',
+      sortKey: 'srttglpmhn',
+      sortOrder: 'desc',
+      currentPage: 1,
+      perPage: 20
+    };
+  },
+  computed: {
+    filteredData: function filteredData() {
+      if (!this.searchQuery) return this.items;
+      var q = this.searchQuery.toLowerCase();
+      return this.items.filter(function (item) {
+        return item.no_pelayanan && item.no_pelayanan.toLowerCase().includes(q) || item.nama_pemohon && item.nama_pemohon.toLowerCase().includes(q) || item.alamat_pemohon && item.alamat_pemohon.toLowerCase().includes(q) || item.namawp && item.namawp.toLowerCase().includes(q) || item.nop && item.nop.toLowerCase().includes(q);
+      });
+    },
+    sortedData: function sortedData() {
+      var _this = this;
+      var list = _toConsumableArray(this.filteredData);
+      if (!this.sortKey) return list;
+      return list.sort(function (a, b) {
+        var valA = a[_this.sortKey] || '';
+        var valB = b[_this.sortKey] || '';
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+        if (valA < valB) return _this.sortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return _this.sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+    },
+    totalPages: function totalPages() {
+      return Math.ceil(this.sortedData.length / this.perPage) || 1;
+    },
+    paginatedData: function paginatedData() {
+      var start = (this.currentPage - 1) * this.perPage;
+      return this.sortedData.slice(start, start + this.perPage);
+    },
+    startItem: function startItem() {
+      if (this.sortedData.length === 0) return 0;
+      return (this.currentPage - 1) * this.perPage + 1;
+    },
+    endItem: function endItem() {
+      return Math.min(this.currentPage * this.perPage, this.sortedData.length);
+    },
+    displayedPages: function displayedPages() {
+      var total = this.totalPages;
+      var current = this.currentPage;
+      if (total <= 7) {
+        return Array.from({
+          length: total
+        }, function (_, i) {
+          return i + 1;
+        });
+      }
+      if (current <= 4) {
+        return [1, 2, 3, 4, 5, '...', total];
+      }
+      if (current >= total - 3) {
+        return [1, '...', total - 4, total - 3, total - 2, total - 1, total];
+      }
+      return [1, '...', current - 1, current, current + 1, '...', total];
+    }
+  },
+  watch: {
+    searchQuery: function searchQuery() {
+      this.currentPage = 1;
+    },
+    perPage: function perPage() {
+      this.currentPage = 1;
+    }
+  },
+  methods: {
+    sortBy: function sortBy(key) {
+      if (this.sortKey === key) {
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortKey = key;
+        this.sortOrder = 'asc';
+      }
+    },
+    goToPage: function goToPage(page) {
+      if (page === '...' || page < 1 || page > this.totalPages) return;
+      this.currentPage = page;
+    },
+    formatNOP: function formatNOP(nop) {
+      if (!nop || nop.length !== 18) return nop;
+      return "".concat(nop.substring(0, 2), ".").concat(nop.substring(2, 4), ".").concat(nop.substring(4, 7), ".").concat(nop.substring(7, 10), ".").concat(nop.substring(10, 13), "-").concat(nop.substring(13, 17), ".").concat(nop.substring(17, 18));
+    },
+    formatDate: function formatDate(dateString) {
+      if (!dateString) return '-';
+      var date = new Date(dateString);
+      return new Intl.DateTimeFormat('id-ID', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }).format(date);
+    },
+    fetchData: function fetchData() {
+      var _this2 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+        var response, _t;
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.p = _context.n) {
+            case 0:
+              _this2.isLoading = true;
+              _context.p = 1;
+              _context.n = 2;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/v1/pendaftaran/unregistered');
+            case 2:
+              response = _context.v;
+              if (response.data && response.data.success) {
+                _this2.items = response.data.data;
+              } else {
+                _this2.items = [];
+              }
+              _context.n = 4;
+              break;
+            case 3:
+              _context.p = 3;
+              _t = _context.v;
+              console.error("Error fetching list pendaftaran:", _t);
+            case 4:
+              _context.p = 4;
+              _this2.isLoading = false;
+              return _context.f(4);
+            case 5:
+              return _context.a(2);
+          }
+        }, _callee, null, [[1, 3, 4, 5]]);
+      }))();
+    },
+    lihatPendaftaran: function lihatPendaftaran(no_pelayanan) {
+      this.$router.push({
+        path: '/input-sspd',
+        query: {
+          no_pelayanan: no_pelayanan
+        }
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.fetchData();
   }
 });
 
@@ -9188,15 +9499,41 @@ var render = function render() {
     staticClass: "w-full"
   }, [_c("div", {
     staticClass: "w-full max-w-[1440px] mx-auto px-6 lg:px-10 py-8 flex flex-col gap-8"
-  }, [_vm._m(0), _vm._v(" "), _vm._m(1), _vm._v(" "), _c("div", {
+  }, [_vm._m(0), _vm._v(" "), _c("div", {
+    staticClass: "mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200"
+  }, [_c("div", {
+    staticClass: "flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-200 shadow-sm"
+  }, [_vm._m(1), _vm._v(" "), _c("div", {
+    staticClass: "flex flex-col min-w-0"
+  }, [_c("span", {
+    staticClass: "font-label-sm text-label-sm text-slate-500 uppercase tracking-wider truncate"
+  }, [_vm._v("No. Pelayanan")]), _vm._v(" "), _c("span", {
+    staticClass: "font-code-md text-code-md text-slate-900 font-semibold truncate"
+  }, [_vm._v(_vm._s(_vm.nomorPelayanan || "-"))])])]), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-200 shadow-sm"
+  }, [_vm._m(2), _vm._v(" "), _c("div", {
+    staticClass: "flex flex-col min-w-0"
+  }, [_c("span", {
+    staticClass: "font-label-sm text-label-sm text-slate-500 uppercase tracking-wider truncate"
+  }, [_vm._v("Tanggal Proses")]), _vm._v(" "), _c("span", {
+    staticClass: "font-title-sm text-title-sm text-slate-900 font-semibold truncate"
+  }, [_vm._v(_vm._s(_vm.formatDate(_vm.tanggalProses)))])])]), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-200 shadow-sm"
+  }, [_vm._m(3), _vm._v(" "), _c("div", {
+    staticClass: "flex flex-col min-w-0"
+  }, [_c("span", {
+    staticClass: "font-label-sm text-label-sm text-slate-500 uppercase tracking-wider truncate"
+  }, [_vm._v("NOP PBB Terkait")]), _vm._v(" "), _c("span", {
+    staticClass: "font-code-md text-code-md text-slate-900 font-semibold truncate"
+  }, [_vm._v(_vm._s(_vm.formatNOP(_vm.form.nop) || "-"))])])]), _vm._v(" "), _vm._m(4)]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-6 pb-32 w-full"
   }, [_c("section", {
     staticClass: "bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
-  }, [_vm._m(2), _c("div", {
+  }, [_vm._m(5), _vm._v(" "), _c("div", {
     staticClass: "p-6 lg:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
   }, [_c("div", {
     staticClass: "flex flex-col gap-1.5"
-  }, [_vm._m(3), _c("div", {
+  }, [_vm._m(6), _vm._v(" "), _c("div", {
     staticClass: "relative"
   }, [_c("input", {
     directives: [{
@@ -9219,11 +9556,11 @@ var render = function render() {
         _vm.$set(_vm.form, "noDokumenSspd", $event.target.value);
       }
     }
-  }), _c("span", {
+  }), _vm._v(" "), _c("span", {
     staticClass: "material-symbols-outlined absolute right-3 top-2.5 text-slate-400 text-[18px]"
-  }, [_vm._v("lock")])])]), _c("div", {
+  }, [_vm._v("lock")])])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
-  }, [_vm._m(4), _c("div", {
+  }, [_vm._m(7), _vm._v(" "), _c("div", {
     staticClass: "relative"
   }, [_c("input", {
     directives: [{
@@ -9246,13 +9583,13 @@ var render = function render() {
         _vm.$set(_vm.form, "nik", $event.target.value);
       }
     }
-  }), _c("span", {
+  }), _vm._v(" "), _c("span", {
     staticClass: "material-symbols-outlined absolute right-3 top-2.5 text-[#4CAF50] text-[20px]"
-  }, [_vm._v("check_circle")])])]), _c("div", {
+  }, [_vm._v("check_circle")])])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Nomor Pokok Wajib Pajak (NPWP)")]), _c("div", {
+  }, [_vm._v("Nomor Pokok Wajib Pajak (NPWP)")]), _vm._v(" "), _c("div", {
     staticClass: "relative"
   }, [_c("input", {
     directives: [{
@@ -9274,11 +9611,11 @@ var render = function render() {
         _vm.$set(_vm.form, "npwp", $event.target.value);
       }
     }
-  }), _c("span", {
+  }), _vm._v(" "), _c("span", {
     staticClass: "material-symbols-outlined absolute right-3 top-2.5 text-slate-400 text-[20px]"
-  }, [_vm._v("id_card")])])]), _c("div", {
+  }, [_vm._v("id_card")])])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5 md:col-span-2 lg:col-span-3"
-  }, [_vm._m(5), _c("input", {
+  }, [_vm._m(8), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9298,9 +9635,9 @@ var render = function render() {
         _vm.$set(_vm.form, "namaWajibPajak", $event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5 md:col-span-2 lg:col-span-3"
-  }, [_vm._m(6), _c("textarea", {
+  }, [_vm._m(9), _vm._v(" "), _c("textarea", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9320,11 +9657,11 @@ var render = function render() {
         _vm.$set(_vm.form, "alamatDomisili", $event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Provinsi")]), _c("select", {
+  }, [_vm._v("Provinsi")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9332,34 +9669,23 @@ var render = function render() {
       expression: "form.provinsi"
     }],
     staticClass: "w-full bg-white text-slate-900 font-body-md text-body-md px-3.5 py-2.5 rounded-lg border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4CAF50] focus:border-[#4CAF50]",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.form.provinsi
+    },
     on: {
-      change: function change($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.form, "provinsi", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "provinsi", $event.target.value);
       }
     }
-  }, [_c("option", {
-    attrs: {
-      value: "Jawa Timur"
-    }
-  }, [_vm._v("Jawa Timur")]), _c("option", {
-    attrs: {
-      value: "Jawa Tengah"
-    }
-  }, [_vm._v("Jawa Tengah")]), _c("option", {
-    attrs: {
-      value: "DKI Jakarta"
-    }
-  }, [_vm._v("DKI Jakarta")])])]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Kabupaten / Kota")]), _c("select", {
+  }, [_vm._v("Kabupaten / Kota")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9367,34 +9693,23 @@ var render = function render() {
       expression: "form.kabupaten"
     }],
     staticClass: "w-full bg-white text-slate-900 font-body-md text-body-md px-3.5 py-2.5 rounded-lg border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4CAF50] focus:border-[#4CAF50]",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.form.kabupaten
+    },
     on: {
-      change: function change($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.form, "kabupaten", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "kabupaten", $event.target.value);
       }
     }
-  }, [_c("option", {
-    attrs: {
-      value: "Kota Malang"
-    }
-  }, [_vm._v("Kota Malang")]), _c("option", {
-    attrs: {
-      value: "Kab. Malang"
-    }
-  }, [_vm._v("Kab. Malang")]), _c("option", {
-    attrs: {
-      value: "Kota Batu"
-    }
-  }, [_vm._v("Kota Batu")])])]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Kecamatan")]), _c("select", {
+  }, [_vm._v("Kecamatan")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9402,42 +9717,23 @@ var render = function render() {
       expression: "form.kecamatan"
     }],
     staticClass: "w-full bg-white text-slate-900 font-body-md text-body-md px-3.5 py-2.5 rounded-lg border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4CAF50] focus:border-[#4CAF50]",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.form.kecamatan
+    },
     on: {
-      change: function change($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.form, "kecamatan", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "kecamatan", $event.target.value);
       }
     }
-  }, [_c("option", {
-    attrs: {
-      value: "Klojen"
-    }
-  }, [_vm._v("Klojen")]), _c("option", {
-    attrs: {
-      value: "Lowokwaru"
-    }
-  }, [_vm._v("Lowokwaru")]), _c("option", {
-    attrs: {
-      value: "Blimbing"
-    }
-  }, [_vm._v("Blimbing")]), _c("option", {
-    attrs: {
-      value: "Kedungkandang"
-    }
-  }, [_vm._v("Kedungkandang")]), _c("option", {
-    attrs: {
-      value: "Sukun"
-    }
-  }, [_vm._v("Sukun")])])]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Kelurahan")]), _c("select", {
+  }, [_vm._v("Kelurahan")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9445,40 +9741,25 @@ var render = function render() {
       expression: "form.kelurahan"
     }],
     staticClass: "w-full bg-white text-slate-900 font-body-md text-body-md px-3.5 py-2.5 rounded-lg border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4CAF50] focus:border-[#4CAF50]",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.form.kelurahan
+    },
     on: {
-      change: function change($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.form, "kelurahan", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "kelurahan", $event.target.value);
       }
     }
-  }, [_c("option", {
-    attrs: {
-      value: "Oro-Oro Dowo"
-    }
-  }, [_vm._v("Oro-Oro Dowo")]), _c("option", {
-    attrs: {
-      value: "Kaudan"
-    }
-  }, [_vm._v("Kaudan")]), _c("option", {
-    attrs: {
-      value: "Gadingkasri"
-    }
-  }, [_vm._v("Gadingkasri")]), _c("option", {
-    attrs: {
-      value: "Bareng"
-    }
-  }, [_vm._v("Bareng")])])]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex gap-3"
   }, [_c("div", {
     staticClass: "flex flex-col gap-1.5 w-1/2"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("RT")]), _c("input", {
+  }, [_vm._v("RT")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9498,11 +9779,11 @@ var render = function render() {
         _vm.$set(_vm.form, "rt", $event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5 w-1/2"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("RW")]), _c("input", {
+  }, [_vm._v("RW")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9522,11 +9803,11 @@ var render = function render() {
         _vm.$set(_vm.form, "rw", $event.target.value);
       }
     }
-  })])]), _c("div", {
+  })])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Kode Pos")]), _c("input", {
+  }, [_vm._v("Kode Pos")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9549,11 +9830,11 @@ var render = function render() {
     }
   })])])]), _vm._v(" "), _c("section", {
     staticClass: "bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
-  }, [_vm._m(7), _c("div", {
+  }, [_vm._m(10), _vm._v(" "), _c("div", {
     staticClass: "p-6 lg:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
   }, [_c("div", {
     staticClass: "flex flex-col gap-1.5 md:col-span-2 lg:col-span-3"
-  }, [_vm._m(8), _c("div", {
+  }, [_vm._m(11), _vm._v(" "), _c("div", {
     staticClass: "relative"
   }, [_c("input", {
     directives: [{
@@ -9576,11 +9857,11 @@ var render = function render() {
         _vm.$set(_vm.form, "namaWpLama", $event.target.value);
       }
     }
-  }), _c("span", {
+  }), _vm._v(" "), _c("span", {
     staticClass: "material-symbols-outlined absolute right-3 top-2.5 text-slate-400 text-[20px]"
-  }, [_vm._v("person_check")])])]), _c("div", {
+  }, [_vm._v("person_check")])])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5 md:col-span-2 lg:col-span-3"
-  }, [_vm._m(9), _c("textarea", {
+  }, [_vm._m(12), _vm._v(" "), _c("textarea", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9600,13 +9881,13 @@ var render = function render() {
         _vm.$set(_vm.form, "letakTanahBangunan", $event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex gap-3"
   }, [_c("div", {
     staticClass: "flex flex-col gap-1.5 w-1/2"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("RT Objek")]), _c("input", {
+  }, [_vm._v("RT Objek")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9626,11 +9907,11 @@ var render = function render() {
         _vm.$set(_vm.form, "rtObjek", $event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5 w-1/2"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("RW Objek")]), _c("input", {
+  }, [_vm._v("RW Objek")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9650,11 +9931,11 @@ var render = function render() {
         _vm.$set(_vm.form, "rwObjek", $event.target.value);
       }
     }
-  })])]), _c("div", {
+  })])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Kelurahan / Desa")]), _c("input", {
+  }, [_vm._v("Kelurahan / Desa")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9674,11 +9955,11 @@ var render = function render() {
         _vm.$set(_vm.form, "kelurahanObjek", $event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Kecamatan")]), _c("input", {
+  }, [_vm._v("Kecamatan")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9698,11 +9979,11 @@ var render = function render() {
         _vm.$set(_vm.form, "kecamatanObjek", $event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Kabupaten / Kota")]), _c("input", {
+  }, [_vm._v("Kabupaten / Kota")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9722,11 +10003,11 @@ var render = function render() {
         _vm.$set(_vm.form, "kabupatenObjek", $event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Kode Pos Objek")]), _c("input", {
+  }, [_vm._v("Kode Pos Objek")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9747,19 +10028,19 @@ var render = function render() {
         _vm.$set(_vm.form, "kodePosObjek", $event.target.value);
       }
     }
-  })]), _vm._m(10)])]), _vm._v(" "), _c("section", {
+  })]), _vm._v(" "), _vm._m(13)])]), _vm._v(" "), _c("section", {
     staticClass: "bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
-  }, [_vm._m(11), _c("div", {
+  }, [_vm._m(14), _vm._v(" "), _c("div", {
     staticClass: "p-6 lg:p-8"
   }, [_c("div", {
     staticClass: "overflow-x-auto rounded-xl border border-slate-200 bg-white"
   }, [_c("table", {
     staticClass: "w-full border-collapse text-left"
-  }, [_vm._m(12), _c("tbody", {
+  }, [_vm._m(15), _vm._v(" "), _c("tbody", {
     staticClass: "divide-y divide-slate-100"
   }, [_c("tr", {
     staticClass: "hover:bg-slate-50/60 transition-colors"
-  }, [_vm._m(13), _c("td", {
+  }, [_vm._m(16), _vm._v(" "), _c("td", {
     staticClass: "p-2 text-center"
   }, [_c("input", {
     directives: [{
@@ -9788,9 +10069,9 @@ var render = function render() {
         return _vm.$forceUpdate();
       }
     }
-  })]), _c("td", {
+  })]), _vm._v(" "), _c("td", {
     staticClass: "p-1 text-center font-code-md text-code-md text-slate-400 font-bold"
-  }, [_vm._v("×")]), _c("td", {
+  }, [_vm._v("×")]), _vm._v(" "), _c("td", {
     staticClass: "p-2 text-center"
   }, [_c("input", {
     directives: [{
@@ -9819,9 +10100,9 @@ var render = function render() {
         return _vm.$forceUpdate();
       }
     }
-  })]), _c("td", {
+  })]), _vm._v(" "), _c("td", {
     staticClass: "p-1 text-center font-code-md text-code-md text-slate-400 font-bold"
-  }, [_vm._v("=")]), _c("td", {
+  }, [_vm._v("=")]), _vm._v(" "), _c("td", {
     staticClass: "p-2 text-center"
   }, [_c("input", {
     directives: [{
@@ -9850,17 +10131,17 @@ var render = function render() {
         return _vm.$forceUpdate();
       }
     }
-  })]), _c("td", {
+  })]), _vm._v(" "), _c("td", {
     staticClass: "p-4 text-right font-code-md text-code-md text-slate-800"
   }, [_c("span", {
     staticClass: "text-slate-400 text-body-sm mr-1"
-  }, [_vm._v("Rp")]), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.form.tanahNjopPerM2)))])]), _c("td", {
+  }, [_vm._v("Rp")]), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.form.tanahNjopPerM2)))])]), _vm._v(" "), _c("td", {
     staticClass: "p-4 text-right font-code-md text-code-md font-semibold text-slate-900 bg-slate-50/40 border-l border-slate-100"
   }, [_c("span", {
     staticClass: "text-slate-400 text-body-sm mr-1"
-  }, [_vm._v("Rp")]), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.totalTanahNjop)))])])]), _c("tr", {
+  }, [_vm._v("Rp")]), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.totalTanahNjop)))])])]), _vm._v(" "), _c("tr", {
     staticClass: "hover:bg-slate-50/60 transition-colors"
-  }, [_vm._m(14), _c("td", {
+  }, [_vm._m(17), _vm._v(" "), _c("td", {
     staticClass: "p-2 text-center"
   }, [_c("input", {
     directives: [{
@@ -9889,9 +10170,9 @@ var render = function render() {
         return _vm.$forceUpdate();
       }
     }
-  })]), _c("td", {
+  })]), _vm._v(" "), _c("td", {
     staticClass: "p-1 text-center font-code-md text-code-md text-slate-400 font-bold"
-  }, [_vm._v("×")]), _c("td", {
+  }, [_vm._v("×")]), _vm._v(" "), _c("td", {
     staticClass: "p-2 text-center"
   }, [_c("input", {
     directives: [{
@@ -9920,9 +10201,9 @@ var render = function render() {
         return _vm.$forceUpdate();
       }
     }
-  })]), _c("td", {
+  })]), _vm._v(" "), _c("td", {
     staticClass: "p-1 text-center font-code-md text-code-md text-slate-400 font-bold"
-  }, [_vm._v("=")]), _c("td", {
+  }, [_vm._v("=")]), _vm._v(" "), _c("td", {
     staticClass: "p-2 text-center"
   }, [_c("input", {
     directives: [{
@@ -9951,29 +10232,29 @@ var render = function render() {
         return _vm.$forceUpdate();
       }
     }
-  })]), _c("td", {
+  })]), _vm._v(" "), _c("td", {
     staticClass: "p-4 text-right font-code-md text-code-md text-slate-800"
   }, [_c("span", {
     staticClass: "text-slate-400 text-body-sm mr-1"
-  }, [_vm._v("Rp")]), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.form.bangunanNjopPerM2)))])]), _c("td", {
+  }, [_vm._v("Rp")]), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.form.bangunanNjopPerM2)))])]), _vm._v(" "), _c("td", {
     staticClass: "p-4 text-right font-code-md text-code-md font-semibold text-slate-900 bg-slate-50/40 border-l border-slate-100"
   }, [_c("span", {
     staticClass: "text-slate-400 text-body-sm mr-1"
-  }, [_vm._v("Rp")]), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.totalBangunanNjop)))])])])]), _c("tfoot", [_c("tr", {
+  }, [_vm._v("Rp")]), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.totalBangunanNjop)))])])])]), _vm._v(" "), _c("tfoot", [_c("tr", {
     staticClass: "bg-slate-50 border-t border-slate-200"
-  }, [_vm._m(15), _c("td", {
+  }, [_vm._m(18), _vm._v(" "), _c("td", {
     staticClass: "p-4 text-right font-title-sm text-title-sm font-semibold text-slate-800"
-  }, [_vm._v("Total NJOP PBB:")]), _c("td", {
+  }, [_vm._v("Total NJOP PBB:")]), _vm._v(" "), _c("td", {
     staticClass: "p-4 text-right font-headline-md text-headline-md font-bold text-[#2e7d32] bg-[#f0fdf4] border-l border-slate-200"
   }, [_c("span", {
     staticClass: "text-sm font-normal text-slate-600 mr-1"
-  }, [_vm._v("Rp")]), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.totalNjopPbb)))])])])])])]), _c("div", {
+  }, [_vm._v("Rp")]), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.totalNjopPbb)))])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "mt-8 pt-6 bg-slate-50 border border-slate-200 p-6 rounded-xl"
-  }, [_vm._m(16), _c("div", {
+  }, [_vm._m(19), _vm._v(" "), _c("div", {
     staticClass: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
   }, [_c("div", {
     staticClass: "flex flex-col gap-1.5"
-  }, [_vm._m(17), _c("select", {
+  }, [_vm._m(20), _vm._v(" "), _c("select", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -9996,25 +10277,25 @@ var render = function render() {
     attrs: {
       value: "Jual Beli"
     }
-  }, [_vm._v("Jual Beli")]), _c("option", {
+  }, [_vm._v("Jual Beli")]), _vm._v(" "), _c("option", {
     attrs: {
       value: "Tukar Menukar"
     }
-  }, [_vm._v("Tukar Menukar")]), _c("option", {
+  }, [_vm._v("Tukar Menukar")]), _vm._v(" "), _c("option", {
     attrs: {
       value: "Hibah / Hibah Wasiat"
     }
-  }, [_vm._v("Hibah / Hibah Wasiat")]), _c("option", {
+  }, [_vm._v("Hibah / Hibah Wasiat")]), _vm._v(" "), _c("option", {
     attrs: {
       value: "Waris"
     }
-  }, [_vm._v("Waris")]), _c("option", {
+  }, [_vm._v("Waris")]), _vm._v(" "), _c("option", {
     attrs: {
       value: "Pemasukan dalam Perseroan (Inbreng)"
     }
-  }, [_vm._v("Pemasukan dalam Perseroan (Inbreng)")])])]), _c("div", {
+  }, [_vm._v("Pemasukan dalam Perseroan (Inbreng)")])])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
-  }, [_vm._m(18), _c("input", {
+  }, [_vm._m(21), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -10034,11 +10315,11 @@ var render = function render() {
         _vm.$set(_vm.form, "nomorSertifikat", $event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Tanggal Sertifikat")]), _c("input", {
+  }, [_vm._v("Tanggal Sertifikat")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -10058,11 +10339,11 @@ var render = function render() {
         _vm.$set(_vm.form, "tanggalSertifikat", $event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Nama Notaris Pembuat Akta")]), _c("select", {
+  }, [_vm._v("Nama Notaris Pembuat Akta")]), _vm._v(" "), _c("select", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -10085,19 +10366,19 @@ var render = function render() {
     attrs: {
       value: "Farida Hanum, S.H., M.Kn."
     }
-  }, [_vm._v("Farida Hanum, S.H., M.Kn.")]), _c("option", {
+  }, [_vm._v("Farida Hanum, S.H., M.Kn.")]), _vm._v(" "), _c("option", {
     attrs: {
       value: "Anwar Sanusi, S.H., M.Kn."
     }
-  }, [_vm._v("Anwar Sanusi, S.H., M.Kn.")]), _c("option", {
+  }, [_vm._v("Anwar Sanusi, S.H., M.Kn.")]), _vm._v(" "), _c("option", {
     attrs: {
       value: "Dewi Sartika, S.H., Sp.N."
     }
-  }, [_vm._v("Dewi Sartika, S.H., Sp.N.")])])]), _c("div", {
+  }, [_vm._v("Dewi Sartika, S.H., Sp.N.")])])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5 sm:col-span-2"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Nama Pejabat / PPAT / PPATS Wilayah")]), _c("select", {
+  }, [_vm._v("Nama Pejabat / PPAT / PPATS Wilayah")]), _vm._v(" "), _c("select", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -10120,7 +10401,7 @@ var render = function render() {
     attrs: {
       value: "Drs. Bambang Sudiro (Camat / PPATS Klojen)"
     }
-  }, [_vm._v("Drs. Bambang Sudiro (Camat / PPATS Klojen)")]), _c("option", {
+  }, [_vm._v("Drs. Bambang Sudiro (Camat / PPATS Klojen)")]), _vm._v(" "), _c("option", {
     attrs: {
       value: "Kantor Pertanahan Kota Malang (BPN)"
     }
@@ -10128,11 +10409,11 @@ var render = function render() {
     staticClass: "bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
   }, [_c("div", {
     staticClass: "px-6 py-4 bg-slate-50/80 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3"
-  }, [_vm._m(19), _c("div", {
+  }, [_vm._m(22), _vm._v(" "), _c("div", {
     staticClass: "flex items-center gap-1.5 font-label-sm text-label-sm text-[#2e7d32] bg-[#e8f5e9] border border-[#c8e6c9] px-3 py-1 rounded-full font-semibold"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
-  }, [_vm._v("verified")]), _vm._v("Tarif Perda Berlaku: " + _vm._s((_vm.tarifBphtb * 100).toFixed(0)) + "%")])]), _c("div", {
+  }, [_vm._v("verified")]), _vm._v("Tarif Perda Berlaku: " + _vm._s((_vm.tarifBphtb * 100).toFixed(0)) + "%\n          ")])]), _vm._v(" "), _c("div", {
     staticClass: "p-6 lg:p-8"
   }, [_c("div", {
     staticClass: "grid grid-cols-1 lg:grid-cols-12 gap-8"
@@ -10140,13 +10421,13 @@ var render = function render() {
     staticClass: "lg:col-span-7 flex flex-col gap-5"
   }, [_c("div", {
     staticClass: "p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col gap-2"
-  }, [_vm._m(20), _c("p", {
+  }, [_vm._m(23), _vm._v(" "), _c("p", {
     staticClass: "font-body-sm text-body-sm text-slate-600"
-  }, [_vm._v("Nilai riil berdasarkan Akta Jual Beli. Jika NPOP > Total NJOP PBB, maka NPOP yang digunakan sebagai dasar.")]), _c("div", {
+  }, [_vm._v("Nilai riil berdasarkan Akta Jual Beli. Jika NPOP > Total NJOP PBB, maka NPOP yang digunakan sebagai dasar.")]), _vm._v(" "), _c("div", {
     staticClass: "relative mt-1"
   }, [_c("span", {
     staticClass: "absolute left-3.5 top-2.5 font-code-md text-code-md font-semibold text-slate-500"
-  }, [_vm._v("Rp")]), _c("input", {
+  }, [_vm._v("Rp")]), _vm._v(" "), _c("input", {
     staticClass: "w-full bg-white text-slate-900 font-headline-md text-headline-md font-semibold pl-12 pr-4 py-2 rounded-lg border border-slate-200 shadow-sm focus:ring-2 focus:ring-[#4CAF50] focus:border-[#4CAF50] focus:outline-none",
     attrs: {
       type: "text"
@@ -10159,79 +10440,79 @@ var render = function render() {
         return _vm.onNpopInput($event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex items-center gap-2 text-[#2e7d32] font-body-sm text-body-sm mt-1 font-medium"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
-  }, [_vm._v("check_circle")]), _vm.form.npop >= _vm.totalNjopPbb ? _c("span", [_vm._v("NPOP (Rp " + _vm._s(_vm.formatRupiah(_vm.form.npop)) + ") lebih tinggi dari Total NJOP (Rp " + _vm._s(_vm.formatRupiah(_vm.totalNjopPbb)) + ") → Sesuai Ketentuan Pajak.")]) : _c("span", {
+  }, [_vm._v("check_circle")]), _vm._v(" "), _vm.form.npop >= _vm.totalNjopPbb ? _c("span", [_vm._v("NPOP (Rp " + _vm._s(_vm.formatRupiah(_vm.form.npop)) + ") lebih tinggi dari Total NJOP (Rp " + _vm._s(_vm.formatRupiah(_vm.totalNjopPbb)) + ") → Sesuai Ketentuan Pajak.")]) : _c("span", {
     staticClass: "text-amber-700 font-semibold"
-  }, [_vm._v("Total NJOP (Rp " + _vm._s(_vm.formatRupiah(_vm.totalNjopPbb)) + ") lebih tinggi dari NPOP → Digunakan NJOP sebagai dasar hitung.")])])]), _c("div", {
+  }, [_vm._v("Total NJOP (Rp " + _vm._s(_vm.formatRupiah(_vm.totalNjopPbb)) + ") lebih tinggi dari NPOP → Digunakan NJOP sebagai dasar hitung.")])])]), _vm._v(" "), _c("div", {
     staticClass: "p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col gap-2"
-  }, [_vm._m(21), _c("div", {
+  }, [_vm._m(24), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white p-3 rounded-lg border border-slate-200 shadow-sm"
   }, [_c("span", {
     staticClass: "font-body-md text-body-md text-slate-600"
-  }, [_vm._v("Standar Perolehan Hak Jual Beli Pertama")]), _c("div", {
+  }, [_vm._v("Standar Perolehan Hak Jual Beli Pertama")]), _vm._v(" "), _c("div", {
     staticClass: "font-code-md text-code-md font-semibold text-slate-900"
   }, [_c("span", {
     staticClass: "text-body-sm text-slate-400 mr-1"
-  }, [_vm._v("Rp")]), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.form.npoptkp)))])])])]), _c("div", {
+  }, [_vm._v("Rp")]), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.form.npoptkp)))])])])]), _vm._v(" "), _c("div", {
     staticClass: "grid grid-cols-1 sm:grid-cols-2 gap-4"
   }, [_c("div", {
     staticClass: "p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col gap-2"
-  }, [_vm._m(22), _c("span", {
+  }, [_vm._m(25), _vm._v(" "), _c("span", {
     staticClass: "font-body-sm text-body-sm text-slate-500"
-  }, [_vm._v("(Dasar Pajak − NPOPTKP)")]), _c("div", {
+  }, [_vm._v("(Dasar Pajak − NPOPTKP)")]), _vm._v(" "), _c("div", {
     staticClass: "bg-white p-3 rounded-lg border border-slate-200 shadow-sm font-code-md text-code-md font-semibold text-slate-900"
   }, [_c("span", {
     staticClass: "text-body-sm text-slate-400 mr-1"
-  }, [_vm._v("Rp")]), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.npopkp)))])])]), _c("div", {
+  }, [_vm._v("Rp")]), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.npopkp)))])])]), _vm._v(" "), _c("div", {
     staticClass: "p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col gap-2"
-  }, [_vm._m(23), _c("span", {
+  }, [_vm._m(26), _vm._v(" "), _c("span", {
     staticClass: "font-body-sm text-body-sm text-slate-500"
-  }, [_vm._v("Tarif Tunggal Daerah")]), _c("div", {
+  }, [_vm._v("Tarif Tunggal Daerah")]), _vm._v(" "), _c("div", {
     staticClass: "bg-white p-3 rounded-lg border border-slate-200 shadow-sm font-code-md text-code-md font-bold text-[#4CAF50]"
-  }, [_vm._v(_vm._s((_vm.tarifBphtb * 100).toFixed(1)) + " % (Persen)")])])]), _c("div", {
+  }, [_vm._v("\n                    " + _vm._s((_vm.tarifBphtb * 100).toFixed(1)) + " % (Persen)\n                  ")])])]), _vm._v(" "), _c("div", {
     staticClass: "p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
-  }, [_vm._m(24), _c("div", {
+  }, [_vm._m(27), _vm._v(" "), _c("div", {
     staticClass: "font-headline-md text-headline-md font-bold text-slate-900 font-code-md self-start sm:self-auto ml-9 sm:ml-0"
   }, [_c("span", {
     staticClass: "text-body-sm text-slate-400 font-normal mr-1"
-  }, [_vm._v("Rp")]), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.bphtbTerutang)))])])])]), _c("div", {
+  }, [_vm._v("Rp")]), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.bphtbTerutang)))])])])]), _vm._v(" "), _c("div", {
     staticClass: "lg:col-span-5 flex flex-col justify-between p-6 lg:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm"
   }, [_c("div", {
     staticClass: "flex flex-col gap-4"
-  }, [_vm._m(25), _c("div", {
+  }, [_vm._m(28), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1 my-2"
   }, [_c("span", {
     staticClass: "font-label-sm text-label-sm text-slate-500 uppercase tracking-wider font-semibold"
-  }, [_vm._v("Total Pokok Pajak Terutang")]), _c("div", {
+  }, [_vm._v("Total Pokok Pajak Terutang")]), _vm._v(" "), _c("div", {
     staticClass: "text-3xl lg:text-display-lg font-bold text-[#4CAF50] tracking-tight font-code-md flex items-baseline break-all"
   }, [_c("span", {
     staticClass: "text-xl lg:text-headline-md font-normal text-slate-400 mr-2"
-  }, [_vm._v("Rp")]), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.bphtbYangHarusDibayar)))])])]), _c("div", {
+  }, [_vm._v("Rp")]), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.formatRupiah(_vm.bphtbYangHarusDibayar)))])])]), _vm._v(" "), _c("div", {
     staticClass: "p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col gap-1"
   }, [_c("span", {
     staticClass: "font-label-sm text-label-sm text-slate-500 font-medium"
-  }, [_vm._v("Terbilang:")]), _c("p", {
+  }, [_vm._v("Terbilang:")]), _vm._v(" "), _c("p", {
     staticClass: "font-body-md text-body-md text-slate-800 font-semibold italic capitalize leading-relaxed"
-  }, [_vm._v("“" + _vm._s(_vm.terbilang) + "”")])]), _c("div", {
+  }, [_vm._v("“" + _vm._s(_vm.terbilang) + "”")])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-2 mt-2 pt-3 border-t border-slate-200 font-body-sm text-body-sm"
   }, [_c("div", {
     staticClass: "flex justify-between text-slate-600"
-  }, [_c("span", {}, [_vm._v("NPOP (Dasar Hitung)")]), _c("span", {
+  }, [_c("span", [_vm._v("NPOP (Dasar Hitung)")]), _vm._v(" "), _c("span", {
     staticClass: "font-code-md text-code-md text-slate-900 font-medium"
-  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.dasarPengenaanPajak)))])]), _c("div", {
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.dasarPengenaanPajak)))])]), _vm._v(" "), _c("div", {
     staticClass: "flex justify-between text-slate-600"
-  }, [_c("span", {}, [_vm._v("Pengurang (NPOPTKP)")]), _c("span", {
+  }, [_c("span", [_vm._v("Pengurang (NPOPTKP)")]), _vm._v(" "), _c("span", {
     staticClass: "font-code-md text-code-md text-slate-900 font-medium"
-  }, [_vm._v("− Rp " + _vm._s(_vm.formatRupiah(_vm.form.npoptkp)))])]), _c("div", {
+  }, [_vm._v("− Rp " + _vm._s(_vm.formatRupiah(_vm.form.npoptkp)))])]), _vm._v(" "), _c("div", {
     staticClass: "flex justify-between text-slate-600"
-  }, [_c("span", {}, [_vm._v("Pengenaan Pajak (5%)")]), _c("span", {
+  }, [_c("span", [_vm._v("Pengenaan Pajak (5%)")]), _vm._v(" "), _c("span", {
     staticClass: "font-code-md text-code-md text-[#4CAF50] font-bold"
-  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.bphtbTerutang)))])]), _vm._m(26)])]), _vm._m(27)])])])]), _vm._v(" "), _c("section", {
+  }, [_vm._v("Rp " + _vm._s(_vm.formatRupiah(_vm.bphtbTerutang)))])]), _vm._v(" "), _vm._m(29)])]), _vm._v(" "), _vm._m(30)])])])]), _vm._v(" "), _c("section", {
     staticClass: "bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
-  }, [_vm._m(28), _c("div", {
+  }, [_vm._m(31), _vm._v(" "), _c("div", {
     staticClass: "p-6 lg:p-8 flex flex-col gap-6"
   }, [_c("div", {
     staticClass: "grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -10258,7 +10539,7 @@ var render = function render() {
         return _vm.$set(_vm.form, "dasarPengenaan", "self_assessment");
       }
     }
-  }), _vm._m(29)]), _c("label", {
+  }), _vm._v(" "), _vm._m(32)]), _vm._v(" "), _c("label", {
     "class": ["relative flex items-start gap-4 p-4 rounded-xl cursor-pointer transition-all", _vm.form.dasarPengenaan === "ketetapan_resmi" ? "bg-[#f0fdf4] border-2 border-[#4CAF50]" : "bg-white hover:bg-slate-50 border border-slate-200"]
   }, [_c("input", {
     directives: [{
@@ -10281,7 +10562,7 @@ var render = function render() {
         return _vm.$set(_vm.form, "dasarPengenaan", "ketetapan_resmi");
       }
     }
-  }), _vm._m(30)])]), _c("div", {
+  }), _vm._v(" "), _vm._m(33)])]), _vm._v(" "), _c("div", {
     directives: [{
       name: "show",
       rawName: "v-show",
@@ -10293,7 +10574,7 @@ var render = function render() {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Nomor Surat Ketetapan (SKPDKB/SKPDKBT)")]), _c("input", {
+  }, [_vm._v("Nomor Surat Ketetapan (SKPDKB/SKPDKBT)")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -10314,11 +10595,11 @@ var render = function render() {
         _vm.$set(_vm.form, "nomorSkp", $event.target.value);
       }
     }
-  })]), _c("div", {
+  })]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold"
-  }, [_vm._v("Tanggal Terbit Ketetapan")]), _c("input", {
+  }, [_vm._v("Tanggal Terbit Ketetapan")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -10338,7 +10619,7 @@ var render = function render() {
         _vm.$set(_vm.form, "tanggalSkp", $event.target.value);
       }
     }
-  })])]), _c("div", {
+  })])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-3 pt-2"
   }, [_c("label", {
     staticClass: "inline-flex items-center gap-2.5 cursor-pointer"
@@ -10374,13 +10655,13 @@ var render = function render() {
         }
       }
     }
-  }), _c("span", {
+  }), _vm._v(" "), _c("span", {
     staticClass: "font-label-md text-label-md text-slate-800 font-semibold"
-  }, [_vm._v("Perhitungan Dihitung Sendiri oleh Wajib Pajak / Kuasa Wajib Pajak")])]), _c("div", {
+  }, [_vm._v("Perhitungan Dihitung Sendiri oleh Wajib Pajak / Kuasa Wajib Pajak")])]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col gap-1.5 pl-6"
   }, [_c("label", {
     staticClass: "font-label-md text-label-md text-slate-600"
-  }, [_vm._v("Alasan / Catatan Dasar Perhitungan:")]), _c("textarea", {
+  }, [_vm._v("Alasan / Catatan Dasar Perhitungan:")]), _vm._v(" "), _c("textarea", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -10404,7 +10685,7 @@ var render = function render() {
     staticClass: "static mt-8 lg:mt-0 lg:sticky lg:bottom-4 z-30 w-full bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 p-4 lg:p-5 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
   }, [_c("div", {
     staticClass: "flex items-center gap-3"
-  }, [_vm._m(31), _vm._v(" "), _c("div", {
+  }, [_vm._m(34), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col"
   }, [_c("span", {
     staticClass: "text-xs font-bold text-slate-900"
@@ -10457,7 +10738,7 @@ var staticRenderFns = [function () {
     staticClass: "hover:text-[#4CAF50] cursor-pointer transition-colors flex items-center gap-1"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[16px]"
-  }, [_vm._v("home")]), _vm._v(" Beranda\n        ")]), _vm._v(" "), _c("span", {
+  }, [_vm._v("home")]), _vm._v(" Beranda\n          ")]), _vm._v(" "), _c("span", {
     staticClass: "text-slate-300"
   }, [_vm._v("/")]), _vm._v(" "), _c("span", {
     staticClass: "hover:text-[#4CAF50] cursor-pointer transition-colors"
@@ -10477,9 +10758,9 @@ var staticRenderFns = [function () {
     staticClass: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#edf7ee] text-[#2e7d32] border border-[#c8e6c9] text-xs font-semibold shadow-xs"
   }, [_c("span", {
     staticClass: "w-1.5 h-1.5 rounded-full bg-[#4CAF50] animate-pulse"
-  }), _vm._v("\n          Tahap Perhitungan & Surat Setoran\n        ")])]), _vm._v(" "), _c("p", {
+  }), _vm._v("\n            Tahap Perhitungan & Surat Setoran\n          ")])]), _vm._v(" "), _c("p", {
     staticClass: "text-sm text-slate-600 max-w-3xl"
-  }, [_vm._v("\n        Perekaman data wajib pajak, objek tanah & bangunan, kalkulasi NJOP PBB, serta penetapan jumlah setoran BPHTB terutang.\n      ")])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n          Perekaman data wajib pajak, objek tanah & bangunan, kalkulasi NJOP PBB, serta penetapan jumlah setoran BPHTB terutang.\n        ")])]), _vm._v(" "), _c("div", {
     staticClass: "flex items-center gap-2.5"
   }, [_c("button", {
     staticClass: "inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors font-label-md text-label-md shadow-sm",
@@ -10488,56 +10769,42 @@ var staticRenderFns = [function () {
     }
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[18px] text-slate-500"
-  }, [_vm._v("history")]), _vm._v("\n        Log Rekam\n      ")]), _vm._v(" "), _c("button", {
+  }, [_vm._v("history")]), _vm._v("\n          Log Rekam\n        ")]), _vm._v(" "), _c("button", {
     staticClass: "inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#4CAF50] text-white hover:bg-[#3d8b40] transition-colors font-label-md text-label-md shadow-sm font-medium",
     attrs: {
       type: "button"
     }
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[18px]"
-  }, [_vm._v("document_scanner")]), _vm._v("\n        Tarik Data SPPT\n      ")])])]);
+  }, [_vm._v("document_scanner")]), _vm._v("\n          Tarik Data SPPT\n        ")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200"
-  }, [_c("div", {
-    staticClass: "flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-200 shadow-sm"
-  }, [_c("div", {
     staticClass: "w-10 h-10 rounded-lg bg-[#e8f5e9] flex items-center justify-center text-[#4CAF50]"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[22px]"
-  }, [_vm._v("confirmation_number")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col min-w-0"
-  }, [_c("span", {
-    staticClass: "font-label-sm text-label-sm text-slate-500 uppercase tracking-wider truncate"
-  }, [_vm._v("No. Pelayanan")]), _vm._v(" "), _c("span", {
-    staticClass: "font-code-md text-code-md text-slate-900 font-semibold truncate"
-  }, [_vm._v("PLY-BPHTB/2026/09/00482")])])]), _vm._v(" "), _c("div", {
-    staticClass: "flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-200 shadow-sm"
-  }, [_c("div", {
+  }, [_vm._v("confirmation_number")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
     staticClass: "w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[22px]"
-  }, [_vm._v("calendar_today")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col min-w-0"
-  }, [_c("span", {
-    staticClass: "font-label-sm text-label-sm text-slate-500 uppercase tracking-wider truncate"
-  }, [_vm._v("Tanggal Proses")]), _vm._v(" "), _c("span", {
-    staticClass: "font-title-sm text-title-sm text-slate-900 font-semibold truncate"
-  }, [_vm._v("19 September 2026")])])]), _vm._v(" "), _c("div", {
-    staticClass: "flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-200 shadow-sm"
-  }, [_c("div", {
+  }, [_vm._v("calendar_today")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
     staticClass: "w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[22px]"
-  }, [_vm._v("pin_invoke")])]), _vm._v(" "), _c("div", {
-    staticClass: "flex flex-col min-w-0"
-  }, [_c("span", {
-    staticClass: "font-label-sm text-label-sm text-slate-500 uppercase tracking-wider truncate"
-  }, [_vm._v("NOP PBB Terkait")]), _vm._v(" "), _c("span", {
-    staticClass: "font-code-md text-code-md text-slate-900 font-semibold truncate"
-  }, [_vm._v("35.73.010.005.012-0045.0")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("pin_invoke")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
     staticClass: "flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-200 shadow-sm"
   }, [_c("div", {
     staticClass: "w-10 h-10 rounded-lg bg-[#e8f5e9] flex items-center justify-center text-[#4CAF50]"
@@ -10549,7 +10816,7 @@ var staticRenderFns = [function () {
     staticClass: "font-label-sm text-label-sm text-slate-500 uppercase tracking-wider truncate"
   }, [_vm._v("Status Dokumen")]), _vm._v(" "), _c("span", {
     staticClass: "font-title-sm text-title-sm text-[#4CAF50] font-bold truncate"
-  }, [_vm._v("Siap Hitung & Cetak SSPD")])])])]);
+  }, [_vm._v("Siap Hitung & Cetak SSPD")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -10561,25 +10828,19 @@ var staticRenderFns = [function () {
     staticClass: "w-8 h-8 rounded-lg bg-[#e8f5e9] text-[#4CAF50] flex items-center justify-center font-bold"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("badge")])]), _c("div", [_c("h2", {
+  }, [_vm._v("badge")])]), _vm._v(" "), _c("div", [_c("h2", {
     staticClass: "font-title-lg text-title-lg font-bold text-slate-900"
-  }, [_vm._v("1. Data Pembeli / Wajib Pajak")]), _c("p", {
+  }, [_vm._v("1. Data Pembeli / Wajib Pajak")]), _vm._v(" "), _c("p", {
     staticClass: "font-body-sm text-body-sm text-slate-500"
-  }, [_vm._v("Identitas subjek pajak pembeli perolehan hak sesuai identitas KTP & NPWP valid.")])])]), _c("div", {
-    staticClass: "flex items-center gap-2"
-  }, [_c("span", {
-    staticClass: "inline-flex items-center gap-1 text-[#2e7d32] bg-[#e8f5e9] border border-[#c8e6c9] px-2.5 py-1 rounded-full font-label-sm text-label-sm font-semibold"
-  }, [_c("span", {
-    staticClass: "material-symbols-outlined text-[15px]"
-  }, [_vm._v("verified_user")]), _vm._v("Dukcapil Verified")])])]);
+  }, [_vm._v("Identitas subjek pajak pembeli perolehan hak sesuai identitas KTP & NPWP valid.")])])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold flex items-center justify-between"
-  }, [_c("span", {}, [_vm._v("No. Dokumen SSPD "), _c("span", {
+  }, [_c("span", [_vm._v("No. Dokumen SSPD "), _c("span", {
     staticClass: "text-rose-500"
-  }, [_vm._v("*")])]), _c("span", {
+  }, [_vm._v("*")])]), _vm._v(" "), _c("span", {
     staticClass: "font-body-sm text-body-sm text-slate-400 font-normal"
   }, [_vm._v("Otomatis Terbit")])]);
 }, function () {
@@ -10587,9 +10848,9 @@ var staticRenderFns = [function () {
     _c = _vm._self._c;
   return _c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold flex items-center justify-between"
-  }, [_c("span", {}, [_vm._v("Nomor Induk Kependudukan (NIK) "), _c("span", {
+  }, [_c("span", [_vm._v("Nomor Induk Kependudukan (NIK) "), _c("span", {
     staticClass: "text-rose-500"
-  }, [_vm._v("*")])]), _c("span", {
+  }, [_vm._v("*")])]), _vm._v(" "), _c("span", {
     staticClass: "font-code-md text-code-md text-[#4CAF50] font-semibold"
   }, [_vm._v("16 Digit")])]);
 }, function () {
@@ -10619,23 +10880,23 @@ var staticRenderFns = [function () {
     staticClass: "w-8 h-8 rounded-lg bg-[#e8f5e9] text-[#4CAF50] flex items-center justify-center font-bold"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("location_on")])]), _c("div", [_c("h2", {
+  }, [_vm._v("location_on")])]), _vm._v(" "), _c("div", [_c("h2", {
     staticClass: "font-title-lg text-title-lg font-bold text-slate-900"
-  }, [_vm._v("2. Data Objek Tanah dan Bangunan")]), _c("p", {
+  }, [_vm._v("2. Data Objek Tanah dan Bangunan")]), _vm._v(" "), _c("p", {
     staticClass: "font-body-sm text-body-sm text-slate-500"
-  }, [_vm._v("Data letak geografis dan rincian objek perolehan hak sesuai register SISMIOP PBB.")])])]), _c("div", {
+  }, [_vm._v("Data letak geografis dan rincian objek perolehan hak sesuai register SISMIOP PBB.")])])]), _vm._v(" "), _c("div", {
     staticClass: "inline-flex items-center gap-2 px-3 py-1 bg-slate-100 text-slate-700 border border-slate-200 rounded-lg font-label-sm text-label-sm font-medium"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[#4CAF50] text-[18px]"
-  }, [_vm._v("verified")]), _vm._v("Zona Perumahan Utama AA (ZNT Valid)")])]);
+  }, [_vm._v("verified")]), _vm._v("Zona Perumahan Utama AA (ZNT Valid)\n          ")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("label", {
     staticClass: "font-label-md text-label-md text-slate-700 font-semibold flex items-center justify-between"
-  }, [_c("span", {}, [_vm._v("Nama Wajib Pajak Lama / Tertera di SPPT PBB "), _c("span", {
+  }, [_c("span", [_vm._v("Nama Wajib Pajak Lama / Tertera di SPPT PBB "), _c("span", {
     staticClass: "text-rose-500"
-  }, [_vm._v("*")])]), _c("span", {
+  }, [_vm._v("*")])]), _vm._v(" "), _c("span", {
     staticClass: "font-body-sm text-body-sm text-slate-400 font-normal"
   }, [_vm._v("Sumber Database PBB-P2")])]);
 }, function () {
@@ -10653,11 +10914,11 @@ var staticRenderFns = [function () {
     staticClass: "flex items-center gap-3 p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-600"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[#4CAF50] text-[24px]"
-  }, [_vm._v("map")]), _c("div", {
+  }, [_vm._v("map")]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col"
   }, [_c("span", {
     staticClass: "font-label-sm text-label-sm font-semibold text-slate-900"
-  }, [_vm._v("Zona Nilai Tanah (ZNT): AA")]), _c("span", {
+  }, [_vm._v("Zona Nilai Tanah (ZNT): AA")]), _vm._v(" "), _c("span", {
     staticClass: "font-body-sm text-body-sm text-slate-500"
   }, [_vm._v("Nilai Indikasi Rata-rata Terverifikasi BPN")])])]);
 }, function () {
@@ -10671,15 +10932,15 @@ var staticRenderFns = [function () {
     staticClass: "w-8 h-8 rounded-lg bg-[#e8f5e9] text-[#4CAF50] flex items-center justify-center font-bold"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("calculate")])]), _c("div", [_c("h2", {
+  }, [_vm._v("calculate")])]), _vm._v(" "), _c("div", [_c("h2", {
     staticClass: "font-title-lg text-title-lg font-bold text-slate-900"
-  }, [_vm._v("3. Perhitungan Nilai Jual Objek Pajak (NJOP)")]), _c("p", {
+  }, [_vm._v("3. Perhitungan Nilai Jual Objek Pajak (NJOP)")]), _vm._v(" "), _c("p", {
     staticClass: "font-body-sm text-body-sm text-slate-500"
-  }, [_vm._v("Matriks perhitungan luas bidang tanah dan bangunan dengan tarif dasar PBB-P2.")])])]), _c("span", {
+  }, [_vm._v("Matriks perhitungan luas bidang tanah dan bangunan dengan tarif dasar PBB-P2.")])])]), _vm._v(" "), _c("span", {
     staticClass: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#e8f5e9] text-[#2e7d32] border border-[#c8e6c9] font-label-sm text-label-sm font-semibold"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[16px]"
-  }, [_vm._v("sync")]), _vm._v("Otomatis & Terintegrasi SISMIOP")])]);
+  }, [_vm._v("sync")]), _vm._v("Otomatis & Terintegrasi SISMIOP\n          ")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -10690,32 +10951,32 @@ var staticRenderFns = [function () {
     attrs: {
       rowspan: "2"
     }
-  }, [_vm._v("Uraian Objek")]), _c("th", {
+  }, [_vm._v("Uraian Objek")]), _vm._v(" "), _c("th", {
     staticClass: "p-3 text-center font-semibold bg-slate-100/70 border-x border-slate-200",
     attrs: {
       colspan: "5"
     }
-  }, [_vm._v("Luas Fisik (m²)")]), _c("th", {
+  }, [_vm._v("Luas Fisik (m²)")]), _vm._v(" "), _c("th", {
     staticClass: "p-4 align-middle text-right font-semibold",
     attrs: {
       rowspan: "2"
     }
-  }, [_vm._v("NJOP PBB per m² (Rp)")]), _c("th", {
+  }, [_vm._v("NJOP PBB per m² (Rp)")]), _vm._v(" "), _c("th", {
     staticClass: "p-4 align-middle text-right font-semibold bg-slate-100/40 border-l border-slate-200",
     attrs: {
       rowspan: "2"
     }
-  }, [_vm._v("Luas × NJOP PBB (Total)")])]), _c("tr", {
+  }, [_vm._v("Luas × NJOP PBB (Total)")])]), _vm._v(" "), _c("tr", {
     staticClass: "bg-slate-50/90 text-slate-500 font-label-sm text-label-sm text-center border-b border-slate-200"
   }, [_c("th", {
     staticClass: "py-2.5 px-3 border-l border-slate-200"
-  }, [_vm._v("Panjang (m)")]), _c("th", {
+  }, [_vm._v("Panjang (m)")]), _vm._v(" "), _c("th", {
     staticClass: "py-2.5 px-1 font-bold"
-  }, [_vm._v("×")]), _c("th", {
+  }, [_vm._v("×")]), _vm._v(" "), _c("th", {
     staticClass: "py-2.5 px-3"
-  }, [_vm._v("Lebar (m)")]), _c("th", {
+  }, [_vm._v("Lebar (m)")]), _vm._v(" "), _c("th", {
     staticClass: "py-2.5 px-1 font-bold"
-  }, [_vm._v("=")]), _c("th", {
+  }, [_vm._v("=")]), _vm._v(" "), _c("th", {
     staticClass: "py-2.5 px-3 font-semibold text-slate-800 border-r border-slate-200"
   }, [_vm._v("Total Luas (m²)")])])]);
 }, function () {
@@ -10727,7 +10988,7 @@ var staticRenderFns = [function () {
     staticClass: "flex items-center gap-2"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[#4CAF50] text-[20px]"
-  }, [_vm._v("landscape")]), _c("span", {
+  }, [_vm._v("landscape")]), _vm._v(" "), _c("span", {
     staticClass: "font-title-sm text-title-sm font-semibold text-slate-900"
   }, [_vm._v("Tanah (Bumi)")])])]);
 }, function () {
@@ -10739,7 +11000,7 @@ var staticRenderFns = [function () {
     staticClass: "flex items-center gap-2"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[#4CAF50] text-[20px]"
-  }, [_vm._v("apartment")]), _c("span", {
+  }, [_vm._v("apartment")]), _vm._v(" "), _c("span", {
     staticClass: "font-title-sm text-title-sm font-semibold text-slate-900"
   }, [_vm._v("Bangunan")])])]);
 }, function () {
@@ -10754,7 +11015,7 @@ var staticRenderFns = [function () {
     staticClass: "flex items-center gap-1.5"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
-  }, [_vm._v("info")]), _c("span", {}, [_vm._v("Catatan: Bisa diisi langsung pada kolom Luas bila data panjang dan lebar tidak ditemukan pada peta ukur.")])])]);
+  }, [_vm._v("info")]), _vm._v(" "), _c("span", [_vm._v("Catatan: Bisa diisi langsung pada kolom Luas bila data panjang dan lebar tidak ditemukan pada peta ukur.")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -10762,7 +11023,7 @@ var staticRenderFns = [function () {
     staticClass: "flex items-center gap-2 mb-4"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[#4CAF50] text-[20px]"
-  }, [_vm._v("contract")]), _c("h3", {
+  }, [_vm._v("contract")]), _vm._v(" "), _c("h3", {
     staticClass: "font-title-sm text-title-sm font-bold text-slate-900"
   }, [_vm._v("Detail Perolehan Hak Atas Tanah & Bangunan")])]);
 }, function () {
@@ -10790,9 +11051,9 @@ var staticRenderFns = [function () {
     staticClass: "w-8 h-8 rounded-lg bg-[#e8f5e9] text-[#4CAF50] flex items-center justify-center font-bold"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("payments")])]), _c("div", [_c("h2", {
+  }, [_vm._v("payments")])]), _vm._v(" "), _c("div", [_c("h2", {
     staticClass: "font-title-lg text-title-lg font-bold text-slate-900"
-  }, [_vm._v("4. Perhitungan Bea Perolehan Hak atas Tanah dan Bangunan (BPHTB)")]), _c("p", {
+  }, [_vm._v("4. Perhitungan Bea Perolehan Hak atas Tanah dan Bangunan (BPHTB)")]), _vm._v(" "), _c("p", {
     staticClass: "font-body-sm text-body-sm text-slate-500"
   }, [_vm._v("Rincian formula penentuan dasar pengenaan pajak (NPOP vs NJOP) dan nilai terutang.")])])]);
 }, function () {
@@ -10804,7 +11065,7 @@ var staticRenderFns = [function () {
     staticClass: "font-title-sm text-title-sm font-bold text-slate-900 flex items-start sm:items-center gap-2"
   }, [_c("span", {
     staticClass: "w-6 h-6 shrink-0 rounded-full bg-[#4CAF50] text-white text-center leading-6 font-code-md text-code-md font-bold"
-  }, [_vm._v("1")]), _c("span", [_vm._v("Nilai Perolehan Objek Pajak (NPOP) / Transaksi Pasar")])]), _c("span", {
+  }, [_vm._v("1")]), _vm._v(" "), _c("span", [_vm._v("Nilai Perolehan Objek Pajak (NPOP) / Transaksi Pasar")])]), _vm._v(" "), _c("span", {
     staticClass: "font-label-sm text-label-sm px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-medium self-start sm:self-auto ml-8 sm:ml-0"
   }, [_vm._v("Input Real Transaksi")])]);
 }, function () {
@@ -10816,7 +11077,7 @@ var staticRenderFns = [function () {
     staticClass: "font-title-sm text-title-sm font-bold text-slate-900 flex items-start sm:items-center gap-2"
   }, [_c("span", {
     staticClass: "w-6 h-6 shrink-0 rounded-full bg-slate-200 text-slate-700 text-center leading-6 font-code-md text-code-md font-semibold"
-  }, [_vm._v("2")]), _c("span", [_vm._v("NPOP Tidak Kena Pajak (NPOPTKP)")])]), _c("span", {
+  }, [_vm._v("2")]), _vm._v(" "), _c("span", [_vm._v("NPOP Tidak Kena Pajak (NPOPTKP)")])]), _vm._v(" "), _c("span", {
     staticClass: "font-label-sm text-label-sm px-2 py-0.5 rounded bg-slate-200 text-slate-600 self-start sm:self-auto ml-8 sm:ml-0"
   }, [_vm._v("Ketetapan Perda")])]);
 }, function () {
@@ -10826,7 +11087,7 @@ var staticRenderFns = [function () {
     staticClass: "font-title-sm text-title-sm font-bold text-slate-900 flex items-center gap-2"
   }, [_c("span", {
     staticClass: "w-6 h-6 rounded-full bg-slate-200 text-slate-700 text-center leading-6 font-code-md text-code-md font-semibold"
-  }, [_vm._v("3")]), _vm._v("NPOP Kena Pajak (NPOPKP)")]);
+  }, [_vm._v("3")]), _vm._v("NPOP Kena Pajak (NPOPKP)\n                  ")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -10834,7 +11095,7 @@ var staticRenderFns = [function () {
     staticClass: "font-title-sm text-title-sm font-bold text-slate-900 flex items-center gap-2"
   }, [_c("span", {
     staticClass: "w-6 h-6 rounded-full bg-slate-200 text-slate-700 text-center leading-6 font-code-md text-code-md font-semibold"
-  }, [_vm._v("4")]), _vm._v("Tarif Pajak BPHTB")]);
+  }, [_vm._v("4")]), _vm._v("Tarif Pajak BPHTB\n                  ")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -10842,11 +11103,11 @@ var staticRenderFns = [function () {
     staticClass: "flex items-start sm:items-center gap-3"
   }, [_c("span", {
     staticClass: "w-6 h-6 shrink-0 rounded-full bg-slate-200 text-slate-700 text-center leading-6 font-code-md text-code-md font-semibold"
-  }, [_vm._v("5")]), _c("div", {
+  }, [_vm._v("5")]), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col"
   }, [_c("span", {
     staticClass: "font-title-sm text-title-sm font-bold text-slate-900"
-  }, [_vm._v("BPHTB yang Terutang")]), _c("span", {
+  }, [_vm._v("BPHTB yang Terutang")]), _vm._v(" "), _c("span", {
     staticClass: "font-body-sm text-body-sm text-slate-500"
   }, [_vm._v("5% × Nilai NPOPKP")])])]);
 }, function () {
@@ -10858,9 +11119,9 @@ var staticRenderFns = [function () {
     staticClass: "flex items-start sm:items-center gap-2"
   }, [_c("span", {
     staticClass: "material-symbols-outlined shrink-0 text-[#4CAF50] text-[22px]"
-  }, [_vm._v("account_balance_wallet")]), _c("span", {
+  }, [_vm._v("account_balance_wallet")]), _vm._v(" "), _c("span", {
     staticClass: "font-label-md text-label-md font-bold text-slate-900"
-  }, [_vm._v("6. BPHTB Yang Harus Dibayar")])]), _c("span", {
+  }, [_vm._v("6. BPHTB Yang Harus Dibayar")])]), _vm._v(" "), _c("span", {
     staticClass: "px-2 py-0.5 rounded bg-[#4CAF50] text-white font-label-sm text-label-sm font-bold self-start sm:self-auto ml-8 sm:ml-0"
   }, [_vm._v("FINAL")])]);
 }, function () {
@@ -10868,7 +11129,7 @@ var staticRenderFns = [function () {
     _c = _vm._self._c;
   return _c("div", {
     staticClass: "flex justify-between text-slate-600"
-  }, [_c("span", {}, [_vm._v("Sanksi Administrasi / Denda")]), _c("span", {
+  }, [_c("span", [_vm._v("Sanksi Administrasi / Denda")]), _vm._v(" "), _c("span", {
     staticClass: "font-code-md text-code-md text-slate-900"
   }, [_vm._v("Rp 0 (Nihil)")])]);
 }, function () {
@@ -10880,7 +11141,7 @@ var staticRenderFns = [function () {
     staticClass: "w-8 h-8 rounded-full bg-[#e8f5e9] text-[#4CAF50] flex items-center justify-center shrink-0"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[18px]"
-  }, [_vm._v("verified")])]), _c("p", {
+  }, [_vm._v("verified")])]), _vm._v(" "), _c("p", {
     staticClass: "font-body-sm text-body-sm text-slate-500 leading-tight"
   }, [_vm._v("Kalkulasi otomatis disinkronkan dengan Modul Validasi BPKAD Kab. Haltim.")])]);
 }, function () {
@@ -10894,9 +11155,9 @@ var staticRenderFns = [function () {
     staticClass: "w-8 h-8 rounded-lg bg-[#e8f5e9] text-[#4CAF50] flex items-center justify-center font-bold"
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[20px]"
-  }, [_vm._v("fact_check")])]), _c("div", [_c("h2", {
+  }, [_vm._v("fact_check")])]), _vm._v(" "), _c("div", [_c("h2", {
     staticClass: "font-title-lg text-title-lg font-bold text-slate-900"
-  }, [_vm._v("5. Dasar Pengenaan & Setoran Pajak")]), _c("p", {
+  }, [_vm._v("5. Dasar Pengenaan & Setoran Pajak")]), _vm._v(" "), _c("p", {
     staticClass: "font-body-sm text-body-sm text-slate-500"
   }, [_vm._v("Legalitas landasan penetapan kewajiban penyetoran bea perolehan hak.")])])])]);
 }, function () {
@@ -10906,7 +11167,7 @@ var staticRenderFns = [function () {
     staticClass: "flex flex-col gap-1"
   }, [_c("span", {
     staticClass: "font-title-sm text-title-sm font-bold text-slate-900"
-  }, [_vm._v("Perhitungan Wajib Pajak (Self Assessment)")]), _c("p", {
+  }, [_vm._v("Perhitungan Wajib Pajak (Self Assessment)")]), _vm._v(" "), _c("p", {
     staticClass: "font-body-sm text-body-sm text-slate-600"
   }, [_vm._v("Dihitung sendiri oleh Wajib Pajak atau melalui Pejabat Pembuat Akta Tanah (PPAT/PPATS) berdasarkan harga transaksi wajar.")])]);
 }, function () {
@@ -10916,7 +11177,7 @@ var staticRenderFns = [function () {
     staticClass: "flex flex-col gap-1"
   }, [_c("span", {
     staticClass: "font-title-sm text-title-sm font-bold text-slate-900"
-  }, [_vm._v("Berdasarkan Ketetapan Resmi (SKPDKB / SKPDKBT / STPD)")]), _c("p", {
+  }, [_vm._v("Berdasarkan Ketetapan Resmi (SKPDKB / SKPDKBT / STPD)")]), _vm._v(" "), _c("p", {
     staticClass: "font-body-sm text-body-sm text-slate-600"
   }, [_vm._v("Penerbitan surat ketetapan oleh pejabat berwenang atas adanya kurang bayar atau temuan pemeriksaan lapangan.")])]);
 }, function () {
@@ -10927,6 +11188,381 @@ var staticRenderFns = [function () {
   }, [_c("span", {
     staticClass: "material-symbols-outlined text-[20px]"
   }, [_vm._v("payments")])]);
+}];
+render._withStripped = true;
+
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=template&id=0b536997&scoped=true":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=template&id=0b536997&scoped=true ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "flex flex-col w-full"
+  }, [_c("div", {
+    staticClass: "w-full max-w-[1440px] mx-auto px-6 lg:px-10 py-8 flex flex-col gap-8"
+  }, [_c("div", {
+    staticClass: "flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200"
+  }, [_vm._m(0), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center gap-3"
+  }, [_c("button", {
+    staticClass: "flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-lg shadow-sm transition-colors",
+    on: {
+      click: _vm.fetchData
+    }
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[18px]",
+    "class": {
+      "animate-spin": _vm.isLoading
+    }
+  }, [_vm._v("refresh")]), _vm._v("\n          Segarkan\n        ")])])]), _vm._v(" "), _c("div", {
+    staticClass: "bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col"
+  }, [_c("div", {
+    staticClass: "px-6 py-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+  }, [_vm._m(1), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center gap-4 w-full sm:w-auto"
+  }, [_c("div", {
+    staticClass: "relative w-full sm:w-72"
+  }, [_vm._m(2), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.searchQuery,
+      expression: "searchQuery"
+    }],
+    staticClass: "block w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-[#4CAF50] focus:border-[#4CAF50] outline-none",
+    attrs: {
+      type: "text",
+      placeholder: "Cari No Pelayanan, Nama WP, NOP..."
+    },
+    domProps: {
+      value: _vm.searchQuery
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.searchQuery = $event.target.value;
+      }
+    }
+  })])])]), _vm._v(" "), _c("div", {
+    staticClass: "overflow-x-auto"
+  }, [_c("table", {
+    staticClass: "w-full text-left border-collapse min-w-[1000px]"
+  }, [_c("thead", [_c("tr", {
+    staticClass: "bg-slate-50 border-b border-slate-200"
+  }, [_c("th", {
+    staticClass: "py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-16 text-center"
+  }, [_vm._v("No")]), _vm._v(" "), _c("th", {
+    staticClass: "py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-20 text-center"
+  }, [_vm._v("Aksi")]), _vm._v(" "), _c("th", {
+    staticClass: "py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer select-none hover:bg-slate-100 transition-colors",
+    on: {
+      click: function click($event) {
+        return _vm.sortBy("no_pelayanan");
+      }
+    }
+  }, [_c("div", {
+    staticClass: "flex items-center gap-1.5"
+  }, [_c("span", [_vm._v("No. Pendaftaran")]), _vm._v(" "), _vm.sortKey !== "no_pelayanan" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-slate-400"
+  }, [_vm._v("unfold_more")]) : _vm.sortOrder === "asc" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_upward")]) : _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_downward")])])]), _vm._v(" "), _c("th", {
+    staticClass: "py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer select-none hover:bg-slate-100 transition-colors",
+    on: {
+      click: function click($event) {
+        return _vm.sortBy("srttglpmhn");
+      }
+    }
+  }, [_c("div", {
+    staticClass: "flex items-center gap-1.5"
+  }, [_c("span", [_vm._v("Tanggal")]), _vm._v(" "), _vm.sortKey !== "srttglpmhn" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-slate-400"
+  }, [_vm._v("unfold_more")]) : _vm.sortOrder === "asc" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_upward")]) : _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_downward")])])]), _vm._v(" "), _c("th", {
+    staticClass: "py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer select-none hover:bg-slate-100 transition-colors",
+    on: {
+      click: function click($event) {
+        return _vm.sortBy("nama_pemohon");
+      }
+    }
+  }, [_c("div", {
+    staticClass: "flex items-center gap-1.5"
+  }, [_c("span", [_vm._v("Nama Pemohon")]), _vm._v(" "), _vm.sortKey !== "nama_pemohon" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-slate-400"
+  }, [_vm._v("unfold_more")]) : _vm.sortOrder === "asc" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_upward")]) : _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_downward")])])]), _vm._v(" "), _c("th", {
+    staticClass: "py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer select-none hover:bg-slate-100 transition-colors",
+    on: {
+      click: function click($event) {
+        return _vm.sortBy("alamat_pemohon");
+      }
+    }
+  }, [_c("div", {
+    staticClass: "flex items-center gap-1.5"
+  }, [_c("span", [_vm._v("Alamat Pemohon")]), _vm._v(" "), _vm.sortKey !== "alamat_pemohon" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-slate-400"
+  }, [_vm._v("unfold_more")]) : _vm.sortOrder === "asc" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_upward")]) : _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_downward")])])]), _vm._v(" "), _c("th", {
+    staticClass: "py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer select-none hover:bg-slate-100 transition-colors",
+    on: {
+      click: function click($event) {
+        return _vm.sortBy("namawp");
+      }
+    }
+  }, [_c("div", {
+    staticClass: "flex items-center gap-1.5"
+  }, [_c("span", [_vm._v("Nama WP")]), _vm._v(" "), _vm.sortKey !== "namawp" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-slate-400"
+  }, [_vm._v("unfold_more")]) : _vm.sortOrder === "asc" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_upward")]) : _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_downward")])])]), _vm._v(" "), _c("th", {
+    staticClass: "py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer select-none hover:bg-slate-100 transition-colors",
+    on: {
+      click: function click($event) {
+        return _vm.sortBy("nop");
+      }
+    }
+  }, [_c("div", {
+    staticClass: "flex items-center gap-1.5"
+  }, [_c("span", [_vm._v("NOP PBB")]), _vm._v(" "), _vm.sortKey !== "nop" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-slate-400"
+  }, [_vm._v("unfold_more")]) : _vm.sortOrder === "asc" ? _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_upward")]) : _c("span", {
+    staticClass: "material-symbols-outlined text-[16px] text-[#4CAF50]"
+  }, [_vm._v("arrow_downward")])])])])]), _vm._v(" "), _c("tbody", {
+    staticClass: "divide-y divide-slate-100"
+  }, [_vm.isLoading ? _c("tr", {
+    staticClass: "bg-white"
+  }, [_vm._m(3)]) : _vm.sortedData.length === 0 ? _c("tr", {
+    staticClass: "bg-white"
+  }, [_c("td", {
+    staticClass: "py-12 text-center text-slate-500 text-sm",
+    attrs: {
+      colspan: "8"
+    }
+  }, [_vm._v("\n                Tidak ada data pendaftaran yang belum diproses.\n              ")])]) : _vm._l(_vm.paginatedData, function (item, index) {
+    return _c("tr", {
+      key: item.no_pelayanan,
+      staticClass: "bg-white hover:bg-slate-50 transition-colors"
+    }, [_c("td", {
+      staticClass: "py-3 px-4 text-sm text-slate-600 text-center"
+    }, [_vm._v(_vm._s((_vm.currentPage - 1) * _vm.perPage + index + 1))]), _vm._v(" "), _c("td", {
+      staticClass: "py-3 px-4 text-center"
+    }, [_c("button", {
+      staticClass: "inline-flex items-center justify-center w-8 h-8 bg-[#eef5f0] text-[#2e7d32] hover:bg-[#4CAF50] hover:text-white rounded-lg transition-colors border border-[#c8e6c9] hover:border-[#4CAF50] shadow-xs",
+      attrs: {
+        title: "Proses Pendaftaran"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.lihatPendaftaran(item.no_pelayanan);
+        }
+      }
+    }, [_c("span", {
+      staticClass: "material-symbols-outlined text-[18px]"
+    }, [_vm._v("arrow_forward")])])]), _vm._v(" "), _c("td", {
+      staticClass: "py-3 px-4 text-sm font-medium text-slate-900"
+    }, [_vm._v(_vm._s(item.no_pelayanan))]), _vm._v(" "), _c("td", {
+      staticClass: "py-3 px-4 text-sm text-slate-600"
+    }, [_vm._v(_vm._s(_vm.formatDate(item.srttglpmhn)))]), _vm._v(" "), _c("td", {
+      staticClass: "py-3 px-4 text-sm text-slate-800"
+    }, [_vm._v(_vm._s(item.nama_pemohon))]), _vm._v(" "), _c("td", {
+      staticClass: "py-3 px-4 text-sm text-slate-600 max-w-xs truncate",
+      attrs: {
+        title: item.alamat_pemohon
+      }
+    }, [_vm._v(_vm._s(item.alamat_pemohon))]), _vm._v(" "), _c("td", {
+      staticClass: "py-3 px-4 text-sm text-slate-800 font-medium"
+    }, [_vm._v(_vm._s(item.namawp))]), _vm._v(" "), _c("td", {
+      staticClass: "py-3 px-4 text-sm text-slate-600 font-mono text-[13px] tracking-tight"
+    }, [_vm._v(_vm._s(_vm.formatNOP(item.nop)))])]);
+  })], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "px-6 py-4 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4"
+  }, [_c("div", {
+    staticClass: "flex flex-wrap items-center gap-4 text-sm text-slate-600"
+  }, [_c("span", [_vm._v("\n            Menampilkan "), _c("span", {
+    staticClass: "font-semibold text-slate-900"
+  }, [_vm._v(_vm._s(_vm.startItem))]), _vm._v(" - "), _c("span", {
+    staticClass: "font-semibold text-slate-900"
+  }, [_vm._v(_vm._s(_vm.endItem))]), _vm._v(" dari "), _c("span", {
+    staticClass: "font-semibold text-slate-900"
+  }, [_vm._v(_vm._s(_vm.sortedData.length))]), _vm._v(" data\n          ")]), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center gap-2"
+  }, [_c("label", {
+    staticClass: "text-xs text-slate-500 font-medium",
+    attrs: {
+      "for": "perPageSelect"
+    }
+  }, [_vm._v("Tampilkan:")]), _vm._v(" "), _c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model.number",
+      value: _vm.perPage,
+      expression: "perPage",
+      modifiers: {
+        number: true
+      }
+    }],
+    staticClass: "bg-white border border-slate-300 text-slate-700 text-xs rounded-lg px-2 py-1 focus:ring-[#4CAF50] focus:border-[#4CAF50] outline-none shadow-xs cursor-pointer",
+    attrs: {
+      id: "perPageSelect"
+    },
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return _vm._n(val);
+        });
+        _vm.perPage = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
+      }
+    }
+  }, [_c("option", {
+    domProps: {
+      value: 20
+    }
+  }, [_vm._v("20")]), _vm._v(" "), _c("option", {
+    domProps: {
+      value: 50
+    }
+  }, [_vm._v("50")]), _vm._v(" "), _c("option", {
+    domProps: {
+      value: 100
+    }
+  }, [_vm._v("100")])]), _vm._v(" "), _c("span", {
+    staticClass: "text-xs text-slate-500"
+  }, [_vm._v("baris")])])]), _vm._v(" "), _vm.totalPages > 1 ? _c("div", {
+    staticClass: "flex items-center gap-1"
+  }, [_c("button", {
+    staticClass: "inline-flex items-center justify-center p-1.5 rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors",
+    attrs: {
+      disabled: _vm.currentPage === 1,
+      title: "Halaman Sebelumnya"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.goToPage(_vm.currentPage - 1);
+      }
+    }
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[18px]"
+  }, [_vm._v("chevron_left")])]), _vm._v(" "), _vm._l(_vm.displayedPages, function (page, idx) {
+    return [page === "..." ? _c("span", {
+      key: "dots-" + idx,
+      staticClass: "px-2 py-1 text-slate-400 text-sm select-none"
+    }, [_vm._v("...")]) : _c("button", {
+      key: page,
+      "class": ["px-3 py-1 rounded-lg text-xs font-semibold transition-colors", _vm.currentPage === page ? "bg-[#4CAF50] text-white shadow-xs" : "bg-white border border-slate-300 text-slate-700 hover:bg-slate-50"],
+      on: {
+        click: function click($event) {
+          return _vm.goToPage(page);
+        }
+      }
+    }, [_vm._v("\n              " + _vm._s(page) + "\n            ")])];
+  }), _vm._v(" "), _c("button", {
+    staticClass: "inline-flex items-center justify-center p-1.5 rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors",
+    attrs: {
+      disabled: _vm.currentPage === _vm.totalPages,
+      title: "Halaman Berikutnya"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.goToPage(_vm.currentPage + 1);
+      }
+    }
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[18px]"
+  }, [_vm._v("chevron_right")])])], 2) : _vm._e()])])])]);
+};
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "flex flex-col gap-1.5"
+  }, [_c("nav", {
+    staticClass: "flex items-center gap-2 text-slate-500 text-xs"
+  }, [_c("span", {
+    staticClass: "hover:text-[#4CAF50] cursor-pointer transition-colors flex items-center gap-1"
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[16px]"
+  }, [_vm._v("home")]), _vm._v(" Beranda\n          ")]), _vm._v(" "), _c("span", {
+    staticClass: "text-slate-300"
+  }, [_vm._v("/")]), _vm._v(" "), _c("span", {
+    staticClass: "hover:text-[#4CAF50] cursor-pointer transition-colors"
+  }, [_vm._v("Pelayanan BPHTB")]), _vm._v(" "), _c("span", {
+    staticClass: "text-slate-300"
+  }, [_vm._v("/")]), _vm._v(" "), _c("span", {
+    staticClass: "text-[#4CAF50] font-semibold"
+  }, [_vm._v("List Pendaftaran BPHTB")])]), _vm._v(" "), _c("div", {
+    staticClass: "flex items-center gap-3 mt-1"
+  }, [_c("h1", {
+    staticClass: "text-2xl font-bold text-slate-900 tracking-tight"
+  }, [_vm._v("List Pendaftaran BPHTB")]), _vm._v(" "), _c("span", {
+    staticClass: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#e3f2fd] text-[#1976d2] border border-[#bbdefb] text-xs font-semibold shadow-xs"
+  }, [_c("span", {
+    staticClass: "w-1.5 h-1.5 rounded-full bg-[#2196f3]"
+  }), _vm._v("\n            Belum Diproses\n          ")])]), _vm._v(" "), _c("p", {
+    staticClass: "text-sm text-slate-600 max-w-3xl"
+  }, [_vm._v("\n          Daftar permohonan BPHTB yang sudah memiliki Nomor Pelayanan namun belum dilanjutkan ke proses pendaftaran (belum terdaftar sebagai SSPD).\n        ")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("h2", {
+    staticClass: "text-base font-bold text-slate-800 flex items-center gap-2"
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-[#4CAF50] text-[20px]"
+  }, [_vm._v("table_rows")]), _vm._v("\n          Data Pendaftaran\n        ")]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("span", {
+    staticClass: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+  }, [_c("span", {
+    staticClass: "material-symbols-outlined text-slate-400 text-[18px]"
+  }, [_vm._v("search")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("td", {
+    staticClass: "py-12 text-center",
+    attrs: {
+      colspan: "8"
+    }
+  }, [_c("div", {
+    staticClass: "flex flex-col items-center justify-center gap-3"
+  }, [_c("div", {
+    staticClass: "w-8 h-8 border-4 border-slate-200 border-t-[#4CAF50] rounded-full animate-spin"
+  }), _vm._v(" "), _c("span", {
+    staticClass: "text-slate-500 text-sm"
+  }, [_vm._v("Memuat data pendaftaran...")])])]);
 }];
 render._withStripped = true;
 
@@ -12214,16 +12850,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var _layouts_AuthLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../layouts/AuthLayout.vue */ "./resources/assets/js/layouts/AuthLayout.vue");
 /* harmony import */ var _layouts_MainLayout_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../layouts/MainLayout.vue */ "./resources/assets/js/layouts/MainLayout.vue");
 /* harmony import */ var _pages_Login_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../pages/Login.vue */ "./resources/assets/js/pages/Login.vue");
 /* harmony import */ var _pages_Dashboard_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../pages/Dashboard.vue */ "./resources/assets/js/pages/Dashboard.vue");
 /* harmony import */ var _pages_InputPendaftaran_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../pages/InputPendaftaran.vue */ "./resources/assets/js/pages/InputPendaftaran.vue");
-/* harmony import */ var _pages_UploadPersyaratan_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../pages/UploadPersyaratan.vue */ "./resources/assets/js/pages/UploadPersyaratan.vue");
-/* harmony import */ var _pages_InputSspd_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../pages/InputSspd.vue */ "./resources/assets/js/pages/InputSspd.vue");
-/* harmony import */ var _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../pages/PlaceholderPage.vue */ "./resources/assets/js/pages/PlaceholderPage.vue");
+/* harmony import */ var _pages_ListPendaftaran_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../pages/ListPendaftaran.vue */ "./resources/assets/js/pages/ListPendaftaran.vue");
+/* harmony import */ var _pages_UploadPersyaratan_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../pages/UploadPersyaratan.vue */ "./resources/assets/js/pages/UploadPersyaratan.vue");
+/* harmony import */ var _pages_InputSspd_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../pages/InputSspd.vue */ "./resources/assets/js/pages/InputSspd.vue");
+/* harmony import */ var _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../pages/PlaceholderPage.vue */ "./resources/assets/js/pages/PlaceholderPage.vue");
 
 
 
@@ -12234,7 +12871,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_8__["default"].use(vue_router__WEBPACK_IMPORTED_MODULE_9__["default"]);
+
+vue__WEBPACK_IMPORTED_MODULE_9__["default"].use(vue_router__WEBPACK_IMPORTED_MODULE_10__["default"]);
 var routes = [{
   path: '/auth',
   component: _layouts_AuthLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
@@ -12269,16 +12907,23 @@ var routes = [{
       title: 'Input Nomor Pelayanan'
     }
   }, {
+    path: 'list-pendaftaran',
+    name: 'list-pendaftaran',
+    component: _pages_ListPendaftaran_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+    meta: {
+      title: 'List Pendaftaran BPHTB'
+    }
+  }, {
     path: 'upload-persyaratan',
     name: 'upload-persyaratan',
-    component: _pages_UploadPersyaratan_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+    component: _pages_UploadPersyaratan_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
     meta: {
       title: 'Upload Persyaratan'
     }
   }, {
     path: 'edit-nomor-pelayanan',
     name: 'edit-nomor-pelayanan',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Edit Nomor Pelayanan'
     }
@@ -12287,42 +12932,42 @@ var routes = [{
   {
     path: 'input-sspd',
     name: 'input-sspd',
-    component: _pages_InputSspd_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
+    component: _pages_InputSspd_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
     meta: {
       title: 'Input Data Surat Setoran'
     }
   }, {
     path: 'cetak-surat-setoran',
     name: 'cetak-surat-setoran',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Cetak Surat Setoran'
     }
   }, {
     path: 'input-sspd-kb',
     name: 'input-sspd-kb',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Input SSPD-BPHTB KB'
     }
   }, {
     path: 'cetak-bukti-nihil',
     name: 'cetak-bukti-nihil',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Cetak Bukti Transaksi Nihil'
     }
   }, {
     path: 'cetak-kwitansi-nihil',
     name: 'cetak-kwitansi-nihil',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Cetak Ulang Kwitansi Nihil'
     }
   }, {
     path: 'pembatalan-nihil',
     name: 'pembatalan-nihil',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Pembatalan BPHTB Nihil'
     }
@@ -12331,7 +12976,7 @@ var routes = [{
   {
     path: 'verifikasi-berkas',
     name: 'verifikasi-berkas',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Verifikasi'
     }
@@ -12340,21 +12985,21 @@ var routes = [{
   {
     path: 'pembayaran-bphtb',
     name: 'pembayaran-bphtb',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Pembayaran BPHTB'
     }
   }, {
     path: 'pembatalan-pembayaran',
     name: 'pembatalan-pembayaran',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Pembatalan Pembayaran BPHTB'
     }
   }, {
     path: 'cetak-kwitansi-pembayaran',
     name: 'cetak-kwitansi-pembayaran',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Cetak Ulang Kwitansi Pembayaran BPHTB'
     }
@@ -12363,14 +13008,14 @@ var routes = [{
   {
     path: 'monitoring/sudah-bayar',
     name: 'monitoring-sudah-bayar',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Monitoring - Sudah Bayar'
     }
   }, {
     path: 'monitoring/siap-bayar',
     name: 'monitoring-siap-bayar',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Monitoring - Siap Bayar'
     }
@@ -12379,7 +13024,7 @@ var routes = [{
   {
     path: 'rekap-laporan',
     name: 'rekap-laporan',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Rekap & Laporan'
     }
@@ -12388,7 +13033,7 @@ var routes = [{
   {
     path: 'ganti-password',
     name: 'ganti-password',
-    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _pages_PlaceholderPage_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
       title: 'Ganti Password'
     }
@@ -12407,7 +13052,7 @@ function getBasePath() {
   }
   return '/';
 }
-var router = new vue_router__WEBPACK_IMPORTED_MODULE_9__["default"]({
+var router = new vue_router__WEBPACK_IMPORTED_MODULE_10__["default"]({
   mode: 'history',
   base: getBasePath(),
   routes: routes
@@ -27778,6 +28423,30 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Specific styling if needed */\r\n", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/laravel-mix/node_modules/css-loader/dist/runtime/api.js */ "./node_modules/laravel-mix/node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "\n/* Optional specific styles if needed */\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -45535,6 +46204,36 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css":
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ListPendaftaran_vue_vue_type_style_index_0_id_0b536997_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css */ "./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ListPendaftaran_vue_vue_type_style_index_0_id_0b536997_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ListPendaftaran_vue_vue_type_style_index_0_id_0b536997_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/Login.vue?vue&type=style&index=0&id=5b96cafc&scoped=true&lang=css":
 /*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/Login.vue?vue&type=style&index=0&id=5b96cafc&scoped=true&lang=css ***!
@@ -50963,6 +51662,47 @@ component.options.__file = "resources/assets/js/pages/InputSspd.vue"
 
 /***/ }),
 
+/***/ "./resources/assets/js/pages/ListPendaftaran.vue":
+/*!*******************************************************!*\
+  !*** ./resources/assets/js/pages/ListPendaftaran.vue ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ListPendaftaran_vue_vue_type_template_id_0b536997_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ListPendaftaran.vue?vue&type=template&id=0b536997&scoped=true */ "./resources/assets/js/pages/ListPendaftaran.vue?vue&type=template&id=0b536997&scoped=true");
+/* harmony import */ var _ListPendaftaran_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ListPendaftaran.vue?vue&type=script&lang=js */ "./resources/assets/js/pages/ListPendaftaran.vue?vue&type=script&lang=js");
+/* harmony import */ var _ListPendaftaran_vue_vue_type_style_index_0_id_0b536997_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css */ "./resources/assets/js/pages/ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+;
+
+
+/* normalize component */
+
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _ListPendaftaran_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ListPendaftaran_vue_vue_type_template_id_0b536997_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render,
+  _ListPendaftaran_vue_vue_type_template_id_0b536997_scoped_true__WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  "0b536997",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/assets/js/pages/ListPendaftaran.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/assets/js/pages/Login.vue":
 /*!*********************************************!*\
   !*** ./resources/assets/js/pages/Login.vue ***!
@@ -51210,6 +51950,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/assets/js/pages/ListPendaftaran.vue?vue&type=script&lang=js":
+/*!*******************************************************************************!*\
+  !*** ./resources/assets/js/pages/ListPendaftaran.vue?vue&type=script&lang=js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ListPendaftaran_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ListPendaftaran.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=script&lang=js");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ListPendaftaran_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/assets/js/pages/Login.vue?vue&type=script&lang=js":
 /*!*********************************************************************!*\
   !*** ./resources/assets/js/pages/Login.vue?vue&type=script&lang=js ***!
@@ -51394,6 +52150,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/assets/js/pages/ListPendaftaran.vue?vue&type=template&id=0b536997&scoped=true":
+/*!*************************************************************************************************!*\
+  !*** ./resources/assets/js/pages/ListPendaftaran.vue?vue&type=template&id=0b536997&scoped=true ***!
+  \*************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ListPendaftaran_vue_vue_type_template_id_0b536997_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ListPendaftaran_vue_vue_type_template_id_0b536997_scoped_true__WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ListPendaftaran_vue_vue_type_template_id_0b536997_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ListPendaftaran.vue?vue&type=template&id=0b536997&scoped=true */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=template&id=0b536997&scoped=true");
+
+
+/***/ }),
+
 /***/ "./resources/assets/js/pages/Login.vue?vue&type=template&id=5b96cafc&scoped=true":
 /*!***************************************************************************************!*\
   !*** ./resources/assets/js/pages/Login.vue?vue&type=template&id=5b96cafc&scoped=true ***!
@@ -51519,6 +52292,19 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_style_index_0_id_049f0327_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader/dist/cjs.js!../../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Dashboard.vue?vue&type=style&index=0&id=049f0327&scoped=true&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/Dashboard.vue?vue&type=style&index=0&id=049f0327&scoped=true&lang=css");
+
+
+/***/ }),
+
+/***/ "./resources/assets/js/pages/ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css":
+/*!***************************************************************************************************************!*\
+  !*** ./resources/assets/js/pages/ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css ***!
+  \***************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ListPendaftaran_vue_vue_type_style_index_0_id_0b536997_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader/dist/cjs.js!../../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/pages/ListPendaftaran.vue?vue&type=style&index=0&id=0b536997&scoped=true&lang=css");
 
 
 /***/ }),

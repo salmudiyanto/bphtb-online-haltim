@@ -6,6 +6,7 @@ import MainLayout from '../layouts/MainLayout.vue';
 import Login from '../pages/Login.vue';
 import Dashboard from '../pages/Dashboard.vue';
 import InputPendaftaran from '../pages/InputPendaftaran.vue';
+import ListPendaftaran from '../pages/ListPendaftaran.vue';
 import UploadPersyaratan from '../pages/UploadPersyaratan.vue';
 import InputSspd from '../pages/InputSspd.vue';
 
@@ -46,6 +47,12 @@ const routes = [
         name: 'pendaftaran-baru',
         component: InputPendaftaran,
         meta: { title: 'Input Nomor Pelayanan' }
+      },
+      {
+        path: 'list-pendaftaran',
+        name: 'list-pendaftaran',
+        component: ListPendaftaran,
+        meta: { title: 'List Pendaftaran BPHTB' }
       },
       {
         path: 'upload-persyaratan',

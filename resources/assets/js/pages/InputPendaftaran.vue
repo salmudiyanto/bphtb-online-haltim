@@ -608,7 +608,8 @@ export default {
         alamatObjekPajak: '',
         nilaiPasar: 0,
         nomorKontak: '',
-        keteranganTambahan: ''
+        keteranganTambahan: '',
+        dasarPengenaan: []
       },
       simulasi: {
         luasBumi: 0,
@@ -758,7 +759,7 @@ export default {
       }
     }
   },
-  mounted() {
+    mounted() {
     const d = new Date(this.form.tanggalPenerimaan);
     d.setDate(d.getDate() + 3);
     this.form.perkiraanSelesai = d.toISOString().split('T')[0];
@@ -766,6 +767,10 @@ export default {
     // Load Jenis Transaksi & Tarif BPHTB dari API
     this.fetchJenisTransaksi();
     this.fetchTarifBphtb();
+
+    if (this.$route.query.no_pelayanan) {
+      this.fetchDetailPendaftaran(this.$route.query.no_pelayanan);
+    }
   },
   methods: {
     formatRupiah(value) {
@@ -986,6 +991,44 @@ export default {
         this.resetSimulasi();
         this.showApiError(err, 'Error Pengecekan PBB');
       });
+    },
+
+    fetchDetailPendaftaran(no_pelayanan) {
+      axios.get(`/api/v1/pendaftaran/detail/${no_pelayanan}`)
+        .then(res => {
+          if (res.data && res.data.success) {
+            const d = res.data.data;
+            this.form.namaWajibPajak = d.nama_pemohon || d.namawp || '';
+            
+            // Format alamat domisili
+            let alamat = d.alamatop || '';
+            if (d.nama_kelurahan) alamat += `, KEL. ${d.nama_kelurahan}`;
+            if (d.nama_kecamatan) alamat += `, KEC. ${d.nama_kecamatan}`;
+            alamat += `, KAB. HALMAHERA TIMUR`;
+            this.form.alamatPemohon = alamat.toUpperCase();
+            
+            this.form.nop = d.nop || '';
+            
+            // Format alamat objek pajak
+            let alamatOp = '';
+            if (d.nama_kelurahan) alamatOp += `KEL. ${d.nama_kelurahan}`;
+            if (d.nama_kecamatan) alamatOp += `, KEC. ${d.nama_kecamatan}`;
+            alamatOp += `, KAB. HALMAHERA TIMUR`;
+            this.form.alamatObjekPajak = alamatOp.toUpperCase();
+
+            this.simulasi.luasBumi = 0;
+            this.simulasi.luasBng = 0;
+            
+            // Automatically trigger NOP check if filled
+            if (this.form.nop.length >= 18) {
+              this.onNopInput({ target: { value: this.form.nop } });
+              this.cekTunggakanPbb();
+            }
+          }
+        })
+        .catch(err => {
+          console.error("Gagal mengambil detail pendaftaran:", err);
+        });
     },
 
     refreshNomorPelayanan() {

@@ -51,6 +51,9 @@ Route::prefix('v1')->group(function () {
     Route::get('/referensi/tarif-bphtb', 'ReferensiController@getTarifBphtb');
     Route::get('/pendaftaran/generate-no-surat', 'PendaftaranController@generateNoSurat');
     Route::post('/pendaftaran/simpan', 'PendaftaranController@simpanPendaftaran');
+    Route::get('/pendaftaran/unregistered', 'PendaftaranController@getUnregisteredList');
+    Route::get('/pendaftaran/detail/{no_pelayanan?}', 'PendaftaranController@getDetail');
+    Route::get('/pendaftaran/detail', 'PendaftaranController@getDetail');
     Route::post('/pbb/cek-tunggakan', 'PbbController@cekTunggakan');
 
     // Persyaratan Routes
